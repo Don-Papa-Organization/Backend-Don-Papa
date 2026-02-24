@@ -1,0 +1,113 @@
+<app-ui-modal
+  *ngIf="mostrar"
+  [mostrar]="mostrar"
+  titulo="Actualizar Empleado"
+  (cerrar)="onCerrar()"
+>
+  <app-ui-form maxHeight="50vh" maxWidth="1000px">
+    <ui-input
+      tituloInput="Nombre"
+      tipo="text"
+      placeholder="Nombre del empleado"
+      [(ngModel)]="empleadoActual.nombre"
+      name="nombre"
+      required
+      #nombreModel="ngModel"
+    ></ui-input>
+
+    <ui-input
+      tituloInput="Documento"
+      tipo="text"
+      placeholder="Documento"
+      [(ngModel)]="empleadoActual.documento"
+      name="documento"
+      required
+      #documentoModel="ngModel"
+    ></ui-input>
+
+    <ui-input
+      tituloInput="Correo"
+      tipo="email"
+      placeholder="Correo electrónico"
+      [(ngModel)]="empleadoActual.correo"
+      name="correo"
+      required
+      #correoModel="ngModel"
+    ></ui-input>
+
+    <ui-input
+      tituloInput="Teléfono"
+      tipo="text"
+      placeholder="Teléfono"
+      [(ngModel)]="empleadoActual.telefono"
+      name="telefono"
+      required
+      #telefonoModel="ngModel"
+    ></ui-input>
+
+    <ui-input
+      tituloInput="Cargo"
+      tipo="text"
+      placeholder="Cargo"
+      [(ngModel)]="empleadoActual.cargo"
+      name="cargo"
+      required
+      #cargoModel="ngModel"
+    ></ui-input>
+
+    <ui-input
+      tituloInput="Nueva Contraseña (opcional)"
+      tipo="password"
+      placeholder="Dejar vacío para mantener actual"
+      [(ngModel)]="empleadoActual.contrasena"
+      name="contrasena"
+      minlength="6"
+      #contrasenaModel="ngModel"
+    ></ui-input>
+
+    <ui-input
+      tituloInput="Confirmar Contraseña"
+      tipo="password"
+      placeholder="Confirme la contraseña"
+      [(ngModel)]="empleadoActual.confirmarContrasena"
+      name="confirmarContrasena"
+      #confirmarContrasenaModel="ngModel"
+    ></ui-input>
+
+    <p class="nota-password">Si desea cambiar la contraseña, ingrese la nueva contraseña en ambos campos.</p>
+
+    <div footer class="form-footer">
+      <ui-button
+        texto="Actualizar"
+        [noBackgroundColor]="true"
+        backgroundColor="#D4AF37"
+        (accion)="onGuardar()"
+      ></ui-button>
+    </div>
+
+    <div>
+      <app-ui-helper-text *ngIf="nombreModel.invalid && nombreModel.touched">
+        <ng-container *ngIf="nombreModel.errors?.['required']">El nombre es obligatorio.</ng-container>
+      </app-ui-helper-text>
+      <app-ui-helper-text *ngIf="documentoModel.invalid && documentoModel.touched">
+        <ng-container *ngIf="documentoModel.errors?.['required']">El documento es obligatorio.</ng-container>
+      </app-ui-helper-text>
+      <app-ui-helper-text *ngIf="correoModel.invalid && correoModel.touched">
+        <ng-container *ngIf="correoModel.errors?.['required']">El correo es obligatorio.</ng-container>
+        <ng-container *ngIf="correoModel.errors?.['email']">El correo debe ser válido.</ng-container>
+      </app-ui-helper-text>
+      <app-ui-helper-text *ngIf="telefonoModel.invalid && telefonoModel.touched">
+        <ng-container *ngIf="telefonoModel.errors?.['required']">El teléfono es obligatorio.</ng-container>
+      </app-ui-helper-text>
+      <app-ui-helper-text *ngIf="cargoModel.invalid && cargoModel.touched">
+        <ng-container *ngIf="cargoModel.errors?.['required']">El cargo es obligatorio.</ng-container>
+      </app-ui-helper-text>
+      <app-ui-helper-text *ngIf="contrasenaModel.invalid && contrasenaModel.touched && empleadoActual.contrasena">
+        <ng-container *ngIf="contrasenaModel.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</ng-container>
+      </app-ui-helper-text>
+      <app-ui-helper-text *ngIf="empleadoActual.contrasena && empleadoActual.contrasena !== empleadoActual.confirmarContrasena">
+        Las contraseñas no coinciden.
+      </app-ui-helper-text>
+    </div>
+  </app-ui-form>
+</app-ui-modal>

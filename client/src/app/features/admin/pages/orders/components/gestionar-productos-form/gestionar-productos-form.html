@@ -1,0 +1,93 @@
+<app-ui-modal
+	[mostrar]="mostrar"
+	titulo="Gestionar Productos del Pedido"
+	(cerrar)="onCerrar()"
+>
+	<app-ui-form maxHeight="50vh" maxWidth="1000px">
+		<!-- Sección: Productos Actuales -->
+		<div class="seccion-productos">
+			<h3>Productos en el Pedido</h3>
+			<div class="tabla-contenedor" *ngIf="productos.length > 0">
+				<app-ui-tabla
+					[theadData]="columnasTabla"
+					[tbodyData]="productos"
+					(eliminarRegistro)="onEliminarProducto($event)"
+				></app-ui-tabla>
+			</div>
+			<p class="sin-productos" *ngIf="productos.length === 0">No hay productos en este pedido</p>
+		</div>
+
+		<!-- Separador -->
+		<hr class="separador" />
+
+		<!-- Sección: Agregar Nuevo Producto -->
+		<div class="seccion-agregar">
+			<h3>Agregar Producto</h3>
+
+			<ui-input
+				tituloInput="ID Producto"
+				tipo="number"
+				placeholder="123"
+				[(ngModel)]="nuevoProducto.idProducto"
+				name="idProducto"
+				required
+			></ui-input>
+
+			<ui-input
+				tituloInput="Cantidad"
+				tipo="number"
+				placeholder="1"
+				[(ngModel)]="nuevoProducto.cantidad"
+				name="cantidad"
+				required
+			></ui-input>
+
+			<div class="boton-agregar">
+				<ui-button
+					texto="Agregar Producto"
+					[noBackgroundColor]="true"
+					backgroundColor="#D4AF37"
+					(accion)="onAgregarProducto()"
+					[disabled]="cargando"
+				></ui-button>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<div footer class="form-footer">
+			<ui-button
+				texto="Cerrar"
+				[noBackgroundColor]="true"
+				backgroundColor="#999999"
+				(accion)="onCerrar()"
+			></ui-button>
+		</div>
+	</app-ui-form>
+</app-ui-modal>
+
+<!-- MODAL DE ELIMINACIÓN -->
+<app-ui-modal
+	*ngIf="mostrarModalEliminar"
+	[mostrar]="mostrarModalEliminar"
+	titulo="¿Desea eliminar producto?"
+	(cerrar)="cerrarModalEliminar()"
+>
+	<div class="contenido-eliminacion">
+		<p>
+			¿Estás seguro de que deseas eliminar el producto
+			<strong>#{{ productoAEliminar?.idProducto }}</strong>
+			del pedido?
+		</p>
+		<p class="advertencia">Esta acción es irreversible.</p>
+
+		<div class="acciones-eliminacion">
+			<ui-button
+				texto="Eliminar Producto"
+				[noBackgroundColor]="true"
+				backgroundColor="#EF4444"
+				(accion)="confirmarEliminacionProducto()"
+				[disabled]="cargando"
+			></ui-button>
+		</div>
+	</div>
+</app-ui-modal>

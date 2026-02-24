@@ -1,0 +1,111 @@
+<div class="pagos-contenido" *ngIf="!cargandoPagos">
+	<section class="pagos-seccion">
+		<div class="pagos-seccion-header">
+			<h2>Pagos Pendientes</h2>
+		</div>
+		<app-ui-tabla
+			[theadData]="columnasPagosPendientes"
+			[tbodyData]="pagosPendientes"
+			[acciones]="accionesPagosPendientes"
+		></app-ui-tabla>
+	</section>
+
+	<section class="pagos-seccion">
+		<div class="pagos-seccion-header">
+			<h2>Todos los Pagos</h2>
+		</div>
+		<app-ui-tabla
+			[theadData]="columnasTodosPagos"
+			[tbodyData]="pagosTodos"
+			[acciones]="accionesTodosPagos"
+		></app-ui-tabla>
+	</section>
+</div>
+
+<div class="cargando" *ngIf="cargandoPagos">
+	<p>Cargando pagos...</p>
+</div>
+
+<!-- MODAL MÉTODOS DE PAGO -->
+<app-ui-modal
+	[mostrar]="mostrarModalMetodosPago"
+	titulo="Gestión de Métodos de Pago"
+	(cerrar)="cerrarModalMetodosPago()"
+>
+	<app-ui-form maxHeight="50vh" maxWidth="600px">
+		<app-ui-combobox
+			tituloInput="Seleccionar Método"
+			[options]="metodosPagoOptions"
+			[(selectedOption)]="metodoPagoSeleccionadoId"
+		>
+		</app-ui-combobox>
+
+		<ui-input
+			tituloInput="Nuevo Nombre (Opcional)"
+			[(ngModel)]="metodoPagoNombreEditado"
+			name="metodoPagoNombreEditado"
+		>
+		</ui-input>
+
+		<div footer style="display: flex; gap: 10px; justify-content: flex-end;">
+			<ui-button
+				texto="Eliminar"
+				[noBackgroundColor]="true"
+				[backgroundColor]="'#EF4444'"
+				(accion)="confirmarEliminarMetodoPago()"
+				[disabled]="!metodoPagoSeleccionadoId || !!metodoPagoNombreEditado"
+			>
+			</ui-button>
+			<ui-button
+				texto="Actualizar"
+				[noBackgroundColor]="true"
+				(accion)="onMetodoPagoActualizadoDirecto()"
+				[disabled]="!metodoPagoSeleccionadoId || !metodoPagoNombreEditado"
+			>
+			</ui-button>
+		</div>
+	</app-ui-form>
+</app-ui-modal>
+
+<!-- FORMULARIO AGREGAR MÉTODO -->
+<app-agregar-metodo-pago-form
+	[mostrar]="mostrarModalAgregarMetodoPago"
+	(cerrar)="cerrarModalAgregarMetodoPago()"
+	(metodoCreado)="onMetodoPagoCreado($event)"
+></app-agregar-metodo-pago-form>
+
+<!-- MODAL REGISTRAR PAGO -->
+<app-registrar-pago-form
+	[mostrar]="mostrarModalRegistrarPago"
+	[pedidoSeleccionado]="pedidoPagoSeleccionado"
+	[metodosPagoOptions]="metodosPagoOptions"
+	(cerrar)="cerrarModalRegistrarPago()"
+	(pagoRegistrado)="onPagoRegistrado($event)"
+></app-registrar-pago-form>
+
+<!-- MODAL PREVIEW RECIBO -->
+<app-ui-modal
+	[mostrar]="mostrarModalPreviewRecibo"
+	titulo="Previsualización de Recibo"
+	(cerrar)="cerrarModalPreviewRecibo()"
+>
+	<div class="preview-recibo-contenedor">
+		<div class="pdf-viewer" *ngIf="reciboURL">
+			<iframe 
+				[src]="reciboURL" 
+				width="100%" 
+				height="500px"
+				frameborder="0">
+			</iframe>
+		</div>
+
+		<div class="acciones-preview">
+			<ui-button
+				texto="Descargar Recibo"
+				[noBackgroundColor]="true"
+				backgroundColor="#22C55E"
+				(accion)="onDescargarReciboDirecto()"
+			></ui-button>
+		</div>
+	</div>
+</app-ui-modal>

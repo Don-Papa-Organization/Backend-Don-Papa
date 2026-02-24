@@ -1,52 +1,34 @@
 <app-ui-form titulo="Iniciar Sesión" (formSubmit)="submit($event)" class="formulario">
-    <ui-input 
-        tituloInput="Correo electronico" 
-        placeholder="ejemplo@correo.com"
-        name="email"
-        tipo="email"
-        required
-        email
-        [(ngModel)]="email"
-        #emailModel="ngModel"
-    ></ui-input>            
+    <ui-input tituloInput="Correo electronico" placeholder="ejemplo@correo.com" name="email" tipo="email" required email
+        [(ngModel)]="email" #emailModel="ngModel"></ui-input>
 
     <section class="contrasenaSection">
-        <ui-input 
-            tituloInput="Contraseña" 
-            placeholder="Ingresa tu contraseña"
-            name="password"
-            tipo="password"
-            required
-            minlength="8"
-            pattern="^(?=.*[A-Z])(?=.*\d).{8,}$"
-            [(ngModel)]="password"
-            #passwordModel="ngModel"
-        ></ui-input>
+        <ui-input tituloInput="Contraseña" placeholder="Ingresa tu contraseña" name="password" tipo="password" required
+            minlength="8" pattern="^(?=.*[A-Z])(?=.*\d).{8,}$" [(ngModel)]="password"
+            #passwordModel="ngModel"></ui-input>
         <a routerLink="/auth/forgot-password" class="link">¿Olvidaste tu contraseña?</a>
     </section>
 
-    <p class="error" *ngIf="emailModel.invalid && emailModel.touched">
+    <app-ui-helper-text *ngIf="emailModel.invalid && emailModel.touched">
         <ng-container *ngIf="emailModel.errors?.['required']">El correo es obligatorio.</ng-container>
         <ng-container *ngIf="emailModel.errors?.['email']">El correo no tiene un formato válido.</ng-container>
-    </p>
+    </app-ui-helper-text>
 
-    <p class="error" *ngIf="passwordModel.invalid && passwordModel.touched">
+    <app-ui-helper-text *ngIf="passwordModel.invalid && passwordModel.touched">
         <ng-container *ngIf="passwordModel.errors?.['required']">La contraseña es obligatoria.</ng-container>
         <ng-container *ngIf="passwordModel.errors?.['minlength']">Debe tener al menos 8 caracteres.</ng-container>
-        <ng-container *ngIf="passwordModel.errors?.['pattern']">Debe incluir mínimo una mayúscula y un número.</ng-container>
-    </p>
+        <ng-container *ngIf="passwordModel.errors?.['pattern']">Debe incluir mínimo una mayúscula y un
+            número.</ng-container>
+    </app-ui-helper-text>
 
-    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
-    <p class="p" *ngIf="(error$ | async) as error">{{ error }}</p>
+    <app-ui-helper-text type="success" *ngIf="successMessage">{{ successMessage }}</app-ui-helper-text>
+    <app-ui-helper-text *ngIf="(error$ | async) as error">{{ error }}</app-ui-helper-text>
 
     <div footer>
-        <ui-button
-            texto="Iniciar Sesion"
-            customWidth="250px"
-            tipo="submit"
-            [disabled]="emailModel.invalid || passwordModel.invalid || !!(loading$ | async)"
-        ></ui-button>
-        
-        <p class="link_iniciar_sesion">¿No tienes cuenta? <a routerLink="/auth/register" class="link">Registrarse</a></p>
+        <ui-button texto="Iniciar Sesion" customWidth="250px" tipo="submit"
+            [disabled]="emailModel.invalid || passwordModel.invalid || !!(loading$ | async)"></ui-button>
+
+        <p class="link_iniciar_sesion">¿No tienes cuenta? <a routerLink="/auth/register" class="link">Registrarse</a>
+        </p>
     </div>
 </app-ui-form>

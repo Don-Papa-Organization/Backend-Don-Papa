@@ -24,12 +24,14 @@ services:
       - backend-network
 
   # MICROSERVICIO 1 - INVENTARIO
-  inventory-service-app: 
+  inventory-service-app:
     build: ./ms1-inventory-service/SistemaDeInventario
     depends_on:
       - inventory-mysql
     ports:
       - "4001:4001"
+    volumes:
+      - ./storage/inventory-images:/home/app/src/images
     environment:
       - PORT=4001
       - DB_HOST=inventory-mysql
@@ -43,13 +45,19 @@ services:
     networks:
       - backend-network
 
-  inventory-mysql:  
+  inventory-mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME_INVENTORY}  
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: ${DB_NAME_INVENTORY:-don_papa}
     volumes:
       - inventory_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
       - backend-network
 
@@ -77,19 +85,19 @@ services:
     networks:
       - backend-network
 
-  user-mysql:  
+  user-mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME_USERS}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: ${DB_NAME_USERS:-don_papa}
     volumes:
       - users_mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 40s
+      start_period: 20s
     networks:
       - backend-network
 
@@ -97,12 +105,18 @@ services:
   order-service-app:
     build: ./ms3-order-service/Pedidos
     depends_on:
-      - order-mysql
-      - inventory-service-app
-      - user-service-app
-      - reservation-service-app
-      - event-service-app
-      - email-service
+      order-mysql:
+        condition: service_healthy
+      inventory-service-app:
+        condition: service_started
+      user-service-app:
+        condition: service_started
+      reservation-service-app:
+        condition: service_started
+      event-service-app:
+        condition: service_started
+      email-service:
+        condition: service_started
     ports:
       - "4003:4003"
     environment:
@@ -133,16 +147,21 @@ services:
       MYSQL_DATABASE: don_papa
     volumes:
       - order_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
       - backend-network
-
-
 
   # MICROSERVICIO 4 - RESERVAS Y MESAS
   reservation-service-app:
     build: ./ms4-reservation-service/ReservasYMesas
     depends_on:
-      - reservation-mysql
+      reservation-mysql:
+        condition: service_healthy
     ports:
       - "4004:4004"
     environment:
@@ -161,36 +180,51 @@ services:
   reservation-mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME_RESERVATIONS}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: ${DB_NAME_RESERVATIONS:-don_papa}
     volumes:
       - reservation_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
       - backend-network
 
-
   # MICROSERVICIO 5 - EVENTOS
-  event-service-app:  
+  event-service-app:
     build: ./ms5-event-service/EventosYPromociones
     depends_on:
-      - event-mysql
+      event-mysql:
+        condition: service_healthy
     ports:
       - "4005:4005"
     environment:
       - PORT=4005
       - DB_HOST=event-mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
+      - DB_NAME=don_papa
       - NODE_ENV=development
-      
     networks:
       - backend-network
 
-  event-mysql: 
+  event-mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME_EVENTS}  
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: ${DB_NAME_EVENTS:-don_papa}
     volumes:
       - events_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
       - backend-network
 
@@ -198,9 +232,11 @@ services:
   report-service-app:
     build: ./ms6-report-service/ReportesYVitacora
     depends_on:
-      - report-mysql
-      - order-service-app
-    ports: 
+      report-mysql:
+        condition: service_healthy
+      order-service-app:
+        condition: service_started
+    ports:
       - "4006:4006"
     environment:
       - PORT=4006
@@ -225,18 +261,24 @@ services:
       MYSQL_DATABASE: don_papa
     volumes:
       - report_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
       - backend-network
-  
 
 volumes:
   inventory_mysql_data:
-  users_mysql_data: 
+  users_mysql_data:
   order_mysql_data:
   events_mysql_data:
   reservation_mysql_data:
   report_mysql_data:
   order_receipts:
+
 
 networks:
   backend-network:

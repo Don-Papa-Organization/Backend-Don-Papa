@@ -35,6 +35,9 @@ import { EmpleadoListItemDto } from "../../domain/users/dtos/response/list-emplo
 import { GetEmployeeResponseDto } from "../../domain/users/dtos/response/get-employee.response.dto";
 import { GetEmployeeByDocumentResponseDto } from "../../domain/users/dtos/response/get-employee-by-document.response.dto";
 import { CreateEmployeeResponseDto } from "../../domain/users/dtos/response/create-employee.response.dto";
+import { UpdateEmployeeRequestDto } from "../../domain/users/dtos/request/update-employee.request.dto";
+import { UpdateEmployeeResponseDto } from "../../domain/users/dtos/response/update-employee.response.dto";
+import { DeleteEmployeeResponseDto } from "../../domain/users/dtos/response/delete-employee.response.dto";
 import { API_ENDPOINTS, buildApiUrl } from "../../config/api.config";
 
 @Injectable({ providedIn: "root" })
@@ -153,6 +156,14 @@ export class UsersApi {
 
 	createEmployee(dto: CreateEmployeeRequestDto): Observable<ApiResponse<CreateEmployeeResponseDto>> {
 		return this.http.post<ApiResponse<CreateEmployeeResponseDto>>(this.employeesUrl, dto);
+	}
+
+	updateEmployee(id: number, dto: UpdateEmployeeRequestDto): Observable<UpdateEmployeeResponseDto> {
+		return this.http.put<UpdateEmployeeResponseDto>(buildApiUrl(API_ENDPOINTS.users.employeeDetail(id)), dto);
+	}
+
+	deleteEmployee(id: number): Observable<DeleteEmployeeResponseDto> {
+		return this.http.delete<DeleteEmployeeResponseDto>(buildApiUrl(API_ENDPOINTS.users.employeeDetail(id)));
 	}
 
 	listUsers(dto?: ListUsersRequestDto): Observable<ApiResponse<Usuario[]>> {

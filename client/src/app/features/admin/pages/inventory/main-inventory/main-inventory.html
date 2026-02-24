@@ -25,10 +25,6 @@
     </div>
 
 
-    <app-ui-modal titulo="">
-
-    </app-ui-modal>
-
 
     <div class="table-content">
         <app-ui-tabla name="table-content" [theadData]="columnas" [tbodyData]="productosTableData"
@@ -44,12 +40,12 @@
     </app-ui-modal>
 
     <app-agregar-form [mostrar]="mostrarModalAgregar" [categoriasOptions]="categoriasOptions"
-        [showTextStyle]="showTextStyle" (cerrar)="cerrarModalAgregar()" (productoCreado)="onProductoCreado()">
+        [showTextStyle]="showTextStyle" (cerrar)="cerrarModalAgregar()" (productoCreado)="onProductoCreado($event)">
     </app-agregar-form>
 
     <app-editar-form [mostrar]="mostrarModalEditar" [categoriasOptions]="categoriasOptions"
-        [showTextStyle]="showTextStyle" [producto]="registroSeleccionado" (cerrar)="cerrarModalEditar()"
-        (productoActualizado)="onProductoActualizado()">
+        [showTextStyle]="showTextStyle" [registroSeleccionado]="registroSeleccionado" (cerrar)="cerrarModalEditar()"
+        (productoActualizado)="onProductoActualizado($event)">
     </app-editar-form>
 
     <!-- Modal Agregar Categoria -->
@@ -59,7 +55,7 @@
             <ui-input tituloInput="Nombre Categoría" [(ngModel)]="nuevaCategoriaNombre" name="nuevaCategoriaNombre">
             </ui-input>
             <div footer>
-                <ui-button texto="Guardar" (accion)="guardarCategoria()"></ui-button>
+                <ui-button [noBackgroundColor]="true" texto="Guardar" (accion)="guardarCategoria()"></ui-button>
             </div>
         </app-ui-form>
     </app-ui-modal>

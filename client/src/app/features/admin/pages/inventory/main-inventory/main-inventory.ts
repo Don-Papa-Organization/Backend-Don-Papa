@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { InventoryApi } from '../../../../../services/apis/inventory.api';
+
+import { InventoryFacade } from '../services/inventory.facade';
 import { Producto } from '../../../../../domain/inventory/models/producto.model';
-import { forkJoin, of, timer } from 'rxjs';
-import { switchMap, map, take } from 'rxjs/operators';
+import { timer } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { CreateProductRequestDto } from '../../../../../domain/inventory/dtos/request/create-product.request.dto';
 import { UpdateProductRequestDto } from '../../../../../domain/inventory/dtos/request/update-product.request.dto';
+import { CreateCategoryRequestDto } from '../../../../../domain/inventory/dtos/request/create-category.request.dto';
+import { UpdateCategoryRequestDto } from '../../../../../domain/inventory/dtos/request/update-category.request.dto';
 
 @Component({
   selector: 'app-main-inventory',
@@ -41,7 +44,9 @@ export class MainInventory implements OnInit {
 
   categoriasOptions: Array<{ value: any, label: string }> = [];
 
-  constructor(private inventoryApi: InventoryApi) { }
+  constructor(
+    private inventoryFacade: InventoryFacade
+  ) { }
 
   ngOnInit(): void {
     this.cargarProductos();
@@ -57,17 +62,23 @@ export class MainInventory implements OnInit {
     this.mostrarModalEditar = true;
   }
 
-  onProductoActualizado(): void {
-    // Refresh immediately and then every second for 3 more times to ensure image updates propagate
-    timer(0, 1000).pipe(take(0)).subscribe(() => {
-      this.cargarProductos();
-    });
-    // this.cerrarModalEditar(); // Removed to keep modal open on image update
+  onProductoActualizado(dto: UpdateProductRequestDto): void {
+    if (this.registroSeleccionado && this.registroSeleccionado.idProducto) {
+      this.inventoryFacade.updateProduct(this.registroSeleccionado.idProducto, dto).subscribe({
+        next: (response) => {
+          if (response.success) {
+            console.log('Producto actualizado exitosamente');
+            this.cargarProductos();
+            this.cerrarModalEditar();
+          }
+        },
+        error: (error) => {
+          console.error('Error al actualizar producto:', error);
+        }
+      });
+    }
   }
 
-  actualizarProducto(): void {
-    // Logic moved to EditarForm
-  }
 
   onEliminar(registro: any): void {
     this.registroSeleccionado = registro;
@@ -88,18 +99,24 @@ export class MainInventory implements OnInit {
     this.mostrarModalAgregar = false;
   }
 
-  onProductoCreado(): void {
-    this.cargarProductos();
-    this.cerrarModalAgregar();
+  onProductoCreado(event: { dto: CreateProductRequestDto, imagen: File | null }): void {
+    this.inventoryFacade.createProduct(event.dto, event.imagen).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.cargarProductos();
+          this.cerrarModalAgregar();
+        }
+      },
+      error: (error) => {
+        console.error('Error al crear producto:', error);
+      }
+    });
   }
 
-  crearProducto(): void {
-    // Logic moved to AgregarForm
-  }
 
   eliminarProducto(): void {
     if (this.registroSeleccionado && this.registroSeleccionado.idProducto) {
-      this.inventoryApi.deleteProduct(this.registroSeleccionado.idProducto).subscribe({
+      this.inventoryFacade.deleteProduct(this.registroSeleccionado.idProducto).subscribe({
         next: (response) => {
           if (response.success) {
             console.log('Producto eliminado exitosamente');
@@ -109,61 +126,21 @@ export class MainInventory implements OnInit {
         },
         error: (error) => {
           console.error('Error al eliminar producto:', error);
-          // Aquí podrías agregar un mensaje de error al usuario
         }
       });
     }
   }
 
   cargarProductos(): void {
-    this.inventoryApi.listProducts().subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          const productos = response.data.productos;
+    this.inventoryFacade.getProductsWithCategories().subscribe({
+      next: (productos) => {
+        this.productosTableData = productos;
 
-          // Crear observables para cada producto (para obtener el nombre de la categoría)
-          const productosConCategoria$ = productos.map(producto =>
-            producto.idCategoria
-              ? this.inventoryApi.getCategory(producto.idCategoria).pipe(
-                map(catResponse => ({
-                  ...producto,
-                  nombreCategoria: catResponse.data?.nombre || 'N/A'
-                })),
-                switchMap(p => of(p))
-              )
-              : of({ ...producto, nombreCategoria: 'N/A' })
-          );
-
-          // Usar forkJoin para esperar todas las solicitudes
-          if (productosConCategoria$.length > 0) {
-            forkJoin(productosConCategoria$).subscribe({
-              next: (productosConCat) => {
-                this.productosTableData = productosConCat.map(producto => ({
-                  idProducto: producto.idProducto,
-                  nombre: producto.nombre,
-                  precio: producto.precio,
-                  stockActual: producto.stockActual,
-                  stockMinimo: producto.stockMinimo,
-                  activo: producto.activo ? 'Sí' : 'No',
-                  descripcion: producto.descripcion || 'N/A',
-                  categoria: producto.nombreCategoria,
-                  idCategoria: producto.idCategoria,
-                  imagen: this.inventoryApi.resolveImageUrl(
-                    producto.urlImagen && producto.urlImagen.startsWith("/images")
-                      ? this.inventoryApi.getProductImageUrl(producto.idProducto)
-                      : (producto.urlImagen || this.inventoryApi.getProductImageUrl(producto.idProducto))
-                  ) + `?t=${new Date().getTime()}`
-                })).sort((a, b) => a.idProducto - b.idProducto);
-
-                // Update selected record if exists to reflect changes in the open modal
-                if (this.registroSeleccionado) {
-                  const updatedRecord = this.productosTableData.find(p => p['idProducto'] === this.registroSeleccionado.idProducto);
-                  if (updatedRecord) {
-                    this.registroSeleccionado = updatedRecord;
-                  }
-                }
-              }
-            });
+        // Update selected record if exists to reflect changes in the open modal
+        if (this.registroSeleccionado) {
+          const updatedRecord = this.productosTableData.find(p => p['idProducto'] === this.registroSeleccionado.idProducto);
+          if (updatedRecord) {
+            this.registroSeleccionado = updatedRecord;
           }
         }
       },
@@ -174,29 +151,24 @@ export class MainInventory implements OnInit {
   }
 
   private cargarCategorias(): void {
-    console.log('Cargando categorías...');
-    this.inventoryApi.listCategories().subscribe({
+    this.inventoryFacade.listCategories().subscribe({
       next: (response) => {
-        // console.log('Respuesta cruda de categorías (JSON):', JSON.stringify(response));
-
-        // Tentative fix/debug: Check if data is array or object
-        const data: any = response.data;
+        const data = response.data;
         let categoriesArray: any[] = [];
 
         if (Array.isArray(data)) {
           categoriesArray = data;
         } else if (data && typeof data === 'object') {
-          // Try to find an array property
-          const keys = Object.keys(data);
-          // console.log('Claves en response.data:', keys);
-          // Common patterns
-          if (Array.isArray(data.categorias)) {
-            categoriesArray = data.categorias;
-          } else if (Array.isArray(data.categories)) {
-            categoriesArray = data.categories;
-          } else if (keys.length > 0 && Array.isArray(data[keys[0]])) {
-            // Fallback: assume the first array property is the list
-            categoriesArray = data[keys[0]];
+          const d = data as any;
+          if (Array.isArray(d.categorias)) {
+            categoriesArray = d.categorias;
+          } else if (Array.isArray(d.categories)) {
+            categoriesArray = d.categories;
+          } else {
+            const keys = Object.keys(d);
+            if (keys.length > 0 && Array.isArray(d[keys[0]])) {
+              categoriesArray = d[keys[0]];
+            }
           }
         }
 
@@ -205,9 +177,6 @@ export class MainInventory implements OnInit {
             value: categoria.idCategoria,
             label: categoria.nombre
           }));
-          // console.log('Categorías transformadas:', this.categoriasOptions);
-        } else {
-          console.warn('No se pudieron encontrar categorías en la respuesta:', response);
         }
       },
       error: (error) => {
@@ -227,8 +196,8 @@ export class MainInventory implements OnInit {
 
   guardarCategoria(): void {
     if (this.nuevaCategoriaNombre.trim()) {
-      const dto = { nombre: this.nuevaCategoriaNombre };
-      this.inventoryApi.createCategory(dto as any).subscribe({
+      const dto: CreateCategoryRequestDto = { nombre: this.nuevaCategoriaNombre };
+      this.inventoryFacade.createCategory(dto).subscribe({
         next: (response) => {
           if (response.success) {
             this.cargarCategorias();
@@ -252,8 +221,8 @@ export class MainInventory implements OnInit {
 
   actualizarCategoria(): void {
     if (this.categoriaSeleccionadaId && this.categoriaNombreEditado.trim()) {
-      const dto = { nombre: this.categoriaNombreEditado };
-      this.inventoryApi.updateCategory(this.categoriaSeleccionadaId, dto as any).subscribe({
+      const dto: UpdateCategoryRequestDto = { nombre: this.categoriaNombreEditado };
+      this.inventoryFacade.updateCategory(this.categoriaSeleccionadaId, dto).subscribe({
         next: (res) => {
           if (res.success) {
             this.cargarCategorias();
@@ -275,7 +244,7 @@ export class MainInventory implements OnInit {
     if (this.categoriaSeleccionadaId) {
       if (!confirm('¿Está seguro de que desea eliminar esta categoría?')) return;
 
-      this.inventoryApi.deleteCategory(this.categoriaSeleccionadaId).subscribe({
+      this.inventoryFacade.deleteCategory(this.categoriaSeleccionadaId).subscribe({
         next: (res) => {
           if (res.success) {
             this.cargarCategorias();

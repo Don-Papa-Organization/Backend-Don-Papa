@@ -1,0 +1,155 @@
+<div class="users-page">
+  <!-- HEADER DE SECCIÓN -->
+  <div class="users-header">
+    <h1>Gestión de Usuarios, Empleados y Clientes</h1>
+    <div class="acciones-header">
+      <app-ui-only-icon-button
+        urlIcono="icons/reload.svg"
+        (action)="onRecargar()"
+      ></app-ui-only-icon-button>
+      <app-ui-only-icon-button
+        *ngIf="tabActiva === 'empleados'"
+        texto="Empleado"
+        [showTextStyle]="true"
+        urlIcono="icons/agregar.svg"
+        (action)="onAgregarEmpleado()"
+      ></app-ui-only-icon-button>
+    </div>
+  </div>
+
+  <!-- TABS COMPONENT -->
+  <app-ui-tabs
+    [tabItems]="tabs"
+    [tabActiva]="tabActiva"
+    (tabChange)="cambiarTab($event)"
+  ></app-ui-tabs>
+
+  <!-- TABLA DE EMPLEADOS -->
+  <app-ui-tabla
+    *ngIf="tabActiva === 'empleados'"
+    [theadData]="columnasEmpleados"
+    [tbodyData]="empleados"
+    (editarRegistro)="onActualizarEmpleado($event)"
+    (eliminarRegistro)="onEliminarEmpleado($event)"
+  ></app-ui-tabla>
+
+  <!-- TABLA DE USUARIOS -->
+  <app-ui-tabla
+    *ngIf="tabActiva === 'usuarios'"
+    [theadData]="columnasUsuarios"
+    [tbodyData]="usuarios"
+    (editarRegistro)="onVerDetalleUsuario($event)"
+  ></app-ui-tabla>
+
+  <!-- TABLA DE CLIENTES -->
+  <app-ui-tabla
+    *ngIf="tabActiva === 'clientes'"
+    [theadData]="columnasClientes"
+    [tbodyData]="clientes"
+    (editarRegistro)="onVerDetalleCliente($event)"
+  ></app-ui-tabla>
+
+  <!-- MODAL: AGREGAR EMPLEADO -->
+  <app-agregar-employee-form
+    [mostrar]="mostrarModalAgregarEmpleado"
+    (cerrar)="cerrarModalAgregarEmpleado()"
+    (empleadoCreado)="onEmpleadoCreado($event)"
+  ></app-agregar-employee-form>
+
+  <!-- MODAL: ACTUALIZAR EMPLEADO -->
+  <app-actualizar-employee-form
+    [mostrar]="mostrarModalActualizarEmpleado"
+    [empleado]="empleadoSeleccionado"
+    (cerrar)="cerrarModalActualizarEmpleado()"
+    (empleadoActualizado)="onEmpleadoActualizado($event)"
+  ></app-actualizar-employee-form>
+
+  <!-- MODAL: CONFIRMAR ELIMINACIÓN EMPLEADO -->
+  <app-ui-modal
+    *ngIf="mostrarModalEliminarEmpleado"
+    [mostrar]="mostrarModalEliminarEmpleado"
+    titulo="¿Desea eliminar empleado?"
+    (cerrar)="cerrarModalEliminarEmpleado()"
+  >
+    <div class="contenido-eliminacion">
+      <p>¿Estás seguro de que deseas eliminar al empleado <strong>{{ empleadoSeleccionado?.nombre }}</strong>?</p>
+      <p class="advertencia">Esta acción desactivará el empleado en el sistema.</p>
+      
+      <div class="acciones-eliminacion">
+        <ui-button
+          texto="Eliminar Empleado"
+          [noBackgroundColor]="true"
+          backgroundColor="#EF4444"
+          (accion)="confirmarEliminacionEmpleado()"
+        ></ui-button>
+      </div>
+    </div>
+  </app-ui-modal>
+
+  <!-- MODAL: DETALLE USUARIO -->
+  <app-ui-modal
+    *ngIf="mostrarModalDetalleUsuario"
+    [mostrar]="mostrarModalDetalleUsuario"
+    titulo="Detalle del Usuario"
+    (cerrar)="cerrarModalDetalleUsuario()"
+  >
+    <div class="detalle-usuario">
+      <div class="campo">
+        <label>ID:</label>
+        <span>{{ usuarioSeleccionado?.idUsuario }}</span>
+      </div>
+      <div class="campo">
+        <label>Correo:</label>
+        <span>{{ usuarioSeleccionado?.correo }}</span>
+      </div>
+      <div class="campo">
+        <label>Tipo de Usuario:</label>
+        <span>{{ usuarioSeleccionado?.tipoUsuario }}</span>
+      </div>
+      <div class="campo">
+        <label>Estado:</label>
+        <span [class.activo]="usuarioSeleccionado?.activo" [class.inactivo]="!usuarioSeleccionado?.activo">
+          {{ usuarioSeleccionado?.activo ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+    </div>
+  </app-ui-modal>
+
+  <!-- MODAL: DETALLE CLIENTE -->
+  <app-ui-modal
+    *ngIf="mostrarModalDetalleCliente"
+    [mostrar]="mostrarModalDetalleCliente"
+    titulo="Detalle del Cliente"
+    (cerrar)="cerrarModalDetalleCliente()"
+  >
+    <div class="detalle-cliente">
+      <div class="campo">
+        <label>ID Usuario:</label>
+        <span>{{ clienteSeleccionado?.idUsuario }}</span>
+      </div>
+      <div class="campo">
+        <label>Nombre:</label>
+        <span>{{ clienteSeleccionado?.nombre }}</span>
+      </div>
+      <div class="campo">
+        <label>Correo:</label>
+        <span>{{ clienteSeleccionado?.correo }}</span>
+      </div>
+      <div class="campo">
+        <label>Teléfono:</label>
+        <span>{{ clienteSeleccionado?.telefono }}</span>
+      </div>
+      <div class="campo">
+        <label>Dirección:</label>
+        <span>{{ clienteSeleccionado?.direccion }}</span>
+      </div>
+      <div class="campo">
+        <label>Estado:</label>
+        <span [class.activo]="clienteSeleccionado?.activo" [class.inactivo]="!clienteSeleccionado?.activo">
+          {{ clienteSeleccionado?.activo ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+    </div>
+  </app-ui-modal>
+
+</div>

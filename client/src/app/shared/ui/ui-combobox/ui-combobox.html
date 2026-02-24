@@ -1,14 +1,48 @@
 <!-- template.component.html -->
 <div class="input-container">
   <label>{{ tituloInput }}</label>
-  <select 
-    class="ui-input-field"
-    [(ngModel)]="selectedOption"
-    [disabled]="isDisabled"
-    (ngModelChange)="onSelectChange($event)"
-  >
-    <option *ngFor="let option of options" [value]="option.value">
-      {{ option.label }}
-    </option>
-  </select>
+  <div class="combobox-container">
+    <div class="combobox-search-wrapper">
+      <input
+        type="text"
+        class="combobox-search"
+        placeholder="Buscar..."
+        [value]="searchTerm"
+        [disabled]="isDisabled"
+        (input)="onSearchChange($event.target.value)"
+        (focus)="toggleDropdown()"
+        autocomplete="off"
+      />
+      <button
+        class="combobox-toggle-btn"
+        [disabled]="isDisabled"
+        (click)="toggleDropdown()"
+        type="button"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="combobox-dropdown" *ngIf="isDropdownOpen && !isDisabled">
+      <div class="combobox-options">
+        <div
+          *ngIf="filteredOptions.length === 0"
+          class="combobox-no-results"
+        >
+          No hay opciones disponibles
+        </div>
+        <button
+          *ngFor="let option of filteredOptions"
+          type="button"
+          class="combobox-option"
+          [class.selected]="option.value === selectedOption"
+          (click)="onSelectChange(option)"
+        >
+          {{ option.label }}
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

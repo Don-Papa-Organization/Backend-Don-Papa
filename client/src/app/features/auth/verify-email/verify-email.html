@@ -4,9 +4,9 @@
   <div class="content">
     <p class="loading" *ngIf="(loading$ | async)">Verificando tu correo...</p>
 
-    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
-    <p class="error" *ngIf="localError">{{ localError }}</p>
-    <p class="error" *ngIf="(error$ | async) as error">{{ error }}</p>
+    <app-ui-helper-text type="success" *ngIf="successMessage">{{ successMessage }}</app-ui-helper-text>
+    <app-ui-helper-text *ngIf="localError">{{ localError }}</app-ui-helper-text>
+    <app-ui-helper-text *ngIf="(error$ | async) as error">{{ error }}</app-ui-helper-text>
 
     <ui-button texto="Volver a iniciar sesión" tipo="button" (accion)="goToLogin()"></ui-button>
   </div>

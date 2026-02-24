@@ -17,6 +17,7 @@
 .modal-container {
   max-width: 80%;
   width: auto;
+  max-height: 85vh;
   height: fit-content;
   background: #2B1D13;
   border: 2px solid #D4AF37;
@@ -25,6 +26,7 @@
   display: flex;
   flex-direction: column;
   color: #FFFFFF;
+  overflow-y: auto;
 }
 
 .modal-header {

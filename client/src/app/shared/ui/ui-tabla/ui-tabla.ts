@@ -1,5 +1,10 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
+export interface AccionTabla {
+  urlIcono: string;
+  accion: (registro: any) => void;
+}
+
 @Component({
   selector: 'app-ui-tabla',
   standalone: false,
@@ -7,6 +12,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./ui-tabla.scss']
 })
 export class UiTabla {
+  @Input() minWidth: string = "725px"
+
   @Input() theadData: string[] = [
     "columna1",
     "columna2",
@@ -15,6 +22,17 @@ export class UiTabla {
     "columna5",
     "columna6",
     "columna7"
+  ];
+
+  @Input() acciones: AccionTabla[] = [
+    {
+      urlIcono: "icons/editar.svg",
+      accion: (registro: any) => this.onEditar(registro)
+    },
+    {
+      urlIcono: "icons/eliminar.svg",
+      accion: (registro: any) => this.onEliminar(registro)
+    }
   ];
 
   @Input() tbodyData: Array<any> = [
@@ -58,6 +76,7 @@ export class UiTabla {
 
   @Output() editarRegistro = new EventEmitter<any>();
   @Output() eliminarRegistro = new EventEmitter<any>();
+  @Output() accionPersonalizada = new EventEmitter<{ accion: string; registro: any }>();
 
   onEditar(fila: any): void {
     this.editarRegistro.emit(fila);
@@ -65,5 +84,9 @@ export class UiTabla {
 
   onEliminar(fila: any): void {
     this.eliminarRegistro.emit(fila);
+  }
+
+  ejecutarAccion(accion: AccionTabla, registro: any): void {
+    accion.accion(registro);
   }
 }

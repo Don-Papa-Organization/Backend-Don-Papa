@@ -12,6 +12,8 @@
     }
 }
 
+
+
 :host {
     display: flex;
     align-items: center;
@@ -27,6 +29,9 @@
     justify-content: center;
     gap: 10px;
     
+    .p{
+        color:#ffffff;
+    }
 }
 
 // Enlaces
@@ -40,19 +45,3 @@
     }
 }
 
-// Mensajes de estado
-.p {
-    color: white;
-}
-
-.error {
-    color: #e74c3c;
-    font-size: 12px;
-    text-align: center;
-}
-
-.success {
-    color: #2ecc71;
-    font-size: 12px;
-    text-align: center;
-}   

@@ -1,0 +1,102 @@
+<app-ui-modal
+	[mostrar]="mostrar"
+	titulo="Agregar Nuevo Pedido"
+	(cerrar)="onCerrar()"
+>
+	<app-ui-form maxHeight="50vh" maxWidth="1000px">
+		<!-- Sección: Agregar Productos -->
+		<div class="seccion-productos">
+			<h3>Agregar Productos al Pedido</h3>
+
+			<!-- Selector de Producto -->
+			<app-ui-combobox
+				tituloInput="Producto"
+				[options]="productosOptions"
+				[(selectedOption)]="productoFormulario.idProducto"
+			></app-ui-combobox>
+
+			<!-- Cantidad -->
+			<ui-input
+				tituloInput="Cantidad"
+				tipo="number"
+				placeholder="1"
+				[(ngModel)]="productoFormulario.cantidad"
+				name="cantidad"
+				required
+				#cantidadModel="ngModel"
+			></ui-input>
+
+			<!-- Botón para agregar producto -->
+			<div class="boton-agregar-producto">
+				<ui-button
+					texto="Agregar Producto"
+					[noBackgroundColor]="true"
+					backgroundColor="#D4AF37"
+					(accion)="onAgregarProducto()"
+				></ui-button>
+			</div>
+
+			<!-- Validaciones -->
+			<app-ui-helper-text *ngIf="formSubmitted && (!productoFormulario.idProducto || productoFormulario.idProducto === 0)">
+				<ng-container>Debe seleccionar un producto.</ng-container>
+			</app-ui-helper-text>
+
+			<app-ui-helper-text *ngIf="productosOptions.length === 0 && !formSubmitted">
+				<ng-container>Cargando productos disponibles...</ng-container>
+			</app-ui-helper-text>
+
+			<app-ui-helper-text *ngIf="cantidadModel.invalid && (cantidadModel.touched || formSubmitted)">
+				<ng-container *ngIf="cantidadModel.errors?.['required']">La cantidad es obligatoria.</ng-container>
+			</app-ui-helper-text>
+		</div>
+
+		<!-- Separador -->
+		
+
+		<!-- Sección: Productos Agregados -->
+		<div class="seccion-productos-agregados">
+			<h3>Productos en el Pedido</h3>
+			
+			<div class="tabla-contenedor" *ngIf="productosAgregados.length > 0"  minWidth="fit-content">
+				<app-ui-tabla
+					[theadData]="columnasProductos"
+					[tbodyData]="productosAgregados"
+					(eliminarRegistro)="onEliminarProducto($event.idProducto)"
+				></app-ui-tabla>
+			</div>
+
+			<p class="sin-productos" *ngIf="productosAgregados.length === 0">
+				No hay productos agregados. Agrega al menos uno para continuar.
+			</p>
+		</div>
+
+
+		<!-- Mesa (opcional) -->
+		<div class="seccion-mesa">
+			<h3>Información Adicional</h3>
+			<ui-input
+				tituloInput="ID Mesa (Opcional)"
+				tipo="number"
+				placeholder="1"
+				[(ngModel)]="idMesa"
+				name="idMesa"
+			></ui-input>
+		</div>
+
+		<!-- Footer -->
+		<div footer class="form-footer">
+			<ui-button
+				texto="Crear Pedido"
+				[noBackgroundColor]="true"
+				backgroundColor="#D4AF37"
+				(accion)="onGuardar()"
+				[disabled]="productosAgregados.length === 0"
+			></ui-button>
+		</div>
+
+		<!-- Validación: Debe tener al menos un producto -->
+		<app-ui-helper-text *ngIf="formSubmitted && productosAgregados.length === 0">
+			<ng-container>Debe agregar al menos un producto al pedido.</ng-container>
+		</app-ui-helper-text>
+	</app-ui-form>
+</app-ui-modal>

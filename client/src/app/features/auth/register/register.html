@@ -1,77 +1,51 @@
 <app-ui-form titulo="Crear cuenta" (formSubmit)="submit($event)">
-    <ui-input 
-        tituloInput="Correo electronico" 
-        placeholder="ejemplo@correo.com"
-        name="email"
-        tipo="email"
-        required
-        email
-        [(ngModel)]="email"
-        #emailModel="ngModel"
-    ></ui-input>            
+    <ui-input tituloInput="Correo electronico" placeholder="ejemplo@correo.com" name="email" tipo="email" required email
+        [(ngModel)]="email" #emailModel="ngModel"></ui-input>
 
-    <ui-input 
-        tituloInput="Contraseña" 
-        placeholder="Ingresa tu contraseña"
-        name="password"
-        tipo="password"
-        required
-        minlength="8"
-        pattern="^(?=.*[A-Z])(?=.*\d).{8,}$"
-        [(ngModel)]="password"
-        #passwordModel="ngModel"
-    ></ui-input>
+    <ui-input tituloInput="Contraseña" placeholder="Ingresa tu contraseña" name="password" tipo="password" required
+        minlength="8" pattern="^(?=.*[A-Z])(?=.*\d).{8,}$" [(ngModel)]="password" #passwordModel="ngModel"></ui-input>
 
     <section class="contrasenaSection">
-        <ui-input 
-            tituloInput="Confirmar contraseña" 
-            placeholder="Ingresa tu contraseña"
-            name="passwordConfirmation"
-            tipo="password"
-            required
-            minlength="8"
-            pattern="^(?=.*[A-Z])(?=.*\d).{8,}$"
-            [(ngModel)]="passwordConfirmation"
-            #passwordConfirmationModel="ngModel"
-        ></ui-input>
-        <p>La contraseña debe tener al menos 8 caracteres, incluyendo una letra mayúscula y un número</p>   
+        <ui-input tituloInput="Confirmar contraseña" placeholder="Ingresa tu contraseña" name="passwordConfirmation"
+            tipo="password" required minlength="8" pattern="^(?=.*[A-Z])(?=.*\d).{8,}$"
+            [(ngModel)]="passwordConfirmation" #passwordConfirmationModel="ngModel"></ui-input>
+        <p>La contraseña debe tener al menos 8 caracteres, incluyendo una letra mayúscula y un número</p>
     </section>
 
-    <p class="error" *ngIf="emailModel.invalid && (emailModel.touched)">
+    <app-ui-helper-text *ngIf="emailModel.invalid && (emailModel.touched)">
         <ng-container *ngIf="emailModel.errors?.['required']">El correo es obligatorio.</ng-container>
         <ng-container *ngIf="emailModel.errors?.['email']">El correo no tiene un formato válido.</ng-container>
-    </p>
+    </app-ui-helper-text>
 
-    <p class="error" *ngIf="emailExistsMessage">
+    <app-ui-helper-text *ngIf="emailExistsMessage">
         {{ emailExistsMessage }}
-    </p>
+    </app-ui-helper-text>
 
-    <p class="error" *ngIf="passwordModel.invalid && (passwordModel.touched)">
+    <app-ui-helper-text *ngIf="passwordModel.invalid && (passwordModel.touched)">
         <ng-container *ngIf="passwordModel.errors?.['required']">La contraseña es obligatoria.</ng-container>
         <ng-container *ngIf="passwordModel.errors?.['minlength']">Debe tener al menos 8 caracteres.</ng-container>
-        <ng-container *ngIf="passwordModel.errors?.['pattern']">Debe incluir mínimo una mayúscula y un número.</ng-container>
-    </p>
+        <ng-container *ngIf="passwordModel.errors?.['pattern']">Debe incluir mínimo una mayúscula y un
+            número.</ng-container>
+    </app-ui-helper-text>
 
-    <p class="error" *ngIf="passwordConfirmationModel.invalid && (passwordConfirmationModel.touched)">
+    <app-ui-helper-text *ngIf="passwordConfirmationModel.invalid && (passwordConfirmationModel.touched)">
         <ng-container *ngIf="passwordConfirmationModel.errors?.['required']">Confirma tu contraseña.</ng-container>
-        <ng-container *ngIf="passwordConfirmationModel.errors?.['minlength']">Debe tener al menos 8 caracteres.</ng-container>
-        <ng-container *ngIf="passwordConfirmationModel.errors?.['pattern']">Debe incluir mínimo una mayúscula y un número.</ng-container>
-    </p>
+        <ng-container *ngIf="passwordConfirmationModel.errors?.['minlength']">Debe tener al menos 8
+            caracteres.</ng-container>
+        <ng-container *ngIf="passwordConfirmationModel.errors?.['pattern']">Debe incluir mínimo una mayúscula y un
+            número.</ng-container>
+    </app-ui-helper-text>
 
-    <p class="error" *ngIf="passwordMismatch">
+    <app-ui-helper-text *ngIf="passwordMismatch">
         Las contraseñas no coinciden.
-    </p>
+    </app-ui-helper-text>
 
-    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
-    <p class="p" *ngIf="(error$ | async) as error">{{ error }}</p>
+    <app-ui-helper-text type="success" *ngIf="successMessage">{{ successMessage }}</app-ui-helper-text>
+    <app-ui-helper-text *ngIf="(error$ | async) as error">{{ error }}</app-ui-helper-text>
 
     <div footer>
-        <ui-button
-            texto="Crear cuenta"
-            customWidth="250px"
-            tipo="submit"
-            [disabled]="emailModel.invalid || passwordModel.invalid || passwordConfirmationModel.invalid || !!(loading$ | async)"
-        ></ui-button>
+        <ui-button texto="Crear cuenta" customWidth="250px" tipo="submit"
+            [disabled]="emailModel.invalid || passwordModel.invalid || passwordConfirmationModel.invalid || !!(loading$ | async)"></ui-button>
 
         <p class="p">¿Ya tienes cuenta? <a routerLink="/auth/login" class="link">Iniciar sesión</a></p>
     </div>

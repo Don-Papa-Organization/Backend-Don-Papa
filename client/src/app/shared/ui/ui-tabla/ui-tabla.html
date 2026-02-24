@@ -1,43 +1,45 @@
-<section class="tabla-section">
+<section 
+class="tabla-section"
+[ngClass]="{
+    'min-width': minWidth
+}"
+>
     <table class="tabla">
     <thead class="tabla-encabezado">
-        <th *ngFor="let x of theadData" class="tabla-item">{{x}}</th>
+        @for (x of theadData; track $index) {
+            <th class="tabla-item">{{x}}</th>
+        }
     </thead>
 
     <tbody class="tabla-body">
-        <tr *ngFor="let objeto of tbodyData" class="tabla-fila">
-            <td *ngFor="let columna of theadData" class="tabla-item">
-                <img
-                    *ngIf="columna === 'imagen' && objeto[columna] && objeto[columna] !== 'N/A'; else acciones"
-                    [src]="objeto[columna]"
-                    alt="Imagen"
-                    style="max-width: 52px; max-height: 52px; object-fit: cover;"
-                />
-                <ng-template #acciones>
-                    <ng-container *ngIf="columna === 'Acciones'; else texto">
-                        <div class="acciones-container">
-                            
-                            <app-ui-only-icon-button 
-                            urlIcono="icons/editar.svg"
-                            [background_color]="true"
-                            (action)="onEditar(objeto)"
-                            >
-
-                            </app-ui-only-icon-button>
-                            <app-ui-only-icon-button
-                            urlIcono="icons/eliminar.svg"
-                            [background_color]="true"
-                            (action)="onEliminar(objeto)"
-                            >
-
-                            </app-ui-only-icon-button>
-                        </div>
-                    </ng-container>
-                    <ng-template #texto>{{objeto[columna]}}</ng-template>
-                </ng-template>
-            </td>
-        </tr>
-        
+        @for (objeto of tbodyData; track $index) {
+            <tr class="tabla-fila">
+                @for (columna of theadData; track $index) {
+                    <td class="tabla-item">
+                        @if (columna === 'imagen' && objeto[columna] && objeto[columna] !== 'N/A') {
+                            <img
+                                [src]="objeto[columna]"
+                                alt="Imagen"
+                                style="max-width: 52px; max-height: 52px; object-fit: cover;"
+                            />
+                        } @else if (columna === 'Acciones') {
+                            <div class="acciones-container">
+                                @for (accion of acciones; track $index) {
+                                    <app-ui-only-icon-button 
+                                    [urlIcono]="accion.urlIcono"
+                                    [background_color]="true"
+                                    (action)="ejecutarAccion(accion, objeto)"
+                                    >
+                                    </app-ui-only-icon-button>
+                                }
+                            </div>
+                        } @else {
+                            {{objeto[columna]}}
+                        }
+                    </td>
+                }
+            </tr>
+        }
     </tbody>
 </table>
 </section>

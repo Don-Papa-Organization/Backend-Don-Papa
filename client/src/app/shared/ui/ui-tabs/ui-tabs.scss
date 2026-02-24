@@ -1,0 +1,50 @@
+:host {
+  max-height: 40px;
+}
+
+.tabs-container {
+  display: flex;
+  gap: 24px;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+
+  .tab {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 0;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #D4AF37;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+      transform-origin: left;
+    }
+
+    &:hover {
+      color: #D4AF37;
+    }
+
+    &.active {
+      color: #D4AF37;
+      
+
+      &::after {
+        transform: scaleY(1);
+      }
+    }
+  }
+
+
+}

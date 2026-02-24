@@ -14,21 +14,21 @@
 
 
   // CORS primero
-/*  app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:4200',
-    credentials: true,
-    methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-    allowedHeaders: ['Content-Type','Authorization']
-  }));*/
+	app.use(cors({
+	  origin: process.env.CORS_ORIGIN || "http://localhost:4200",
+	  credentials: true,
+	  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
+	  allowedHeaders: ["Content-Type","Authorization"]
+	}));
 
-  // Preflight sin auth (Express 5 no acepta '*')
-  //app.options('/*', (req, res) => res.sendStatus(204));
+
+  // Preflight sin auth (manejo global en middleware para evitar path-to-regexp)
 
   // Evitar que el auth middleware bloquee OPTIONS
   app.use((req, res, next) => {
-    if (req.method === 'OPTIONS') return res.sendStatus(204);
-    return authGatewayMiddleware(req, res, next);
-  });
+	  if (req.method === "OPTIONS") return res.sendStatus(204);
+	  return authGatewayMiddleware(req, res, next);
+	});
 
   // NO usar ningún middleware de body parsing global
   // El proxy middleware de http-proxy-middleware va a manejar el stream directamente

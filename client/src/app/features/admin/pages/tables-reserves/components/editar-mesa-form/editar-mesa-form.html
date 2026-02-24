@@ -1,0 +1,52 @@
+<app-ui-modal
+  [mostrar]="mostrar"
+  titulo="Actualizar Mesa"
+  (cerrar)="onCerrar()"
+>
+  <app-ui-form maxHeight="50vh" maxWidth="600px">
+    <ui-input
+      tituloInput="Número"
+      tipo="number"
+      placeholder="10"
+      [(ngModel)]="mesaEditada.numero"
+      name="numero"
+      required
+      #numeroModel="ngModel"
+    ></ui-input>
+
+    <app-ui-combobox
+      tituloInput="Tipo"
+      [options]="tipoOptions"
+      [(selectedOption)]="mesaEditada.tipo"
+      (selectionChange)="onTipoTouched()"
+    ></app-ui-combobox>
+
+    <app-ui-combobox
+      tituloInput="Estado"
+      [options]="estadoOptions"
+      [(selectedOption)]="mesaEditada.estado"
+      (selectionChange)="onEstadoTouched()"
+    ></app-ui-combobox>
+
+    <div footer class="form-footer">
+      <ui-button
+        texto="Guardar Cambios"
+        [noBackgroundColor]="true"
+        backgroundColor="#D4AF37"
+        (accion)="onGuardar()"
+      ></ui-button>
+    </div>
+
+    <app-ui-helper-text *ngIf="numeroModel.invalid && numeroModel.touched">
+      <ng-container *ngIf="numeroModel.errors?.['required']">El número es obligatorio.</ng-container>
+    </app-ui-helper-text>
+
+    <app-ui-helper-text *ngIf="!mesaEditada.tipo && tipoTouched">
+      <ng-container>El tipo de mesa es obligatorio.</ng-container>
+    </app-ui-helper-text>
+
+    <app-ui-helper-text *ngIf="!mesaEditada.estado && estadoTouched">
+      <ng-container>El estado de la mesa es obligatorio.</ng-container>
+    </app-ui-helper-text>
+  </app-ui-form>
+</app-ui-modal>

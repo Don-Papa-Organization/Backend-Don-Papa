@@ -13,8 +13,8 @@ import { UiForm } from './ui/ui-form/ui-form';
 import { FormsModule } from '@angular/forms';
 import { UiCombobox } from './ui/ui-combobox/ui-combobox';
 import { UiImageUpload } from './ui/ui-image-upload/ui-image-upload';
-import { UiToast } from './ui/ui-toast/ui-toast';
-import { UiToastService } from './ui/ui-toast/ui-toast.service';
+import { UiTabs } from './ui/ui-tabs/ui-tabs';
+import { UiHelperText } from './ui/ui-helper-text/ui-helper-text';
 
 @NgModule({
   declarations: [
@@ -29,14 +29,14 @@ import { UiToastService } from './ui/ui-toast/ui-toast.service';
     UiForm,
     UiCombobox,
     UiImageUpload,
-    UiToast
+    UiTabs,
+    UiHelperText,
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule
   ],
-  providers: [UiToastService],
   exports: [
     UiModalComponent,
     UiBreadcrumbsComponent,
@@ -49,7 +49,8 @@ import { UiToastService } from './ui/ui-toast/ui-toast.service';
     UiForm,
     UiCombobox,
     UiImageUpload,
-    UiToast
+    UiTabs,
+    UiHelperText
   ]
 })
 export class SharedModule { }

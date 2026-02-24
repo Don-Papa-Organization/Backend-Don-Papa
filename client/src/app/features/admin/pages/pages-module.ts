@@ -5,7 +5,6 @@ import { SharedModule } from '../../../shared/shared-module';
 import { PagesRoutingModule } from './pages-routing-module';
 import { LayoutModule } from "../../../shared/layout/layout-module";
 import { FormsModule, NgForm } from '@angular/forms';
-import { InventoryModule } from './inventory/inventory-module';
 
 
 @NgModule({
@@ -16,8 +15,7 @@ import { InventoryModule } from './inventory/inventory-module';
     PagesRoutingModule,
     SharedModule,
     LayoutModule,
-    FormsModule,
-    InventoryModule
+    FormsModule
   ]
 })
 export class PagesModule { }

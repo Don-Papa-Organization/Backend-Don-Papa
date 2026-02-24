@@ -1,0 +1,19 @@
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.nota-password {
+  max-width: 300px;
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: -0.5rem;
+  font-style: italic;
+}
+
+
+app-ui-helper-text {
+  margin: 0;
+}

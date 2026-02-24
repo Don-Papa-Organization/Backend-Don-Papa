@@ -1,0 +1,130 @@
+<div class="tables-reserves-page">
+  <div class="tables-reserves-header">
+    <h1>Gestión de Mesas y Reservas</h1>
+    <div class="acciones-header">
+      <app-ui-only-icon-button
+        urlIcono="icons/reload.svg"
+        (action)="onRecargar()"
+      ></app-ui-only-icon-button>
+      @if (tabActiva === 'mesas') {
+        <app-ui-only-icon-button
+          texto="Mesa"
+          [showTextStyle]="true"
+          urlIcono="icons/agregar.svg"
+          (action)="onAgregarMesa()"
+        ></app-ui-only-icon-button>
+      }
+    </div>
+  </div>
+
+  <app-ui-tabs
+    [tabItems]="tabs"
+    [tabActiva]="tabActiva"
+    (tabChange)="cambiarTab($event)"
+  ></app-ui-tabs>
+
+  @if (tabActiva === 'mesas') {
+    <app-ui-tabla
+      [theadData]="columnasMesas"
+      [tbodyData]="mesas"
+      [acciones]="accionesMesas"
+    ></app-ui-tabla>
+  }
+
+  @if (tabActiva === 'reservas') {
+    <app-ui-tabla
+      [theadData]="columnasReservas"
+      [tbodyData]="reservas"
+      [acciones]="accionesReservas"
+    ></app-ui-tabla>
+  }
+
+  <app-agregar-mesa-form
+    [mostrar]="mostrarModalAgregarMesa"
+    (cerrar)="cerrarModalAgregarMesa()"
+    (mesaCreada)="onMesaCreada($event)"
+  ></app-agregar-mesa-form>
+
+  <app-editar-mesa-form
+    [mostrar]="mostrarModalEditarMesa"
+    [registroSeleccionado]="mesaSeleccionada"
+    (cerrar)="cerrarModalEditarMesa()"
+    (mesaActualizada)="onMesaActualizada($event)"
+  ></app-editar-mesa-form>
+
+  @if (mostrarModalEliminarMesa) {
+    <app-ui-modal
+      [mostrar]="mostrarModalEliminarMesa"
+      titulo="¿Desea eliminar mesa?"
+      (cerrar)="cerrarModalEliminarMesa()"
+    >
+      <div class="acciones-eliminacion">
+        <ui-button
+          texto="Eliminar Mesa"
+          [noBackgroundColor]="true"
+          backgroundColor="#EF4444"
+          (accion)="confirmarEliminarMesa()"
+        ></ui-button>
+      </div>
+    </app-ui-modal>
+  }
+
+  @if (mostrarModalCancelarReserva) {
+    <app-ui-modal
+      [mostrar]="mostrarModalCancelarReserva"
+      titulo="¿Desea cancelar la reserva?"
+      (cerrar)="cerrarModalCancelarReserva()"
+    >
+
+
+
+      <div class="acciones-eliminacion">
+        <ui-button
+          texto="Cancelar Reserva"
+          [noBackgroundColor]="true"
+          backgroundColor="#EF4444"
+          (accion)="confirmarCancelacionReserva()"
+        ></ui-button>
+      </div>
+    </app-ui-modal>
+  }
+
+  @if (mostrarModalDetalleReserva) {
+    <app-ui-modal
+      [mostrar]="mostrarModalDetalleReserva"
+      titulo="Detalle de la Reserva"
+      (cerrar)="cerrarModalDetalleReserva()"
+    >
+    <div class="detalle-reserva">
+      <div class="campo">
+        <label>ID Reserva:</label>
+        <span>{{ reservaSeleccionada?.idReserva }}</span>
+      </div>
+      <div class="campo">
+        <label>Fecha:</label>
+        <span>{{ reservaSeleccionada?.fecha }}</span>
+      </div>
+      <div class="campo">
+        <label>Hora:</label>
+        <span>{{ reservaSeleccionada?.hora }}</span>
+      </div>
+      <div class="campo">
+        <label>Mesa:</label>
+        <span>{{ reservaSeleccionada?.numeroMesa }} ({{ reservaSeleccionada?.tipoMesa }})</span>
+      </div>
+      <div class="campo">
+        <label>Personas:</label>
+        <span>{{ reservaSeleccionada?.cantidadPersonas }}</span>
+      </div>
+      <div class="campo">
+        <label>Estado:</label>
+        <span>{{ reservaSeleccionada?.estado }}</span>
+      </div>
+      <div class="campo">
+        <label>ID Cliente:</label>
+        <span>{{ reservaSeleccionada?.idCliente }}</span>
+      </div>
+    </div>
+    </app-ui-modal>
+  }
+</div>

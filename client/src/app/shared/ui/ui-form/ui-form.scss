@@ -2,7 +2,7 @@
 .ui-form-container {
     width: fit-content;
     max-width: min(90vw, 800px);
-    min-width: min(400px, 90vw);
+    min-width: min(350px, 90vw);
     box-sizing: border-box;
     
     background-color: #1A120B;
@@ -41,7 +41,7 @@
         gap: 16px;
         padding: 10px;
         width: 100%;
-        max-height: 60vh;
+        
         overflow-y: auto;
         overflow-x: hidden;
         box-sizing: border-box;

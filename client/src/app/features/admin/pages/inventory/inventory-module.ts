@@ -6,8 +6,8 @@ import { LayoutModule } from "../../../../shared/layout/layout-module";
 import { FormsModule } from '@angular/forms';
 import { InventoryRoutingModule } from './inventory-routing-module';
 import { MainInventory } from './main-inventory/main-inventory';
-import { AgregarForm } from './agregar-form/agregar-form';
-import { EditarForm } from './editar-form/editar-form';
+import { AgregarForm } from './components/agregar-form/agregar-form';
+import { EditarForm } from './components/editar-form/editar-form';
 
 
 @NgModule({
