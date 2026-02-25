@@ -1,0 +1,32 @@
+<app-ui-modal titulo="Editar Evento" [mostrar]="mostrar" (cerrar)="onCerrar()">
+	<app-ui-form maxHeight="50vh" maxWidth="700px">
+		<!-- Nombre -->
+		<ui-input tituloInput="Nombre del Evento" tipo="text" placeholder="Noche de Jazz" [(ngModel)]="nombre"
+			name="nombre" required #nombreField="ngModel"></ui-input>
+
+		<!-- Descripción -->
+		<ui-input tituloInput="Descripción" tipo="text" placeholder="Música en vivo todos los viernes"
+			[(ngModel)]="descripcion" name="descripcion" required #descripcionField="ngModel"></ui-input>
+
+		<!-- Validaciones -->
+		<div class="form-errors">
+			@if (nombreField.invalid && nombreField.touched) {
+			<app-ui-helper-text>
+				<ng-container>El nombre es obligatorio</ng-container>
+			</app-ui-helper-text>
+			}
+
+			@if (descripcionField.invalid && descripcionField.touched) {
+			<app-ui-helper-text>
+				<ng-container>La descripción es obligatoria</ng-container>
+			</app-ui-helper-text>
+			}
+		</div>
+
+		<!-- Footer con botones -->
+		<div footer class="form-footer">
+			<ui-button texto="Actualizar Evento" [noBackgroundColor]="true" type="submit"
+				(accion)="onSubmit()"></ui-button>
+		</div>
+	</app-ui-form>
+</app-ui-modal>

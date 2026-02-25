@@ -1,0 +1,70 @@
+<app-ui-modal titulo="Editar Promoción" [mostrar]="mostrar" (cerrar)="onCerrar()">
+	<app-ui-form maxHeight="60vh" maxWidth="700px">
+		<!-- Nombre -->
+		<ui-input tituloInput="Nombre de la Promoción" tipo="text" placeholder="Black Friday 2026" [(ngModel)]="nombre"
+			name="nombre" required #nombreField="ngModel"></ui-input>
+
+		<!-- Descripción -->
+		<ui-input tituloInput="Descripción" tipo="text" placeholder="Descuentos especiales en toda la carta"
+			[(ngModel)]="descripcion" name="descripcion" required #descripcionField="ngModel"></ui-input>
+
+		<!-- Tipo de Promoción -->
+		<app-ui-combobox tituloInput="Tipo de Promoción" [options]="tiposPromocionOptions"
+			[(selectedOption)]="tipoPromocionSeleccionado" name="tipoPromocion" required></app-ui-combobox>
+
+		<!-- Fecha de Inicio -->
+		<ui-input tituloInput="Fecha de Inicio" tipo="date" [(ngModel)]="fechaInicio" name="fechaInicio" required
+			#fechaInicioField="ngModel"></ui-input>
+
+		<!-- Fecha de Fin -->
+		<ui-input tituloInput="Fecha de Fin" tipo="date" [(ngModel)]="fechaFin" name="fechaFin" required
+			#fechaFinField="ngModel"></ui-input>
+
+		<!-- Estado Activo -->
+		<div class="checkbox-container">
+			<label>
+				<input type="checkbox" [(ngModel)]="activo" name="activo" />
+				<span>Promoción activa</span>
+			</label>
+		</div>
+
+		<!-- Validaciones -->
+		<div class="form-errors">
+			@if (nombreField.invalid && nombreField.touched) {
+			<app-ui-helper-text>
+				<ng-container>El nombre es obligatorio</ng-container>
+			</app-ui-helper-text>
+			}
+
+			@if (descripcionField.invalid && descripcionField.touched) {
+			<app-ui-helper-text>
+				<ng-container>La descripción es obligatoria</ng-container>
+			</app-ui-helper-text>
+			}
+
+			@if (!tipoPromocionSeleccionado && nombreField.touched) {
+			<app-ui-helper-text>
+				<ng-container>Debe seleccionar un tipo de promoción</ng-container>
+			</app-ui-helper-text>
+			}
+
+			@if (fechaInicioField.invalid && fechaInicioField.touched) {
+			<app-ui-helper-text>
+				<ng-container>La fecha de inicio es obligatoria</ng-container>
+			</app-ui-helper-text>
+			}
+
+			@if (fechaFinField.invalid && fechaFinField.touched) {
+			<app-ui-helper-text>
+				<ng-container>La fecha de fin es obligatoria</ng-container>
+			</app-ui-helper-text>
+			}
+		</div>
+
+		<!-- Footer con botones -->
+		<div footer class="form-footer">
+			<ui-button texto="Actualizar Promoción" [noBackgroundColor]="true" type="submit"
+				(accion)="onSubmit()"></ui-button>
+		</div>
+	</app-ui-form>
+</app-ui-modal>

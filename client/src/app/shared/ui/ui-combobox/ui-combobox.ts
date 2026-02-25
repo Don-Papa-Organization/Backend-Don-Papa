@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener, ElementRef, ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-ui-combobox',
@@ -14,7 +14,11 @@ export class UiCombobox {
 
   searchTerm: string = '';
   isDropdownOpen: boolean = false;
+  dropdownDirection: 'down' | 'up' = 'down';
+  maxDropdownHeight: string = '250px';
   filteredOptions: Array<{ value: any, label: string }> = [];
+
+  constructor(private elementRef: ElementRef, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.filteredOptions = this.options;
@@ -60,10 +64,35 @@ export class UiCombobox {
     if (!this.isDisabled) {
       this.isDropdownOpen = !this.isDropdownOpen;
       if (this.isDropdownOpen) {
+        this.calculateDropdownPosition();
         this.filteredOptions = this.options;
         this.searchTerm = '';
       }
     }
+  }
+
+  private calculateDropdownPosition(): void {
+    const hostElement = this.elementRef.nativeElement;
+    const inputElement = hostElement.querySelector('.combobox-search-wrapper');
+    if (!inputElement) return;
+
+    const rect = inputElement.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    const spaceBelow = windowHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    // Prefer downward, but switch to upward if space is tight below and better above
+    if (spaceBelow < 250 && spaceAbove > spaceBelow) {
+      this.dropdownDirection = 'up';
+      this.maxDropdownHeight = `${Math.max(100, spaceAbove - 20)}px`;
+    } else {
+      this.dropdownDirection = 'down';
+      this.maxDropdownHeight = `${Math.max(100, spaceBelow - 20)}px`;
+    }
+
+    // Also consider the parent .formulario scroll container if needed, 
+    // but window height is usually the ultimate constraint in a modal.
+    this.cdr.detectChanges();
   }
 
   @HostListener('document:click', ['$event'])

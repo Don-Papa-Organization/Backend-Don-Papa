@@ -1,0 +1,39 @@
+<app-ui-modal titulo="Agregar Producto a Promoción" [mostrar]="mostrar" (cerrar)="onCerrar()">
+	<app-ui-form maxHeight="50vh" maxWidth="600px">
+		<app-ui-combobox
+			tituloInput="Producto"
+			[options]="productosOptions"
+			[(selectedOption)]="productoSeleccionadoId"
+			optionLabel="nombre"
+			optionValue="idProducto">
+		</app-ui-combobox>
+
+		<ui-input
+			tituloInput="Cantidad Mínima"
+			tipo="number"
+			placeholder="Ej: 1"
+			[(ngModel)]="cantidadMinima"
+			name="cantidadMinima">
+		</ui-input>
+
+		<ui-input
+			tituloInput="Precio Promocional (Opcional)"
+			tipo="number"
+			placeholder="Ej: 99.99"
+			[(ngModel)]="precioPromocional"
+			name="precioPromocional">
+		</ui-input>
+
+		<ui-input
+			tituloInput="Porcentaje Descuento (Opcional)"
+			tipo="number"
+			placeholder="Ej: 20"
+			[(ngModel)]="porcentajeDescuento"
+			name="porcentajeDescuento">
+		</ui-input>
+
+		<div footer class="form-footer">
+			<ui-button texto="Agregar" (accion)="onSubmit()"></ui-button>
+		</div>
+	</app-ui-form>
+</app-ui-modal>

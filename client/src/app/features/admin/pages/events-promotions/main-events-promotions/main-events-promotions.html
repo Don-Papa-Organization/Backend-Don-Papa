@@ -1,0 +1,184 @@
+<div class="events-promotions-page">
+	<!-- HEADER -->
+	<div class="events-promotions-header">
+		<h1>Eventos y Promociones</h1>
+		<div class="acciones-header">
+			<!-- BOTONES PARA PROMOCIONES -->
+			<ng-container *ngIf="tabActiva === 'promociones'">
+				<app-ui-only-icon-button texto="Promoción" urlIcono="icons/agregar.svg" (action)="onAgregarPromocion()"
+					[showTextStyle]="true"></app-ui-only-icon-button>
+
+				<app-ui-only-icon-button urlIcono="icons/reload.svg"
+					(action)="cargarPromociones()"></app-ui-only-icon-button>
+			</ng-container>
+
+			<!-- BOTONES PARA EVENTOS -->
+			<ng-container *ngIf="tabActiva === 'eventos'">
+				<app-ui-only-icon-button texto="Evento" urlIcono="icons/agregar.svg"
+					(action)="onAgregarEvento()" [showTextStyle]="true"></app-ui-only-icon-button>
+
+				<app-ui-only-icon-button urlIcono="icons/reload.svg"
+					(action)="cargarEventos()"></app-ui-only-icon-button>
+			</ng-container>
+		</div>
+	</div>
+
+	<!-- TABS -->
+	<app-ui-tabs [tabItems]="tabs" [tabActiva]="tabActiva" (tabChange)="cambiarTab($event)"></app-ui-tabs>
+
+	<!-- CONTENIDO - TAB PROMOCIONES -->
+	@if (tabActiva === 'promociones') {
+	<div class="table-content">
+		<app-ui-tabla [theadData]="columnasPromociones" [tbodyData]="promociones"
+			[acciones]="accionesPromociones"></app-ui-tabla>
+	</div>
+	}
+
+	<!-- CONTENIDO - TAB EVENTOS -->
+	@if (tabActiva === 'eventos') {
+	<div class="table-content">
+		<app-ui-tabla [theadData]="columnasEventos" [tbodyData]="eventos" [acciones]="accionesEventos"></app-ui-tabla>
+	</div>
+	}
+
+	<!-- ==================== MODALES PROMOCIONES ==================== -->
+
+	<!-- AGREGAR PROMOCIÓN -->
+	<app-agregar-promotion-form [mostrar]="mostrarModalAgregarPromocion" (cerrar)="mostrarModalAgregarPromocion = false"
+		(promocionCreada)="onPromocionCreada($event)"></app-agregar-promotion-form>
+
+	<!-- EDITAR PROMOCIÓN -->
+	<app-editar-promotion-form [mostrar]="mostrarModalEditarPromocion" [promocionSeleccionada]="promocionSeleccionada"
+		(cerrar)="mostrarModalEditarPromocion = false; promocionSeleccionada = null"
+		(promocionActualizada)="onPromocionActualizada($event)"></app-editar-promotion-form>
+
+	<!-- ELIMINAR PROMOCIÓN -->
+	@if (mostrarModalEliminarPromocion) {
+	<app-ui-modal titulo="Eliminar Promoción" [mostrar]="mostrarModalEliminarPromocion"
+		(cerrar)="cerrarModalEliminarPromocion()">
+		<div class="modal-confirmacion">
+			<p>¿Está seguro que desea eliminar la promoción "{{ promocionSeleccionada?.nombre }}"?</p>
+			<p class="warning-text">Esta acción no se puede deshacer.</p>
+
+			<div footer class="form-footer">
+				<ui-button texto="Cancelar" backgroundColor="transparent" [noBackgroundColor]="true"
+					(accion)="cerrarModalEliminarPromocion()"></ui-button>
+
+				<ui-button texto="Eliminar Promoción" backgroundColor="#EF4444"
+					(accion)="confirmarEliminacionPromocion()"></ui-button>
+			</div>
+		</div>
+	</app-ui-modal>
+	}
+
+	<!-- ==================== MODALES EVENTOS ==================== -->
+
+	<!-- AGREGAR EVENTO -->
+	<app-agregar-event-form [mostrar]="mostrarModalAgregarEvento" (cerrar)="mostrarModalAgregarEvento = false"
+		(eventoCreado)="onEventoCreado($event)"></app-agregar-event-form>
+
+	<!-- EDITAR EVENTO -->
+	<app-editar-event-form [mostrar]="mostrarModalEditarEvento" [eventoSeleccionado]="eventoSeleccionado"
+		(cerrar)="mostrarModalEditarEvento = false; eventoSeleccionado = null"
+		(eventoActualizado)="onEventoActualizado($event)"></app-editar-event-form>
+
+	<!-- ELIMINAR EVENTO -->
+	@if (mostrarModalEliminarEvento) {
+	<app-ui-modal titulo="Eliminar Evento" [mostrar]="mostrarModalEliminarEvento"
+		(cerrar)="cerrarModalEliminarEvento()">
+		<div class="modal-confirmacion">
+			<p>¿Está seguro que desea eliminar el evento "{{ eventoSeleccionado?.nombre }}"?</p>
+			<p class="warning-text">Esta acción no se puede deshacer.</p>
+
+			<div footer class="form-footer">
+				<ui-button texto="Cancelar" backgroundColor="transparent" [noBackgroundColor]="true"
+					(accion)="cerrarModalEliminarEvento()"></ui-button>
+
+				<ui-button texto="Eliminar Evento" backgroundColor="#EF4444"
+					(accion)="confirmarEliminacionEvento()"></ui-button>
+			</div>
+		</div>
+	</app-ui-modal>
+	}
+
+	<!-- ==================== MODALES ADICIONALES ==================== -->
+
+	<!-- GESTIONAR PRODUCTOS DE PROMOCIÓN -->
+	@if (mostrarModalProductosPromocion) {
+	<app-ui-modal titulo="Productos de la Promoción" [mostrar]="mostrarModalProductosPromocion"
+		(cerrar)="cerrarModalProductosPromocion()">
+		<div class="modal-productos">
+			<p *ngIf="promocionSeleccionada">
+				<strong>Promoción:</strong> {{ promocionSeleccionada.nombre }}
+			</p>
+
+			@if (productosPromocion.length > 0) {
+			<div class="productos-list">
+				<h3>Productos Asociados:</h3>
+				<ul>
+					@for (producto of productosPromocion; track $index) {
+					<li>{{ producto.nombre }} - {{ producto.sku }}</li>
+					}
+				</ul>
+			</div>
+			} @else {
+			<p class="warning-text">No hay productos asociados a esta promoción.</p>
+			}
+
+			<div footer class="form-footer">
+				<ui-button texto="Agregar Producto" (accion)="abrirModalAgregarProducto()"></ui-button>
+				<ui-button texto="Cerrar" backgroundColor="transparent" [noBackgroundColor]="true"
+					(accion)="cerrarModalProductosPromocion()"></ui-button>
+			</div>
+		</div>
+	</app-ui-modal>
+	}
+
+	<!-- GESTIONAR DÍAS DE EVENTO -->
+	@if (mostrarModalDiasEvento) {
+	<app-ui-modal titulo="Días del Evento" [mostrar]="mostrarModalDiasEvento"
+		(cerrar)="cerrarModalDiasEvento()">
+		<div class="modal-dias">
+			<p *ngIf="eventoSeleccionado">
+				<strong>Evento:</strong> {{ eventoSeleccionado.nombre }}
+			</p>
+
+			@if (diasEvento.length > 0) {
+			<div class="dias-list">
+				<h3>Días Programados:</h3>
+				<ul>
+					@for (dia of diasEvento; track $index) {
+					<li>{{ dia.fecha }} - {{ dia.descripcion }}</li>
+					}
+				</ul>
+			</div>
+			} @else {
+			<p class="warning-text">No hay días programados para este evento.</p>
+			}
+
+			<div footer class="form-footer">
+				<ui-button texto="Agregar Día" (accion)="abrirModalAgregarDia()"></ui-button>
+				<ui-button texto="Cerrar" backgroundColor="transparent" [noBackgroundColor]="true"
+					(accion)="cerrarModalDiasEvento()"></ui-button>
+			</div>
+		</div>
+	</app-ui-modal>
+	}
+
+	<!-- AGREGAR PRODUCTO A PROMOCIÓN -->
+	<app-agregar-producto-form 
+		[mostrar]="mostrarModalAgregarProducto"
+		[promocionId]="promocionSeleccionada?.idPromocion || null"
+		[productosOptions]="productosDisponibles"
+		(cerrar)="cerrarModalAgregarProducto()"
+		(productoAgregado)="onProductoAgregado($event)">
+	</app-agregar-producto-form>
+
+	<!-- AGREGAR DÍA A EVENTO -->
+	<app-agregar-dia-evento-form
+		[mostrar]="mostrarModalAgregarDia"
+		[eventoId]="eventoSeleccionado?.idEvento || null"
+		(cerrar)="cerrarModalAgregarDia()"
+		(diaAgregado)="onDiaAgregado($event)">
+	</app-agregar-dia-evento-form>
+</div>

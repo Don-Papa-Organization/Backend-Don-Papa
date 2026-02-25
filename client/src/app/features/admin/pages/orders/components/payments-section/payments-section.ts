@@ -178,6 +178,10 @@ export class PaymentsSectionComponent {
 	}
 
 	onDescargarRecibo(registro: PaymentViewModel): void {
+		this.descargarReciboPDF(registro);
+	}
+
+	private descargarReciboPDF(registro: PaymentViewModel): void {
 		this.reciboSeleccionado = registro;
 		this.ordersFacade.downloadReceipt(registro.idPago).subscribe({
 			next: (data) => {
@@ -188,6 +192,7 @@ export class PaymentsSectionComponent {
 			},
 			error: (err) => {
 				console.error('Error al descargar recibo:', err);
+				alert(`Error al descargar recibo: ${err.message}`);
 			}
 		});
 	}

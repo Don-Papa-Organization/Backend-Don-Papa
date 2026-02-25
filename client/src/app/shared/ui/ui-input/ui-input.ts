@@ -17,7 +17,7 @@
   export class UiInput implements ControlValueAccessor {
     @Input() tituloInput: string = '';
     @Input() placeholder: string = '';
-    @Input() tipo: 'text' | 'password' | 'email' | 'number' | 'checkbox' = 'text';
+    @Input() tipo: 'text' | 'password' | 'email' | 'number' | 'checkbox' | 'date' = 'text';
     @Input() valorInput: string = '';
     @Input() min?: number;
 

@@ -25,7 +25,12 @@
       </button>
     </div>
     
-    <div class="combobox-dropdown" *ngIf="isDropdownOpen && !isDisabled">
+    <div 
+      class="combobox-dropdown" 
+      *ngIf="isDropdownOpen && !isDisabled"
+      [class.up]="dropdownDirection === 'up'"
+      [style.--ui-combobox-max-height]="maxDropdownHeight"
+    >
       <div class="combobox-options">
         <div
           *ngIf="filteredOptions.length === 0"

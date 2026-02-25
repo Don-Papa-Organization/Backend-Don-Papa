@@ -18,6 +18,15 @@ Toda página de administración debe seguir este esquema jerárquico:
 > [!NOTE]
 > **Justificación**: Separar la visualización (tabla) de la gestión (modales) reduce la carga cognitiva. El usuario se enfoca en una operación a la vez sin perder el contexto de la lista.
 
+> [!IMPORTANT]
+> **Errores Comunes a Evitar (Lecciones de Events-Promotions)**:
+> - **Padding Inconsistente**: NO uses `2rem` de padding en el contenedor principal; el estándar es `1.5rem`.
+> - **Falta de Bordes en Header**: El header de cada sección DEBE tener `border-bottom: 1px solid #D4AF37` y `padding-bottom: 1rem`.
+> - **Iconos No Estándar**: NO inventes nombres de iconos (ej: `edit.svg`, `delete.svg`, `add.svg`). Usa los nombres oficiales: `editar.svg`, `eliminar.svg`, `agregar.svg`.
+> - **Contenedores de Tabla**: Siempre envuelve el componente `app-ui-tabla` en un `<div class="table-content">` para mantener la consistencia del layout.
+
+---
+
 ### Contenedor Base
 ```scss
 .inventory-page {
@@ -27,6 +36,7 @@ Toda página de administración debe seguir este esquema jerárquico:
   width: 100%;
   padding: 1.5rem;
   color: #ffffff;
+  // ⚠️ NO agregar background-color aquí - el fondo lo gestiona el layout padre
 }
 
 .users-page {
@@ -38,6 +48,7 @@ Toda página de administración debe seguir este esquema jerárquico:
   gap: 1rem;
   padding: 1.5rem;
   color: #ffffff;
+  // ⚠️ NO agregar background-color aquí - el fondo lo gestiona el layout padre
 }
 ```
 
@@ -86,7 +97,66 @@ Toda página de administración debe seguir este esquema jerárquico:
 
 ---
 
-## 2. Guía de Componentes
+## 2. Iconos Disponibles
+
+**Ubicación**: `public/icons/`
+
+Todos los componentes que aceptan la propiedad `urlIcono` pueden usar cualquiera de estos iconos:
+
+### Iconos de Acciones
+- `icons/agregar.svg` - Agregar nuevo registro (botón +)
+- `icons/editar.svg` - Editar registro existente
+- `icons/eliminar.svg` - Eliminar registro
+- `icons/reload.svg` - Recargar datos
+- `icons/eye.svg` - Ver/Previsualizar
+- `icons/addImage.svg` - Agregar imagen
+
+### Iconos de Navegación (Sidebar)
+- `icons/iconoInventario.svg` - Módulo de Inventario
+- `icons/iconoUsuarios.svg` - Módulo de Usuarios
+- `icons/iconoEmpleados.svg` - Gestión de Empleados
+- `icons/iconoMesas.svg` - Mesas y Reservaciones
+- `icons/iconoPromociones.svg` - Eventos y Promociones
+- `icons/iconoReportes.svg` - Reportes
+- `icons/iconoEstadisticas.svg` - Estadísticas
+- `icons/iconoBitacora.svg` - Bitácora de Incidencias
+- `icons/iconoAyuda.svg` - Ayuda
+- `icons/iconoSalir.svg` - Cerrar sesión
+
+**Uso en componentes**:
+```html
+<!-- En botones de header -->
+<app-ui-only-icon-button
+  urlIcono="icons/agregar.svg"
+  texto="Producto"
+  (action)="onAgregar()"
+></app-ui-only-icon-button>
+
+<!-- En acciones de tabla -->
+accionesTabla: AccionTabla[] = [
+  {
+    urlIcono: "icons/editar.svg",
+    accion: (registro) => this.onEditar(registro)
+  },
+  {
+    urlIcono: "icons/eliminar.svg",
+    accion: (registro) => this.onEliminar(registro)
+  }
+];
+
+<!-- En menú sidebar -->
+menuItems: MenuItem[] = [
+  {
+    texto: "Inventario",
+    urlIcono: "icons/iconoInventario.svg",
+    link: "/admin/inventory"
+  }
+];
+```
+
+---
+
+## 3. Guía de Componentes
 
 ### Tabs (`app-ui-tabs`)
 **Componente reutilizable para navegación entre vistas (usado en users para empleados, usuarios y clientes).**
@@ -256,10 +326,194 @@ actualizar(): void {
 
 ---
 
-### Botones (`ui-button`, `app-ui-only-icon-button`)
-**Usa siempre `ui-button` para acciones en formularios y `app-ui-only-icon-button` para acciones rápidas en headers.**
+## 2.1 Iconos Disponibles
 
-**Botones Condicionales en Headers (Patrón Orders):**
+**Ubicación**: `public/icons/`
+
+Todos los componentes que aceptan la propiedad `urlIcono` pueden usar cualquiera de estos iconos:
+
+### Iconos de Acciones
+- `icons/agregar.svg` - Agregar nuevo registro (botón +)
+- `icons/editar.svg` - Editar registro existente
+- `icons/eliminar.svg` - Eliminar registro
+- `icons/reload.svg` - Recargar datos
+- `icons/eye.svg` - Ver/Previsualizar
+- `icons/addImage.svg` - Agregar imagen
+
+### Iconos de Navegación (Sidebar)
+- `icons/iconoInventario.svg` - Módulo de Inventario
+- `icons/iconoUsuarios.svg` - Módulo de Usuarios
+- `icons/iconoEmpleados.svg` - Gestión de Empleados
+- `icons/iconoMesas.svg` - Mesas y Reservaciones
+- `icons/iconoPromociones.svg` - Eventos y Promociones
+- `icons/iconoReportes.svg` - Reportes
+- `icons/iconoEstadisticas.svg` - Estadísticas
+- `icons/iconoBitacora.svg` - Bitácora de Incidencias
+- `icons/iconoAyuda.svg` - Ayuda
+- `icons/iconoSalir.svg` - Cerrar sesión
+
+**Uso en componentes**:
+```html
+<!-- En botones -->
+<app-ui-only-icon-button
+  urlIcono="icons/agregar.svg"
+  texto="Producto"
+  (action)="onAgregar()"
+></app-ui-only-icon-button>
+
+<!-- En acciones de tabla -->
+accionesTabla: AccionTabla[] = [
+  {
+    urlIcono: "icons/editar.svg",
+    accion: (registro) => this.onEditar(registro)
+  },
+  {
+    urlIcono: "icons/eliminar.svg",
+    accion: (registro) => this.onEliminar(registro)
+  }
+];
+
+<!-- En menú sidebar -->
+menuItems: MenuItem[] = [
+  {
+    texto: "Inventario",
+    urlIcono: "icons/iconoInventario.svg",
+    link: "/admin/inventory"
+  }
+];
+```
+
+---
+
+### Botones (`ui-button`, `app-ui-only-icon-button`)
+
+**Componentes de Botones Disponibles:**
+- `ui-button` - Botón estándar para acciones en formularios y modales
+- `app-ui-only-icon-button` - Botón solo icono para headers (acciones rápidas)
+
+#### Propiedades de `ui-button`
+| Propiedad | Tipo | Predeterminado | Descripción |
+|-----------|------|---|---|
+| `texto` | string | - | Texto del botón |
+| `backgroundColor` | string | `#D4AF37` | **NO USE** - Dejar que sea el default |
+| `[noBackgroundColor]` | boolean | false | Si es `true`, muestra solo borde sin fondo relleno |
+| `type` | string | `button` | Tipo HTML (`button`, `submit`, `reset`) |
+| `(accion)` | event | - | Evento al hacer click |
+| `[disabled]` | boolean | false | Deshabilita el botón |
+
+#### Regla de Color Predeterminado
+**Todos los botones usan color dorado `#D4AF37` por defecto. NO especifiques `backgroundColor` a menos que uses un color diferente (como rojo para eliminar).**
+
+```html
+<!-- ✅ CORRECTO - Usa default dorado -->
+<ui-button
+  texto="Guardar"
+  [noBackgroundColor]="true"
+  (accion)="onGuardar()"
+></ui-button>
+
+<!-- ❌ INCORRECTO - backgroundColor es redundante -->
+<ui-button
+  texto="Guardar"
+  [noBackgroundColor]="true"
+  backgroundColor="#D4AF37"
+  (accion)="onGuardar()"
+></ui-button>
+
+<!-- ✅ CORRECTO - Usa rojo para eliminar (excepción) -->
+<ui-button
+  texto="Eliminar"
+  [noBackgroundColor]="true"
+  backgroundColor="#EF4444"
+  (accion)="confirmar()"
+></ui-button>
+```
+
+#### Botones en Formularios (Dentro de `app-ui-form`)
+
+**Importante**: La etiqueta `<form>` NO debe usarse. El componente `app-ui-form` **ya contiene la etiqueta form internamente**.
+
+```html
+<!-- ✅ CORRECTO - Sin etiqueta <form> -->
+<app-ui-modal titulo="Crear Elemento" [mostrar]="mostrar" (cerrar)="onCerrar()">
+  <app-ui-form maxHeight="50vh" maxWidth="700px">
+    <ui-input
+      tituloInput="Nombre"
+      [(ngModel)]="nombre"
+      name="nombre"
+      required
+    ></ui-input>
+
+    <div footer class="form-footer">
+      <ui-button
+        texto="Crear"
+        [noBackgroundColor]="true"
+        type="submit"
+        (accion)="onSubmit($event)"
+      ></ui-button>
+    </div>
+  </app-ui-form>
+</app-ui-modal>
+
+<!-- ❌ INCORRECTO - Etiqueta <form> redundante -->
+<app-ui-form>
+  <form #myForm="ngForm" (ngSubmit)="onSubmit()">
+    <!-- Esto es INCORRECTO porque app-ui-form ya tiene form -->
+    ...
+  </form>
+</app-ui-form>
+```
+
+#### Botones en Modales (Modal Footer)
+
+**Regla importante**: Los botones en footers de modales deben tener `[noBackgroundColor]="true"` para que sean transparentes.
+
+```html
+<!-- Modal de Confirmación -->
+<app-ui-modal titulo="¿Confirmar eliminación?" [mostrar]="mostrar" (cerrar)="onCerrar()">
+  <p>¿Estás seguro de eliminar este registro?</p>
+
+  <div footer class="form-footer">
+    <!-- NO incluir botón de cancelar - usar X del modal header -->
+    <ui-button
+      texto="Eliminar"
+      [noBackgroundColor]="true"
+      backgroundColor="#EF4444"
+      (accion)="confirmar()"
+    ></ui-button>
+  </div>
+</app-ui-modal>
+
+<!-- ✅ CORRECTO - Solo botón de acción, cierre vía X del modal -->
+<app-ui-modal titulo="Editar Producto" [mostrar]="mostrar" (cerrar)="onCerrar()">
+  <app-ui-form>
+    <!-- campos del formulario -->
+    
+    <div footer class="form-footer">
+      <ui-button
+        texto="Actualizar"
+        [noBackgroundColor]="true"
+        type="submit"
+        (accion)="onSubmit($event)"
+      ></ui-button>
+    </div>
+  </app-ui-form>
+</app-ui-modal>
+
+<!-- ❌ INCORRECTO - Botón de Cancelar redundante -->
+<app-ui-modal titulo="Editar Producto" [mostrar]="mostrar" (cerrar)="onCerrar()">
+  <div footer class="form-footer">
+    <ui-button texto="Cancelar" [noBackgroundColor]="true" (accion)="onCerrar()"></ui-button>
+    <ui-button texto="Actualizar" [noBackgroundColor]="true" (accion)="onSubmit()"></ui-button>
+  </div>
+</app-ui-modal>
+```
+
+> [!IMPORTANT]
+> **Patrón de Cierre Modal**: Los modales cierran mediante el botón **X** en el header (automático en `app-ui-modal`). **NO incluyas botón de Cancelar** - es redundante y confunde al usuario.
+
+#### Botones Condicionales en Headers (Patrón Orders)
+
 ```html
 <div class="acciones-header">
   <app-ui-only-icon-button
@@ -267,6 +521,7 @@ actualizar(): void {
     (action)="onRecargar()"
   ></app-ui-only-icon-button>
 
+  <!-- Botones que cambian según tab activo -->
   <ng-container *ngIf="tabActiva === 'pedidos'">
     <app-ui-only-icon-button
       texto="Agregar Pedido"
@@ -278,14 +533,14 @@ actualizar(): void {
 
   <ng-container *ngIf="tabActiva === 'pagos'">
     <app-ui-only-icon-button
-      texto="Métodos de Pago"
+      texto="Agregar Método"
       urlIcono="icons/agregar.svg"
       [showTextStyle]="true"
       (action)="onAgregarMetodoPago()"
     ></app-ui-only-icon-button>
 
     <app-ui-only-icon-button
-      texto="Métodos de Pago"
+      texto="Gestionar Métodos"
       urlIcono="icons/editar.svg"
       [showTextStyle]="true"
       (action)="onAbrirModalMetodosPago()"
@@ -294,46 +549,21 @@ actualizar(): void {
 </div>
 ```
 
-Propiedades estándar de `ui-button`:
-- `texto` - Texto del botón
-- `backgroundColor` - Color del botón (ej: `#D4AF37` para primario, `#EF4444` para eliminar)
-- `noBackgroundColor` - Si es `true`, muestra solo borde sin fondo
-- `(accion)` - Evento al hacer click
+#### Icon-Buttons en Headers
 
-**Botones en Formularios:**
 ```html
-<div footer class="form-footer">
-  <ui-button
-    texto="Guardar"
-    [noBackgroundColor]="true"
-    backgroundColor="#D4AF37"
-    (accion)="onGuardar()"
-  ></ui-button>
-</div>
-```
+<!-- Botón solo icono (sin texto) -->
+<app-ui-only-icon-button
+  urlIcono="icons/reload.svg"
+  (action)="cargarDatos()"
+></app-ui-only-icon-button>
 
-**Botones de Eliminación:**
-```html
-<ui-button
-  texto="Eliminar Producto"
-  [noBackgroundColor]="true"
-  backgroundColor="#EF4444"
-  (accion)="confirmarEliminacion()"
-></ui-button>
-```
-
-**Icon-Buttons en Headers:**
-```html
+<!-- Botón con icono y texto -->
 <app-ui-only-icon-button
   texto="Producto"
   urlIcono="icons/agregar.svg"
   [showTextStyle]="true"
   (action)="onAgregar()"
-></app-ui-only-icon-button>
-
-<app-ui-only-icon-button
-  urlIcono="icons/reload.svg"
-  (action)="cargarDatos()"
 ></app-ui-only-icon-button>
 ```
 
@@ -342,7 +572,10 @@ Propiedades estándar de `ui-button`:
 ### Formularios (`app-ui-form`, `ui-input`, `app-ui-combobox`, `app-ui-helper-text`, `app-ui-image-upload`)
 Los formularios deben ser compactos, contenidos en modales y usar validaciones con `app-ui-helper-text`.
 
-**Estructura Base:**
+> [!CRITICAL]
+> **Regla Fundamental**: `app-ui-form` ya contiene la etiqueta `<form>` internamente. **NO anides una etiqueta `<form>` dentro de `app-ui-form`**. Esto causará rendering incorrecto.
+
+**Estructura Base CORRECTA:**
 ```html
 <app-ui-modal titulo="Agregar Nuevo Elemento" [mostrar]="mostrar" (cerrar)="onCerrar()">
   <app-ui-form maxHeight="50vh" maxWidth="1000px">
@@ -369,22 +602,37 @@ Los formularios deben ser compactos, contenidos en modales y usar validaciones c
       (archivoSeleccionado)="onArchivoSeleccionado($event)"
     ></app-ui-image-upload>
 
-    <!-- Footer con botones -->
-    <div footer class="form-footer">
-      <ui-button
-        texto="Guardar"
-        [noBackgroundColor]="true"
-        backgroundColor="#D4AF37"
-        (accion)="onGuardar()"
-      ></ui-button>
-    </div>
-
-    <!-- Validaciones con helper-text -->
+    <!-- Validaciones con helper-text ANTES del footer -->
     @if (nombreModel.invalid && nombreModel.touched) {
       <app-ui-helper-text>
         <ng-container *ngIf="nombreModel.errors?.['required']">El nombre es obligatorio.</ng-container>
       </app-ui-helper-text>
     }
+
+    <!-- Footer con botones -->
+    <div footer class="form-footer">
+      <ui-button
+        texto="Guardar"
+        [noBackgroundColor]="true"
+        type="submit"
+        (accion)="onGuardar($event)"
+      ></ui-button>
+    </div>
+  </app-ui-form>
+</app-ui-modal>
+```
+
+**Estructura INCORRECTA (NO HACER ESTO):**
+```html
+<!-- ❌ INCORRECTO - Etiqueta <form> redundante -->
+<app-ui-modal titulo="Agregar" [mostrar]="mostrar" (cerrar)="onCerrar()">
+  <app-ui-form>
+    <form #myForm="ngForm" (ngSubmit)="onGuardar(myForm)">
+      <!-- app-ui-form ya contiene la etiqueta form internamente -->
+      <!-- Esta estructura anidada causa problemas de rendering -->
+      <ui-input [(ngModel)]="nombre" name="nombre"></ui-input>
+      <ui-button texto="Guardar" type="submit"></ui-button>
+    </form>
   </app-ui-form>
 </app-ui-modal>
 ```
@@ -398,11 +646,23 @@ Los formularios deben ser compactos, contenidos en modales y usar validaciones c
 | `app-ui-image-upload` | Carga de imágenes | `(archivoSeleccionado)` |
 | `app-ui-helper-text` | Mensajes de validación | Contenido en `<ng-container>` |
 
+**Personalización de Altura del Dropdown (Combobox):**
+Si el combobox se encuentra dentro de un contenedor con altura limitada (como un modal pequeño), puedes ajustar la altura máxima del dropdown usando la variable CSS `--ui-combobox-max-height`:
+
+```html
+<app-ui-combobox
+  tituloInput="Seleccionar..."
+  [options]="options"
+  style="--ui-combobox-max-height: 150px;"
+></app-ui-combobox>
+```
+
 **Validación de Campos:**
 - Usa `app-ui-helper-text` para mostrar errores debajo de inputs
 - Los errores se muestran cuando el campo es `invalid` Y `touched`
 - Usa sintaxis de control flow `@if` para condiciones
 - NO usar arrays de errores globales en el formulario
+- La etiqueta `app-ui-helper-text` va **ANTES del footer**, no después
 
 **Placeholders Minimalistas:**
 ```html
@@ -437,8 +697,8 @@ El componente central para mostrar listados de datos. Las tablas no son editable
 
 **Propiedades:**
 - `theadData: string[]` - Nombres de columnas
-- `tbodyData: any[]` - Array de registros
-- `acciones: AccionTabla[]` - Array de acciones configurables (editar, eliminar, etc.)
+- `tbodyData: any[]` - Array de registros con propiedades que coincidan exactamente con los nombres en `theadData`
+- `[acciones]: AccionTabla[]` - Array de acciones configurables (editar, eliminar, etc.)
 
 **Interfaz AccionTabla:**
 ```typescript
@@ -448,17 +708,55 @@ export interface AccionTabla {
 }
 ```
 
-**Uso en Inventory:**
+#### REGLA CRÍTICA: El campo "Acciones" es Obligatorio
+
+⚠️ **IMPORTANTE**: Si una tabla tiene acciones (botones de editar, eliminar, ver, etc.), **DEBES incluir la cadena `"Acciones"` en el array `theadData`**. 
+
+Sin esto, la columna de acciones no aparecerá en la tabla.
+
+**Regla de Mapeo de ViewModels:**
+- Las propiedades del ViewModel DEBEN coincidir exactamente con los nombres en `theadData`
+- Utiliza propiedades con espacios usando la notación de corchetes: `"Fecha Inicio"`, `"Tipo Promoción"`
+- Ejemplo incorrecto (causará filas vacías):
+  ```typescript
+  columnasPromociones = ["ID", "Nombre", "Descripción"];
+  interface ViewModel {
+    idPromocion: number;      // ❌ No coincide con "ID"
+    nombre: string;           // ❌ No coincide con "Nombre"
+    descripcion: string;      // ❌ No coincide con "Descripción"
+  }
+  ```
+- Ejemplo correcto:
+  ```typescript
+  columnasPromociones = ["ID", "Nombre", "Descripción", "Acciones"];
+  interface ViewModel {
+    "ID": number;             // ✅ Coincide con "ID"
+    "Nombre": string;         // ✅ Coincide con "Nombre"
+    "Descripción": string;    // ✅ Coincide con "Descripción"
+    // Propiedades adicionales para acceso mediante notación de punto
+    idPromocion: number;      // ✅ Para usar en métodos: registro.idPromocion
+  }
+  ```
+
+#### Regla: Tablas con Acciones
+
+**Importante**: Toda tabla que permita editar o eliminar registros **DEBE tener la propiedad `[acciones]` definida**. Si no hay acciones disponibles, omite la propiedad.
+
+**Uso Correcto:**
 ```html
-<app-ui-tabla
-  [theadData]="columnas"
-  [tbodyData]="productosTableData"
-  [acciones]="acciones"
-></app-ui-tabla>
+<!-- Con acciones (editar y eliminar) - SIEMPRE incluye "Acciones" en theadData -->
+<div class="table-content">
+  <app-ui-tabla
+    [theadData]="columnas"
+    [tbodyData]="productosTableData"
+    [acciones]="acciones"
+  ></app-ui-tabla>
+</div>
 ```
 
-**En TypeScript:**
 ```typescript
+columnas = ["ID", "Nombre", "Precio", "Stock", "Acciones"];  // ✅ "Acciones" incluida
+
 acciones: AccionTabla[] = [
   {
     urlIcono: "icons/editar.svg",
@@ -474,6 +772,7 @@ onEditar(registro: any): void {
   this.registroSeleccionado = registro;
   this.mostrarModalEditar = true;
 }
+}
 
 onEliminar(registro: any): void {
   this.registroSeleccionado = registro;
@@ -481,22 +780,73 @@ onEliminar(registro: any): void {
 }
 ```
 
-**Uso con Tabs (Users):**
+**Tabla sin acciones (solo lectura):**
+```html
+<!-- Sin acciones (propiedad [acciones] omitida) -->
+<div class="table-content">
+  <app-ui-tabla
+    [theadData]="columnas"
+    [tbodyData]="registros"
+  ></app-ui-tabla>
+</div>
+```
+
+#### Tablas Envueltas en Content Container
+
+**Importante**: Todas las tablas deben estar envueltas en un `<div class="table-content">` para mantener consistencia de layout y aplicar estilos comunes.
+
+```html
+<!-- ✅ CORRECTO -->
+<div class="table-content">
+  <app-ui-tabla
+    [theadData]="columnas"
+    [tbodyData]="datos"
+    [acciones]="acciones"
+  ></app-ui-tabla>
+</div>
+
+<!-- ❌ INCORRECTO - Tabla sin wrapper -->
+<app-ui-tabla
+  [theadData]="columnas"
+  [tbodyData]="datos"
+  [acciones]="acciones"
+></app-ui-tabla>
+```
+
+**SCSS para table-content:**
+```scss
+.table-content {
+  width: 100%;
+  background-color: transparent;
+  border-radius: 8px;
+  overflow: hidden;
+
+  app-ui-tabla {
+    width: 100%;
+  }
+}
+```
+
+#### Uso con Tabs (Users)
 ```html
 @if (tabActiva === 'empleados') {
-  <app-ui-tabla
-    [theadData]="columnasEmpleados"
-    [tbodyData]="empleados"
-    [acciones]="accionesEmpleados"
-  ></app-ui-tabla>
+  <div class="table-content">
+    <app-ui-tabla
+      [theadData]="columnasEmpleados"
+      [tbodyData]="empleados"
+      [acciones]="accionesEmpleados"
+    ></app-ui-tabla>
+  </div>
 }
 
 @if (tabActiva === 'usuarios') {
-  <app-ui-tabla
-    [theadData]="columnasUsuarios"
-    [tbodyData]="usuarios"
-    [acciones]="accionesUsuarios"
-  ></app-ui-tabla>
+  <div class="table-content">
+    <app-ui-tabla
+      [theadData]="columnasUsuarios"
+      [tbodyData]="usuarios"
+      [acciones]="accionesUsuarios"
+    ></app-ui-tabla>
+  </div>
 }
 ```
 

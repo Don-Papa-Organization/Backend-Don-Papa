@@ -12,6 +12,7 @@ const routes: Routes = [
       { path: "users", loadChildren: () => import('./users/users-module').then(m => m.UsersModule) },
       { path: "orders", loadChildren: () => import('./orders/orders-module').then(m => m.OrdersModule) },
       { path: "tables-reserves", loadChildren: () => import('./tables-reserves/tables-reserves-module').then(m => m.TablesReservesModule) },
+      { path: "events-promotions", loadChildren: () => import('./events-promotions/events-promotions-module').then(m => m.EventsPromotionsModule) },
     ]
   }
   

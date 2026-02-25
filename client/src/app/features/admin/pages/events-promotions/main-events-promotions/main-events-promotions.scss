@@ -1,0 +1,54 @@
+.events-promotions-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+	padding: 1.5rem;
+	color: #ffffff;
+	// ⚠️ NO agregar background-color aquí - el fondo lo gestiona el layout padre
+}
+
+.events-promotions-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid #D4AF37;
+
+	h1 {
+		font-size: 2rem;
+		font-weight: 100;
+		color: #ffffff;
+		margin: 0;
+	}
+
+	.acciones-header {
+		display: flex;
+		gap: 0.75rem;
+		align-items: center;
+	}
+}
+
+.modal-confirmacion {
+	padding: 1.5rem;
+	color: #ffffff;
+
+	p {
+		margin-bottom: 1rem;
+		font-size: 1rem;
+		line-height: 1.5;
+	}
+
+	.warning-text {
+		color: #ef4444;
+		font-weight: 500;
+		font-style: italic;
+	}
+}
+
+.form-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 1rem;
+	margin-top: 2rem;
+}

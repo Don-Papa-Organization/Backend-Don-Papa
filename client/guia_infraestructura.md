@@ -73,6 +73,16 @@ inventory/
 
 **Responsabilidad**: Orquestación de la página principal de inventario
 
+**Configuración del Componente**:
+```typescript
+@Component({
+  selector: 'app-main-inventory',
+  templateUrl: './main-inventory.html',
+  styleUrls: ['./main-inventory.scss'],
+  standalone: false  // ⚠️ OBLIGATORIO: Todos los componentes deben declararse con standalone: false
+})
+```
+
 **Características**:
 - **Dependencia directa** de: Facade Service, API Service
 - **Gestiona el estado visual** de:
@@ -112,6 +122,16 @@ onProductoEliminado()  // Callback cuando se elimina producto
 #### 3.2.1 AgregarForm (agregar-form/)
 **Responsabilidad**: Capturar datos para crear nuevos productos
 
+**Configuración del Componente**:
+```typescript
+@Component({
+  selector: 'app-agregar-form',
+  templateUrl: './agregar-form.html',
+  styleUrls: ['./agregar-form.scss'],
+  standalone: false  // ⚠️ OBLIGATORIO: Todos los componentes deben declararse con standalone: false
+})
+```
+
 **Contrato de Comunicación**:
 ```typescript
 // INPUTS (Datos que recibe del padre)
@@ -139,6 +159,16 @@ onProductoEliminado()  // Callback cuando se elimina producto
 
 #### 3.2.2 EditarForm (editar-form/)
 **Responsabilidad**: Capturar datos para actualizar productos existentes
+
+**Configuración del Componente**:
+```typescript
+@Component({
+  selector: 'app-editar-form',
+  templateUrl: './editar-form.html',
+  styleUrls: ['./editar-form.scss'],
+  standalone: false  // ⚠️ OBLIGATORIO: Todos los componentes deben declararse con standalone: false
+})
+```
 
 **Contrato de Comunicación**:
 ```typescript
@@ -235,8 +265,20 @@ mapToDto(formData: any): CreateProductRequestDto | UpdateProductRequestDto
 
 #### R4: Comunicación Componente-Padre
 - Solo a través de **@Input y @Output**
-- **PROHIBIDO**: Inyectar servicios en componentes presentacionales (AgregarForm, EditarForm)
-- El padre es responsable de la orquestación
+- **PROHIBIDO**: Inyectar servicios en componentes presentacionales (AgregarForm, EditarForm, etc.)
+- El padre es responsable de la orquestación.
+
+> [!CAUTION]
+> **Anti-patrón Crítico (Detectado en Events-Promotions)**:
+> Inyectar un Facade o API Service directamente en un formulario (`AgregarForm`, `EditarForm`).
+> 
+> **Consecuencias**:
+> - Rompe la reutilización del componente.
+> - Dificulta el testing (requiere mocks complejos para componentes simples).
+> - Genera inconsistencias en el flujo de datos (el padre pierde el control de cuándo recargar/cerrar).
+> 
+> **Solución Correcta**:
+> El formulario captura los datos, valida y hace `@Output().emit(dto)`. El componente "Main" recibe el evento, llama al Facade y gestiona el éxito o error.
 
 #### R5: Responsabilidad del Componente Principal
 ```typescript
@@ -316,7 +358,8 @@ MainInventory.cargarProductos() -> refresca tabla
 ```
 
 ---
-
+TODOS los componentes tienen `standalone: false` en el decorador @Component**
+- [ ] **
 ## 7. Checklist de Cumplimiento
 
 Al crear un nuevo módulo (ej: Orders, Users, Events) sigue este checklist:
@@ -371,7 +414,8 @@ orders/
 │   │   ├── payments-section.html
 │   │   └── payments-section.scss
 │   ├── agregar-metodo-pago-form/         # Formulario auxiliar
-│   └── registrar-pago-form/              # Formulario auxiliar
+│   └── registrar-pago-form/            ,
+  standalone: false  // ⚠️ OBLIGATORIO en todos los componentes  # Formulario auxiliar
 └── services/
     └── orders.facade.ts
 ```
@@ -609,7 +653,8 @@ Datos actualizados se pasan via @Input al hijo
 - Usar @Input solo para **datos** (arrays, objetos de datos)
 - Usar @Output solo para **eventos de recarga** (no para estados de modales)
 - Exponer métodos públicos para acciones del padre via @ViewChild
-- Mantener estado de modales privado dentro del componente
+- Mant**El componente tiene `standalone: false` en el decorador @Component**
+- [ ] ener estado de modales privado dentro del componente
 
 **❌ NO HACER:**
 - Pasar estados de modales como @Input (ej: `[mostrarModal]="mostrarModalPago"`)
@@ -633,24 +678,241 @@ Al crear un componente encapsulado:
 
 ---
 
-## 9. Recomendaciones y Mejores Prácticas
+## 9. Patrón de Formularios Corregido (Events-Promotions v2.0)
 
-### 8.1 Para Escalabilidad
+### 9.1 Estructura Correcta de Componentes de Formulario
+
+**Importante**: A partir de la v2.0 del módulo Events-Promotions, se han corregido errores críticos en la estructura de formularios. Todos los nuevos módulos DEBEN seguir este patrón.
+
+#### Componente TypeScript (agregar-evento-form.ts)
+
+```typescript
+@Component({
+  selector: 'app-agregar-evento-form',
+  templateUrl: './agregar-evento-form.html',
+  styleUrls: ['./agregar-evento-form.scss'],
+  standalone: false  // ⚠️ OBLIGATORIO
+})
+export class AgregarEventoForm {
+  @Input() mostrar = false;
+  @Output() cerrar = new EventEmitter<void>();
+  @Output() eventoCreado = new EventEmitter<CreateEventRequestDto>();
+
+  // Campos del formulario (binding bidireccional)
+  nombre = '';
+  descripcion = '';
+
+  constructor() { }
+
+  // ⭐ IMPORTANTE: Sin argumentos en onSubmit()
+  onSubmit(): void {
+    // Validación manual simple (sin NgForm)
+    if (!this.nombre || !this.descripcion) return;
+
+    const dto: CreateEventRequestDto = {
+      nombre: this.nombre.trim(),
+      descripcion: this.descripcion.trim()
+    };
+
+    this.eventoCreado.emit(dto);
+    this.limpiarFormulario();
+  }
+
+  onCerrar(): void {
+    this.limpiarFormulario();
+    this.cerrar.emit();
+  }
+
+  private limpiarFormulario(): void {
+    this.nombre = '';
+    this.descripcion = '';
+  }
+}
+```
+
+#### Template HTML (agregar-evento-form.html)
+
+```html
+<!-- ⭐ CORRECTO: Sin etiqueta <form> anidada -->
+<app-ui-modal
+  titulo="Agregar Nuevo Evento"
+  [mostrar]="mostrar"
+  (cerrar)="onCerrar()"
+>
+  <app-ui-form maxHeight="50vh" maxWidth="700px">
+    <!-- ✅ Inputs FUERA de <form> (app-ui-form ya lo contiene) -->
+    <ui-input
+      tituloInput="Nombre del Evento"
+      tipo="text"
+      placeholder="Noche de Jazz"
+      [(ngModel)]="nombre"
+      name="nombre"
+      required
+      #nombreField="ngModel"
+    ></ui-input>
+
+    @if (nombreField.invalid && nombreField.touched) {
+      <app-ui-helper-text>
+        <ng-container>El nombre es obligatorio</ng-container>
+      </app-ui-helper-text>
+    }
+
+    <ui-input
+      tituloInput="Descripción"
+      tipo="text"
+      placeholder="Música en vivo todos los viernes"
+      [(ngModel)]="descripcion"
+      name="descripcion"
+      required
+      #descripcionField="ngModel"
+    ></ui-input>
+
+    @if (descripcionField.invalid && descripcionField.touched) {
+      <app-ui-helper-text>
+        <ng-container>La descripción es obligatoria</ng-container>
+      </app-ui-helper-text>
+    }
+
+    <!-- ✅ Footer con botones (sin cancelar, solo acción) -->
+    <div footer class="form-footer">
+      <ui-button
+        texto="Crear Evento"
+        [noBackgroundColor]="true"
+        type="submit"
+        (accion)="onSubmit()"
+      ></ui-button>
+    </div>
+  </app-ui-form>
+</app-ui-modal>
+```
+
+### 9.2 Errores Comunes a Evitar
+
+#### ❌ INCORRECTO: Etiqueta <form> Anidada
+
+```html
+<!-- NO HACER ESTO -->
+<app-ui-form>
+  <form #myForm="ngForm" (ngSubmit)="onSubmit(myForm)">
+    <!-- El problema: app-ui-form YA CONTIENE <form> internamente -->
+    <!-- Esta estructura anidada causa problemas de rendering -->
+    <ui-input></ui-input>
+  </form>
+</app-ui-form>
+```
+
+#### ❌ INCORRECTO: onSubmit() Recibiendo NgForm
+
+```typescript
+// NO HACER ESTO
+onSubmit(form: NgForm): void {
+  if (!form.valid) return;  // form es undefined cuando llamas sin argumentos
+  // ...
+}
+```
+
+#### ❌ INCORRECTO: Botón Cancelar en Modal
+
+```html
+<!-- NO HACER ESTO -->
+<div footer class="form-footer">
+  <ui-button
+    texto="Cancelar"
+    [noBackgroundColor]="true"
+    (accion)="onCerrar()"
+  ></ui-button>
+
+  <ui-button
+    texto="Guardar"
+    [noBackgroundColor]="true"
+    (accion)="onSubmit()"
+  ></ui-button>
+</div>
+
+<!-- Los modales CIERRAN mediante el botón X en el header automáticamente.
+     NO es necesario un botón Cancelar (es redundante y confunde al usuario) -->
+```
+
+#### ❌ INCORRECTO: Botón Sin [noBackgroundColor]
+
+```html
+<!-- NO HACER ESTO -->
+<ui-button
+  texto="Guardar"
+  backgroundColor="#D4AF37"  <!-- ← REDUNDANTE, es el default -->
+  (accion)="onSubmit()"
+></ui-button>
+
+<!-- CORRECTO -->
+<ui-button
+  texto="Guardar"
+  [noBackgroundColor]="true"
+  (accion)="onSubmit()"
+></ui-button>
+```
+
+### 9.3 Patrón de Validación Recomendado
+
+**Validación Manual Simple** (para formularios pequeños):
+```typescript
+// ✅ Para formularios simples (2-3 campos)
+onSubmit(): void {
+  if (!this.nombre || !this.descripcion) return;
+  
+  const dto: CreateEventRequestDto = { /*...*/ };
+  this.eventoCreado.emit(dto);
+}
+```
+
+**Validación con Template Form** (si necesitas validaciones complejas):
+```typescript
+// Para formularios complejos con validaciones múltiples
+@ViewChild('formulario') formulario!: NgForm;
+
+onSubmit(): void {
+  if (!this.formulario.valid) return;
+  
+  const dto: CreateEventRequestDto = { /*...*/ };
+  this.eventoCreado.emit(dto);
+}
+```
+
+### 9.4 Checklist para Componentes de Formulario
+
+Al crear un componente `agregar-*-form` o `editar-*-form`:
+
+- [ ] Componente tiene `standalone: false`
+- [ ] **NO hay etiqueta `<form>` dentro del template** (app-ui-form lo contiene)
+- [ ] @Input `mostrar` controla visibilidad del modal
+- [ ] @Output eventos emiten DTOs, no objetos arbitrarios
+- [ ] `onSubmit()` **recibe 0 argumentos**
+- [ ] Validaciones simples con `app-ui-helper-text`
+- [ ] **NO hay botón Cancelar** en el footer (cierre vía X del modal)
+- [ ] Botones en footer tienen `[noBackgroundColor]="true"`
+- [ ] Campo `type="submit"` en el botón principal
+- [ ] `(accion)="onSubmit()"` **sin parámetros $event**
+- [ ] Método `limpiarFormulario()` se llama en `onCerrar()` y después de `emit()`
+
+---
+
+## 10. Recomendaciones y Mejores Prácticas
+
+### 10.1 Para Escalabilidad
 - Si `main-{modulo}` crece (>300 líneas), divide en sub-componentes
 - Crear `layout/` dentro del módulo para componentes de disposición
 - Usar `*ngIf` para componentes condicionales, no múltiples vistas
 
-### 8.2 Para Testing
+### 10.2 Para Testing
 - Cada componente hijo debe tener tests de @Input/@Output
 - Facade debe mockearse en tests de componentes
 - InventoryApi debe mockearse en tests de Facade
 
-### 8.3 Para Mantenibilidad
+### 10.3 Para Mantenibilidad
 - Documentar el propósito de cada Facade method
 - Mantener ViewModels simples (máximo 15 propiedades)
 - Usar comentarios TSDoc para métodos complejos
 
-### 8.4 Para Nuevos Módulos
+### 10.4 Para Nuevos Módulos
 - Copia la estructura de **inventory** como template para módulos simples
 - Usa la estructura de **orders** como referencia para módulos con tabs complejos
 - Si necesitas componentes encapsulados (>3 modales), revisa PaymentsSectionComponent
@@ -667,7 +929,7 @@ Al crear un componente encapsulado:
 
 ---
 
-## 9. Anexo: Estructura Esperada de Domain
+## 11. Anexo: Estructura Esperada de Domain
 
 Los DTOs de cada módulo deben residir en:
 
@@ -706,7 +968,7 @@ domain/inventory/
 
 ---
 
-## 10. Glosario
+## 12. Glosario
 
 | Término | Definición |
 |---------|-----------|
@@ -722,5 +984,5 @@ domain/inventory/
 ---
 
 **Última actualización**: 21 de enero de 2025  
-**Versión**: 1.1 (Agregado: Patrón @ViewChild con componentes encapsulados)  
+**Versión**: 1.2 (Agregado: Patrón de formularios corregido v2.0 Events-Promotions)  
 **Responsable**: Arquitectura de Frontend

@@ -1,0 +1,31 @@
+<app-ui-modal titulo="Agregar Día al Evento" [mostrar]="mostrar" (cerrar)="onCerrar()">
+	<app-ui-form maxHeight="50vh" maxWidth="600px">
+		<ui-input
+			tituloInput="Fecha"
+			tipo="date"
+			[(ngModel)]="fecha"
+			name="fecha"
+			required>
+		</ui-input>
+
+		<ui-input
+			tituloInput="Hora Inicio (HH:mm)"
+			tipo="text"
+			placeholder="09:00"
+			[(ngModel)]="horaInicio"
+			name="horaInicio">
+		</ui-input>
+
+		<ui-input
+			tituloInput="Hora Fin (HH:mm)"
+			tipo="text"
+			placeholder="18:00"
+			[(ngModel)]="horaFin"
+			name="horaFin">
+		</ui-input>
+
+		<div footer class="form-footer">
+			<ui-button texto="Agregar" (accion)="onSubmit()"></ui-button>
+		</div>
+	</app-ui-form>
+</app-ui-modal>
