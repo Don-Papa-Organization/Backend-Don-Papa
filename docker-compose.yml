@@ -136,7 +136,7 @@ services:
       - EVENT_SERVICE_URL=http://event-service-app:4005/api
       - RECEIPTS_DIR=recibos
     volumes:
-      - order_receipts:/app/recibos
+      - order_receipts:/home/app/recibos
     networks:
       - backend-network
 
@@ -236,6 +236,14 @@ services:
         condition: service_healthy
       order-service-app:
         condition: service_started
+      inventory-service-app:
+        condition: service_started
+      user-service-app:
+        condition: service_started
+      reservation-service-app:
+        condition: service_started
+      event-service-app:
+        condition: service_started
     ports:
       - "4006:4006"
     environment:
@@ -248,7 +256,12 @@ services:
       - DB_NAME=don_papa
       - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
       - JWT_REFRESH_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
-      - ORDER_SERVICE_URL=http://order-service-app:4003
+      - ORDER_SERVICE_URL=http://order-service-app:4003/api
+      - INVENTORY_SERVICE_URL=http://inventory-service-app:4001/api
+      - USER_SERVICE_URL=http://user-service-app:4002/api
+      - RESERVATION_SERVICE_URL=http://reservation-service-app:4004/api
+      - EVENT_SERVICE_URL=http://event-service-app:4005/api
+      - INTERNAL_SERVICE_KEY=una_llave_secreta_compartida
       - HTTP_TIMEOUT=10000
       - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:4000
     networks:
@@ -267,6 +280,29 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
+    networks:
+      - backend-network
+
+  # MICROSERVICIO 8 - AGENTE IA
+  agent-service-app:
+    build: ./ms8-agent-service/agente
+    depends_on:
+      - gateway
+    ports:
+      - "4008:4008"
+    environment:
+      - PORT=4008
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
+      - GATEWAY_URL=http://gateway:4000
+      - GATEWAY_TIMEOUT=5
+      - GEMINI_RPM_LIMIT=12
+      - GEMINI_RPD_LIMIT=1200
+      - CACHE_TTL_SECONDS=300
+      - SCRAPER_TIMEOUT=10
+      - SCRAPER_MAX_IMAGES=3
+      - MAX_HISTORY_TURNS=3
+      - MAX_TOOL_CALLS=2
     networks:
       - backend-network
 
