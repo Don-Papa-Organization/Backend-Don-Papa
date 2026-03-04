@@ -284,27 +284,27 @@ services:
       - backend-network
 
   # MICROSERVICIO 8 - AGENTE IA
-  agent-service-app:
-    build: ./ms8-agent-service/agente
-    depends_on:
-      - gateway
-    ports:
-      - "4008:4008"
-    environment:
-      - PORT=4008
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-      - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
-      - GATEWAY_URL=http://gateway:4000
-      - GATEWAY_TIMEOUT=5
-      - GEMINI_RPM_LIMIT=12
-      - GEMINI_RPD_LIMIT=1200
-      - CACHE_TTL_SECONDS=300
-      - SCRAPER_TIMEOUT=10
-      - SCRAPER_MAX_IMAGES=3
-      - MAX_HISTORY_TURNS=3
-      - MAX_TOOL_CALLS=2
-    networks:
-      - backend-network
+  # agent-service-app:
+  #   build: ./ms8-agent-service/agente
+  #   depends_on:
+  #     - gateway
+  #   ports:
+  #     - "4008:4008"
+  #   environment:
+  #     - PORT=4008
+  #     - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+  #     - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
+  #     - GATEWAY_URL=http://gateway:4000
+  #     - GATEWAY_TIMEOUT=5
+  #     - GEMINI_RPM_LIMIT=12
+  #     - GEMINI_RPD_LIMIT=1200
+  #     - CACHE_TTL_SECONDS=300
+  #     - SCRAPER_TIMEOUT=10
+  #     - SCRAPER_MAX_IMAGES=3
+  #     - MAX_HISTORY_TURNS=3
+  #     - MAX_TOOL_CALLS=2
+  #   networks:
+  #     - backend-network
 
 volumes:
   inventory_mysql_data:
