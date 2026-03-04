@@ -1,0 +1,16 @@
+<div class="sales-section-wrapper">
+  <app-statistics-metrics-grid
+    title="Ventas"
+    [loading]="loading"
+    [error]="error"
+    [metrics]="metrics"
+  ></app-statistics-metrics-grid>
+
+  <app-statistics-data-table
+    title="Timeline de Ventas"
+    [loading]="loading"
+    [error]="error"
+    [columns]="['Fecha', 'Ventas', 'Pedidos']"
+    [rows]="timelineRows"
+  ></app-statistics-data-table>
+</div>

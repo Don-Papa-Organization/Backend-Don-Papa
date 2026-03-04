@@ -1,0 +1,18 @@
+<div class="chart-container" [ngClass]="{ 'is-loading': isLoading, 'has-error': hasError }">
+  <div *ngIf="isLoading" class="chart-loading">
+    <p>Cargando datos...</p>
+  </div>
+
+  <div *ngIf="hasError && !isLoading" class="chart-error">
+    <p>{{ errorMessage }}</p>
+    <ui-button texto="Reintentar" (accion)="onRetry.emit()"></ui-button>
+  </div>
+
+  <div *ngIf="isEmpty && !isLoading && !hasError" class="chart-empty">
+    <p>{{ emptyMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !hasError && !isEmpty" class="chart-content">
+    <ng-content></ng-content>
+  </div>
+</div>

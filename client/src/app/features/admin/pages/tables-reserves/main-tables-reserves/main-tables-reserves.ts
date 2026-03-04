@@ -43,6 +43,10 @@ export class MainTablesReserves implements OnInit {
 
   tabActiva: string = 'mesas';
 
+  // === INDICADORES DE CARGA ===
+  cargandoMesas = false;
+  cargandoReservas = false;
+
   mesas: MesaViewModel[] = [];
   columnasMesas: string[] = ['idMesa', 'numero', 'tipo', 'estado', 'Acciones'];
 
@@ -59,7 +63,7 @@ export class MainTablesReserves implements OnInit {
   mesaSeleccionada: MesaViewModel | null = null;
   reservaSeleccionada: ReservationViewModel | null = null;
 
-  constructor(@Inject(TablesReservesFacade) private tablesReservesFacade: TablesReservesFacade) {}
+  constructor(@Inject(TablesReservesFacade) private tablesReservesFacade: TablesReservesFacade) { }
 
   ngOnInit(): void {
     this.cargarMesas();
@@ -80,23 +84,29 @@ export class MainTablesReserves implements OnInit {
   }
 
   cargarMesas(): void {
+    this.cargandoMesas = true;
     this.tablesReservesFacade.getTables().subscribe({
       next: (mesas) => {
         this.mesas = mesas;
+        this.cargandoMesas = false;
       },
       error: (error) => {
         console.error('Error al cargar mesas:', error);
+        this.cargandoMesas = false;
       }
     });
   }
 
   cargarReservas(): void {
+    this.cargandoReservas = true;
     this.tablesReservesFacade.getReservationsByStatus().subscribe({
       next: (reservas) => {
         this.reservas = reservas;
+        this.cargandoReservas = false;
       },
       error: (error) => {
         console.error('Error al cargar reservas:', error);
+        this.cargandoReservas = false;
       }
     });
   }

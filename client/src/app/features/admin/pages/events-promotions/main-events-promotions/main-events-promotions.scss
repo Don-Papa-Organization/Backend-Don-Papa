@@ -52,3 +52,37 @@
 	gap: 1rem;
 	margin-top: 2rem;
 }
+
+.modal-productos {
+	p {
+		color: #ffffff;
+		margin-bottom: 1rem;
+	}
+
+	.productos-table {
+		margin-top: 1rem;
+	}
+}
+
+.modal-dias {
+	p {
+		color: #ffffff;
+		margin-bottom: 1rem;
+	}
+
+	.dias-table {
+		margin-top: 1rem;
+	}
+}
+
+.cargando {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 300px;
+
+	p {
+		font-size: 1.2rem;
+		color: #999;
+	}
+}

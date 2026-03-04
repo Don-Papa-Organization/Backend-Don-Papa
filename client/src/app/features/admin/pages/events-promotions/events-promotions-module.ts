@@ -13,6 +13,11 @@ import { AgregarEventForm } from './components/agregar-event-form/agregar-event-
 import { EditarEventForm } from './components/editar-event-form/editar-event-form';
 import { AgregarProductoForm } from './components/agregar-producto-form/agregar-producto-form';
 import { AgregarDiaEventoForm } from './components/agregar-dia-evento-form/agregar-dia-evento-form';
+import { EditarProductoForm } from './components/editar-producto-form/editar-producto-form';
+import { EditarDiaEventoForm } from './components/editar-dia-evento-form/editar-dia-evento-form';
+import { AgregarPromocionDiaEventoForm } from './components/agregar-promocion-dia-evento-form/agregar-promocion-dia-evento-form';
+import { ProductsSectionComponent } from './components/products-section/products-section';
+import { DaysSectionComponent } from './components/days-section/days-section';
 
 @NgModule({
   declarations: [
@@ -22,7 +27,12 @@ import { AgregarDiaEventoForm } from './components/agregar-dia-evento-form/agreg
     AgregarEventForm,
     EditarEventForm,
     AgregarProductoForm,
-    AgregarDiaEventoForm
+    AgregarDiaEventoForm,
+    EditarProductoForm,
+    EditarDiaEventoForm,
+    AgregarPromocionDiaEventoForm,
+    ProductsSectionComponent,
+    DaysSectionComponent
   ],
   imports: [
     CommonModule,

@@ -12,6 +12,7 @@ import { AddProductToOrderRequestDto } from '../../../../../../domain/orders/dto
 export class GestionarProductosFormComponent implements OnChanges {
 	@Input() mostrar = false;
 	@Input() pedidoSeleccionado: Pedido | null = null;
+	@Input() productosOptions: Array<{ value: any, label: string }> = [];
 	@Output() cerrar = new EventEmitter<void>();
 	@Output() pedidoActualizado = new EventEmitter<void>();
 
@@ -31,7 +32,7 @@ export class GestionarProductosFormComponent implements OnChanges {
 
 	columnasTabla = ['idProductoPedido', 'idProducto', 'cantidad', 'precioUnitario', 'subtotal'];
 
-	constructor(private ordersFacade: OrdersFacade) {}
+	constructor(private ordersFacade: OrdersFacade) { }
 
 	ngOnChanges(changes: SimpleChanges): void {
 		if (changes['pedidoSeleccionado'] && this.pedidoSeleccionado && this.mostrar) {

@@ -3,96 +3,76 @@
   <div class="users-header">
     <h1>Gestión de Usuarios, Empleados y Clientes</h1>
     <div class="acciones-header">
-      <app-ui-only-icon-button
-        urlIcono="icons/reload.svg"
-        (action)="onRecargar()"
-      ></app-ui-only-icon-button>
-      <app-ui-only-icon-button
-        *ngIf="tabActiva === 'empleados'"
-        texto="Empleado"
-        [showTextStyle]="true"
-        urlIcono="icons/agregar.svg"
-        (action)="onAgregarEmpleado()"
-      ></app-ui-only-icon-button>
+      <app-ui-only-icon-button urlIcono="icons/reload.svg" (action)="onRecargar()"></app-ui-only-icon-button>
+      <app-ui-only-icon-button *ngIf="tabActiva === 'empleados'" texto="Empleado" [showTextStyle]="true"
+        urlIcono="icons/agregar.svg" (action)="onAgregarEmpleado()"></app-ui-only-icon-button>
     </div>
   </div>
 
+  <app-ui-admin-filter-panel [estadoOpciones]="estadoOpciones" [mostrarFechas]="false" [mostrarEstado]="true"
+    labelBusqueda="Buscar usuarios" placeholderBusqueda="Nombre, correo o documento..."
+    (filtrosAplicados)="onFiltrosAplicados($event)" (filtrosLimpiados)="onFiltrosLimpiados()">
+  </app-ui-admin-filter-panel>
+
   <!-- TABS COMPONENT -->
-  <app-ui-tabs
-    [tabItems]="tabs"
-    [tabActiva]="tabActiva"
-    (tabChange)="cambiarTab($event)"
-  ></app-ui-tabs>
+  <app-ui-tabs [tabItems]="tabs" [tabActiva]="tabActiva" (tabChange)="cambiarTab($event)"></app-ui-tabs>
 
   <!-- TABLA DE EMPLEADOS -->
-  <app-ui-tabla
-    *ngIf="tabActiva === 'empleados'"
-    [theadData]="columnasEmpleados"
-    [tbodyData]="empleados"
-    (editarRegistro)="onActualizarEmpleado($event)"
-    (eliminarRegistro)="onEliminarEmpleado($event)"
-  ></app-ui-tabla>
+  <div class="cargando" *ngIf="tabActiva === 'empleados' && cargandoEmpleados">
+    <p>Cargando empleados...</p>
+  </div>
+
+  <div class="table-content" *ngIf="tabActiva === 'empleados' && !cargandoEmpleados">
+    <app-ui-tabla [theadData]="columnasEmpleados" [tbodyData]="empleados"
+      (editarRegistro)="onActualizarEmpleado($event)" (eliminarRegistro)="onEliminarEmpleado($event)"></app-ui-tabla>
+  </div>
 
   <!-- TABLA DE USUARIOS -->
-  <app-ui-tabla
-    *ngIf="tabActiva === 'usuarios'"
-    [theadData]="columnasUsuarios"
-    [tbodyData]="usuarios"
-    (editarRegistro)="onVerDetalleUsuario($event)"
-  ></app-ui-tabla>
+  <div class="cargando" *ngIf="tabActiva === 'usuarios' && cargandoUsuarios">
+    <p>Cargando usuarios...</p>
+  </div>
+
+  <div class="table-content" *ngIf="tabActiva === 'usuarios' && !cargandoUsuarios">
+    <app-ui-tabla [theadData]="columnasUsuarios" [tbodyData]="usuarios"
+      (editarRegistro)="onVerDetalleUsuario($event)"></app-ui-tabla>
+  </div>
 
   <!-- TABLA DE CLIENTES -->
-  <app-ui-tabla
-    *ngIf="tabActiva === 'clientes'"
-    [theadData]="columnasClientes"
-    [tbodyData]="clientes"
-    (editarRegistro)="onVerDetalleCliente($event)"
-  ></app-ui-tabla>
+  <div class="cargando" *ngIf="tabActiva === 'clientes' && cargandoClientes">
+    <p>Cargando clientes...</p>
+  </div>
+
+  <div class="table-content" *ngIf="tabActiva === 'clientes' && !cargandoClientes">
+    <app-ui-tabla [theadData]="columnasClientes" [tbodyData]="clientes"
+      (editarRegistro)="onVerDetalleCliente($event)"></app-ui-tabla>
+  </div>
 
   <!-- MODAL: AGREGAR EMPLEADO -->
-  <app-agregar-employee-form
-    [mostrar]="mostrarModalAgregarEmpleado"
-    (cerrar)="cerrarModalAgregarEmpleado()"
-    (empleadoCreado)="onEmpleadoCreado($event)"
-  ></app-agregar-employee-form>
+  <app-agregar-employee-form [mostrar]="mostrarModalAgregarEmpleado" (cerrar)="cerrarModalAgregarEmpleado()"
+    (empleadoCreado)="onEmpleadoCreado($event)"></app-agregar-employee-form>
 
   <!-- MODAL: ACTUALIZAR EMPLEADO -->
-  <app-actualizar-employee-form
-    [mostrar]="mostrarModalActualizarEmpleado"
-    [empleado]="empleadoSeleccionado"
+  <app-actualizar-employee-form [mostrar]="mostrarModalActualizarEmpleado" [empleado]="empleadoSeleccionado"
     (cerrar)="cerrarModalActualizarEmpleado()"
-    (empleadoActualizado)="onEmpleadoActualizado($event)"
-  ></app-actualizar-employee-form>
+    (empleadoActualizado)="onEmpleadoActualizado($event)"></app-actualizar-employee-form>
 
   <!-- MODAL: CONFIRMAR ELIMINACIÓN EMPLEADO -->
-  <app-ui-modal
-    *ngIf="mostrarModalEliminarEmpleado"
-    [mostrar]="mostrarModalEliminarEmpleado"
-    titulo="¿Desea eliminar empleado?"
-    (cerrar)="cerrarModalEliminarEmpleado()"
-  >
+  <app-ui-modal *ngIf="mostrarModalEliminarEmpleado" [mostrar]="mostrarModalEliminarEmpleado"
+    titulo="¿Desea eliminar empleado?" (cerrar)="cerrarModalEliminarEmpleado()">
     <div class="contenido-eliminacion">
       <p>¿Estás seguro de que deseas eliminar al empleado <strong>{{ empleadoSeleccionado?.nombre }}</strong>?</p>
       <p class="advertencia">Esta acción desactivará el empleado en el sistema.</p>
-      
+
       <div class="acciones-eliminacion">
-        <ui-button
-          texto="Eliminar Empleado"
-          [noBackgroundColor]="true"
-          backgroundColor="#EF4444"
-          (accion)="confirmarEliminacionEmpleado()"
-        ></ui-button>
+        <ui-button texto="Eliminar Empleado" [noBackgroundColor]="true" backgroundColor="#EF4444"
+          (accion)="confirmarEliminacionEmpleado()"></ui-button>
       </div>
     </div>
   </app-ui-modal>
 
   <!-- MODAL: DETALLE USUARIO -->
-  <app-ui-modal
-    *ngIf="mostrarModalDetalleUsuario"
-    [mostrar]="mostrarModalDetalleUsuario"
-    titulo="Detalle del Usuario"
-    (cerrar)="cerrarModalDetalleUsuario()"
-  >
+  <app-ui-modal *ngIf="mostrarModalDetalleUsuario" [mostrar]="mostrarModalDetalleUsuario" titulo="Detalle del Usuario"
+    (cerrar)="cerrarModalDetalleUsuario()">
     <div class="detalle-usuario">
       <div class="campo">
         <label>ID:</label>
@@ -116,12 +96,8 @@
   </app-ui-modal>
 
   <!-- MODAL: DETALLE CLIENTE -->
-  <app-ui-modal
-    *ngIf="mostrarModalDetalleCliente"
-    [mostrar]="mostrarModalDetalleCliente"
-    titulo="Detalle del Cliente"
-    (cerrar)="cerrarModalDetalleCliente()"
-  >
+  <app-ui-modal *ngIf="mostrarModalDetalleCliente" [mostrar]="mostrarModalDetalleCliente" titulo="Detalle del Cliente"
+    (cerrar)="cerrarModalDetalleCliente()">
     <div class="detalle-cliente">
       <div class="campo">
         <label>ID Usuario:</label>

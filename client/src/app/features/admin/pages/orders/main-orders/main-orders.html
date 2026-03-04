@@ -3,54 +3,37 @@
 	<div class="orders-header">
 		<h1>Gestión de Pedidos y Pagos</h1>
 		<div class="acciones-header">
-			<app-ui-only-icon-button
-				urlIcono="icons/reload.svg"
-				(action)="onRecargar()"
-			></app-ui-only-icon-button>
+			<app-ui-only-icon-button urlIcono="icons/reload.svg" (action)="onRecargar()"></app-ui-only-icon-button>
 
 			<ng-container *ngIf="tabActiva === 'pedidos'">
-				<app-ui-only-icon-button
-					texto="Agregar Pedido"
-					urlIcono="icons/agregar.svg"
-					[showTextStyle]="true"
-					(action)="onAgregar()"
-				></app-ui-only-icon-button>
+				<app-ui-only-icon-button texto="Agregar Pedido" urlIcono="icons/agregar.svg" [showTextStyle]="true"
+					(action)="onAgregar()"></app-ui-only-icon-button>
 			</ng-container>
 
-		<ng-container *ngIf="tabActiva === 'pagos'">
-			<app-ui-only-icon-button
-				texto="Métodos de Pago"
-				urlIcono="icons/agregar.svg"
-				[showTextStyle]="true"
-				(action)="onAgregarMetodoPago()"
-			></app-ui-only-icon-button>
+			<ng-container *ngIf="tabActiva === 'pagos'">
+				<app-ui-only-icon-button texto="Métodos de Pago" urlIcono="icons/agregar.svg" [showTextStyle]="true"
+					(action)="onAgregarMetodoPago()"></app-ui-only-icon-button>
 
-			<app-ui-only-icon-button
-				texto="Métodos de Pago"
-				urlIcono="icons/editar.svg"
-				[showTextStyle]="true"
-				(action)="onAbrirModalMetodosPago()"
-			></app-ui-only-icon-button>
-		</ng-container>
+				<app-ui-only-icon-button texto="Métodos de Pago" urlIcono="icons/editar.svg" [showTextStyle]="true"
+					(action)="onAbrirModalMetodosPago()"></app-ui-only-icon-button>
+			</ng-container>
 		</div>
 	</div>
 
-	<app-ui-tabs
-		[tabItems]="tabs"
-		[tabActiva]="tabActiva"
-		(tabChange)="cambiarTab($event)"
-	></app-ui-tabs>
+	<app-ui-admin-filter-panel [estadoOpciones]="estadoPedidoOpciones" [mostrarFechas]="tabActiva === 'pedidos'"
+		[mostrarEstado]="tabActiva === 'pedidos'" labelBusqueda="Buscar pedidos..."
+		placeholderBusqueda="ID, usuario o dirección..." (filtrosAplicados)="onFiltrosAplicados($event)"
+		(filtrosLimpiados)="onFiltrosLimpiados()">
+	</app-ui-admin-filter-panel>
+
+	<app-ui-tabs [tabItems]="tabs" [tabActiva]="tabActiva" (tabChange)="cambiarTab($event)"></app-ui-tabs>
 
 	<!-- TAB PEDIDOS -->
 	<div *ngIf="tabActiva === 'pedidos'">
 		<!-- TABLA PRINCIPAL DE PEDIDOS -->
 		<div class="tabla-contenedor" *ngIf="!cargandoPedidos">
-			<app-ui-tabla
-				[theadData]="columnasTabla"
-				[tbodyData]="pedidos"
-				(editarRegistro)="onEditar($event)"
-				(eliminarRegistro)="onEliminar($event)"
-			></app-ui-tabla>
+			<app-ui-tabla [theadData]="columnasTabla" [tbodyData]="pedidos" (editarRegistro)="onEditar($event)"
+				(eliminarRegistro)="onEliminar($event)"></app-ui-tabla>
 		</div>
 
 		<!-- INDICADOR DE CARGA -->
@@ -59,60 +42,36 @@
 		</div>
 
 		<!-- COMPONENTE AGREGAR PEDIDO (con modal interno) -->
-		<app-agregar-order-form
-			[mostrar]="mostrarModalAgregar"
-			[productosOptions]="productosOptions"
-			(cerrar)="cerrarModalAgregar()"
-			(pedidoCreado)="onPedidoCreado($event)"
-		></app-agregar-order-form>
+		<app-agregar-order-form [mostrar]="mostrarModalAgregar" [productosOptions]="productosOptions"
+			(cerrar)="cerrarModalAgregar()" (pedidoCreado)="onPedidoCreado($event)"></app-agregar-order-form>
 
 		<!-- COMPONENTE EDITAR PEDIDO (con modal interno) -->
-		<app-editar-order-form
-			[mostrar]="mostrarModalEditar"
-			[pedidoSeleccionado]="pedidoSeleccionado"
-			(cerrar)="cerrarModalEditar()"
-			(pedidoActualizado)="onPedidoActualizado($event)"
-		></app-editar-order-form>
+		<app-editar-order-form [mostrar]="mostrarModalEditar" [pedidoSeleccionado]="pedidoSeleccionado"
+			(cerrar)="cerrarModalEditar()" (pedidoActualizado)="onPedidoActualizado($event)"></app-editar-order-form>
 
 		<!-- MODAL DE ELIMINACIÓN (inline) -->
-		<app-ui-modal
-			*ngIf="mostrarModalEliminar"
-			[mostrar]="mostrarModalEliminar"
-			titulo="¿Desea eliminar pedido?"
-			(cerrar)="cerrarModalEliminar()"
-		>
+		<app-ui-modal *ngIf="mostrarModalEliminar" [mostrar]="mostrarModalEliminar" titulo="¿Desea eliminar pedido?"
+			(cerrar)="cerrarModalEliminar()">
 			<div class="contenido-eliminacion">
-				<p>¿Estás seguro de que deseas eliminar el pedido <strong>#{{ pedidoSeleccionado?.idPedido }}</strong>?</p>
+				<p>¿Estás seguro de que deseas eliminar el pedido <strong>#{{ pedidoSeleccionado?.idPedido }}</strong>?
+				</p>
 				<p class="advertencia">Esta acción desactivará el pedido en el sistema.</p>
 
 				<div class="acciones-eliminacion">
-					<ui-button
-						texto="Eliminar Pedido"
-						[noBackgroundColor]="true"
-						backgroundColor="#EF4444"
-						(accion)="confirmarEliminacionPedido()"
-					></ui-button>
+					<ui-button texto="Eliminar Pedido" [noBackgroundColor]="true" backgroundColor="#EF4444"
+						(accion)="confirmarEliminacionPedido()"></ui-button>
 				</div>
 			</div>
 		</app-ui-modal>
 
 		<!-- COMPONENTE GESTIONAR PRODUCTOS EN PEDIDO -->
-		<app-gestionar-productos-form
-			[mostrar]="mostrarModalProductos"
-			[pedidoSeleccionado]="pedidoSeleccionado"
-			(cerrar)="cerrarModalProductos()"
-			(pedidoActualizado)="onProductosActualizados()"
-		></app-gestionar-productos-form>
+		<app-gestionar-productos-form [mostrar]="mostrarModalProductos" [pedidoSeleccionado]="pedidoSeleccionado"
+			[productosOptions]="productosOptions" (cerrar)="cerrarModalProductos()"
+			(pedidoActualizado)="onProductosActualizados()"></app-gestionar-productos-form>
 	</div>
 
 	<!-- TAB PAGOS -->
-	<app-payments-section
-		*ngIf="tabActiva === 'pagos'"
-		[cargandoPagos]="cargandoPagos"
-		[pagosPendientes]="pagosPendientes"
-		[pagosTodos]="pagosTodos"
-		[metodosPago]="metodosPago"
-		[metodosPagoOptions]="metodosPagoOptions"
-		(recargarSeccion)="cargarSeccionPagos()"
-	></app-payments-section>
+	<app-payments-section *ngIf="tabActiva === 'pagos'" [cargandoPagos]="cargandoPagos"
+		[pagosPendientes]="pagosPendientes" [pagosTodos]="pagosTodos" [metodosPago]="metodosPago"
+		[metodosPagoOptions]="metodosPagoOptions" (recargarSeccion)="cargarSeccionPagos()"></app-payments-section>
 </div>

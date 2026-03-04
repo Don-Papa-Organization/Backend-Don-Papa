@@ -1,0 +1,39 @@
+<app-ui-modal titulo="Editar Día del Evento" [mostrar]="mostrar" (cerrar)="onCerrar()">
+	<app-ui-form maxHeight="50vh" maxWidth="600px">
+		<ui-input tituloInput="Fecha" tipo="date" [(ngModel)]="fecha" name="fecha" required #fechaField="ngModel">
+		</ui-input>
+
+		<ui-input tituloInput="Hora Inicio (HH:mm)" tipo="text" placeholder="09:00" [(ngModel)]="horaInicio"
+			name="horaInicio" required #horaInicioField="ngModel">
+		</ui-input>
+
+		<ui-input tituloInput="Hora Fin (HH:mm)" tipo="text" placeholder="18:00" [(ngModel)]="horaFin" name="horaFin"
+			required #horaFinField="ngModel">
+		</ui-input>
+
+		<!-- Validaciones -->
+		<div class="form-errors">
+			@if (fechaField.invalid && fechaField.touched) {
+			<app-ui-helper-text>
+				<ng-container>La fecha es obligatoria</ng-container>
+			</app-ui-helper-text>
+			}
+
+			@if (horaInicioField.invalid && horaInicioField.touched) {
+			<app-ui-helper-text>
+				<ng-container>La hora de inicio es obligatoria</ng-container>
+			</app-ui-helper-text>
+			}
+
+			@if (horaFinField.invalid && horaFinField.touched) {
+			<app-ui-helper-text>
+				<ng-container>La hora de fin es obligatoria</ng-container>
+			</app-ui-helper-text>
+			}
+		</div>
+
+		<div footer class="form-footer">
+			<ui-button texto="Actualizar" (accion)="onSubmit()" [noBackgroundColor]="true"></ui-button>
+		</div>
+	</app-ui-form>
+</app-ui-modal>

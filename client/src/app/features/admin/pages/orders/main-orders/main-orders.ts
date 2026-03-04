@@ -5,6 +5,7 @@ import { CreateCustomerOrderRequestDto } from '../../../../../domain/orders/dtos
 import { UpdateOrderStatusRequestDto } from '../../../../../domain/orders/dtos/request/update-order-status.request.dto';
 import { InventoryFacade } from '../../inventory/services/inventory.facade';
 import type { TabItem } from '../../../../../shared/ui/ui-tabs/ui-tabs';
+import { AdminFiltros, FiltroOpcion } from '../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel';
 import { AccionTabla } from '../../../../../shared/ui/ui-tabla/ui-tabla';
 import { PaymentsSectionComponent } from '../components/payments-section/payments-section';
 
@@ -20,7 +21,7 @@ export class MainOrdersComponent implements OnInit {
 		{ id: 'pedidos', label: 'Pedidos' },
 		{ id: 'pagos', label: 'Pagos' }
 	];
-	
+
 	tabActiva: string = 'pedidos';
 
 	// Estado de datos
@@ -40,8 +41,17 @@ export class MainOrdersComponent implements OnInit {
 	cargandoPedidos = false;
 	cargandoPagos = false;
 
+	// Filtros
+	filtrosActuales: AdminFiltros | null = null;
+	estadoPedidoOpciones: FiltroOpcion[] = [
+		{ value: EstadoPedido.PENDIENTE, label: 'Pendiente' },
+		{ value: EstadoPedido.ENTREGADO, label: 'Entregado' },
+		{ value: EstadoPedido.CANCELADO, label: 'Cancelado' },
+		{ value: EstadoPedido.SIN_CONFIRMAR, label: 'Sin Confirmar' }
+	];
+
 	// Columnas de tabla
-	columnasTabla = ['idPedido', 'idUsuario', 'total', 'estado', 'canalVenta', 'fechaPedido', 'cantidadProductos', 'direccionEntrega', 'Acciones'];
+	columnasTabla = ['ID', 'Usuario', 'Total', 'Estado', 'Canal Venta', 'Fecha', 'Productos', 'Dirección', 'Acciones'];
 
 	// Estados disponibles para actualización
 	estadosDisponibles = [
@@ -62,7 +72,7 @@ export class MainOrdersComponent implements OnInit {
 	constructor(
 		private ordersFacade: OrdersFacade,
 		private inventoryFacade: InventoryFacade
-	) {}
+	) { }
 
 	ngOnInit(): void {
 		this.cargarPedidos();
@@ -92,7 +102,7 @@ export class MainOrdersComponent implements OnInit {
 	 */
 	cargarPedidos(): void {
 		this.cargandoPedidos = true;
-		this.ordersFacade.listAllOrders().subscribe({
+		this.ordersFacade.listAllOrders(this.filtrosActuales || undefined).subscribe({
 			next: (response: any) => {
 				if (response.data) {
 					this.pedidos = response.data.map((pedido: Pedido) =>
@@ -117,10 +127,15 @@ export class MainOrdersComponent implements OnInit {
 				console.log('Productos recibidos:', productos);
 				this.productosOptions = productos
 					.filter((p: any) => p.activo !== false && p.activo !== 0) // Excluir solo explícitamente inactivos
-					.map((producto: any) => ({
-						value: producto.idProducto,
-						label: `${producto.nombre} - $${producto.precio}`
-					}));
+					.map((producto: any) => {
+						const tienePromocion = producto.promotion && producto.promotion !== null;
+						const indicadorPromo = tienePromocion ? ' 🏷️ (Promo Activa)' : '';
+
+						return {
+							value: producto.idProducto,
+							label: `${producto.nombre} - $${producto.precio}${indicadorPromo}`
+						};
+					});
 				console.log('Opciones mapeadas:', this.productosOptions);
 			},
 			error: (error) => {
@@ -371,5 +386,17 @@ export class MainOrdersComponent implements OnInit {
 	 */
 	cerrarModalProductos(): void {
 		this.mostrarModalProductos = false;
+	}
+
+	// ==================== FILTROS ====================
+
+	onFiltrosAplicados(filtros: AdminFiltros): void {
+		this.filtrosActuales = filtros;
+		this.onRecargar();
+	}
+
+	onFiltrosLimpiados(): void {
+		this.filtrosActuales = null;
+		this.onRecargar();
 	}
 }

@@ -1,0 +1,28 @@
+.modal-productos {
+	p {
+		color: #ffffff;
+		margin-bottom: 1rem;
+	}
+
+	.table-content {
+		margin-top: 1rem;
+	}
+}
+
+.modal-confirmacion {
+	padding: 1rem 0;
+}
+
+.form-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 1rem;
+	margin-top: 2rem;
+}
+
+.warning-text {
+	color: #ef4444;
+	font-weight: 500;
+	font-style: italic;
+	margin: 1rem 0;
+}

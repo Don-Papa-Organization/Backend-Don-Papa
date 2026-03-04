@@ -1,0 +1,17 @@
+<div class="inventory-section-wrapper">
+  <app-statistics-data-table
+    title="Top 10 Productos"
+    [loading]="topProductsLoading"
+    [error]="topProductsError"
+    [columns]="['ID Producto', 'Unidades Vendidas', 'Ingresos']"
+    [rows]="topProductsRows"
+  ></app-statistics-data-table>
+
+  <app-statistics-data-table
+    title="Stock Muerto"
+    [loading]="deadStockLoading"
+    [error]="deadStockError"
+    [columns]="['ID Producto', 'Nombre', 'Días sin ventas']"
+    [rows]="deadStockRows"
+  ></app-statistics-data-table>
+</div>

@@ -1,0 +1,29 @@
+<section class="section">
+  <h2>{{ title }}</h2>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+    <button class="retry-button" (click)="onRetry()">Reintentar</button>
+  </div>
+  
+  <div *ngIf="!loading && !error && !rows.length" class="empty">
+    <p>{{ emptyMessage }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error && rows.length" class="table-content">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th *ngFor="let col of columns">{{ col }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <td *ngFor="let col of columns">{{ row[col] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

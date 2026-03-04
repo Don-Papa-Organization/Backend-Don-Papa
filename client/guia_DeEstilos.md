@@ -468,6 +468,8 @@ menuItems: MenuItem[] = [
 
 **Regla importante**: Los botones en footers de modales deben tener `[noBackgroundColor]="true"` para que sean transparentes.
 
+**Sinergia de Estilo**: Para acciones de alerta (ej: Eliminar), el uso conjunto de `[noBackgroundColor]="true"` y `backgroundColor="#EF4444"` genera un botón transparente con borde rojo que se rellena de rojo al hacer hover, manteniendo el texto blanco.
+
 ```html
 <!-- Modal de Confirmación -->
 <app-ui-modal titulo="¿Confirmar eliminación?" [mostrar]="mostrar" (cerrar)="onCerrar()">
@@ -1277,6 +1279,95 @@ Modal simple inline en el componente main. **No es un componente separado**.
   p {
     margin: 0;
     color: #ffffff;
+
+    &.advertencia {
+      font-size: 1rem;
+      color: #999;
+    }
+  }
+
+  strong {
+    color: #D4AF37;
+  }
+}
+
+.acciones-eliminacion {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-start;
+  margin-top: 1rem;
+}
+```
+
+> [!IMPORTANT]
+> **Patrón Estandarizado de Modales de Eliminación**
+> 
+> Todos los modales de confirmación de eliminación DEBEN seguir este patrón:
+> 
+> 1. **Modal inline** en el componente principal (NO componente separado)
+> 2. **Solo botón de eliminar** - NO incluir botón de Cancelar (usar X del modal)
+> 3. **Botón rojo** con `backgroundColor="#EF4444"` y `[noBackgroundColor]="true"`
+> 4. **Título descriptivo** que indique la acción (ej: "Eliminar Producto")
+> 5. **Mensaje de confirmación** con el nombre del elemento a eliminar
+> 6. **Texto de advertencia** opcional para acciones irreversibles
+> 
+> **Ejemplo estandarizado:**
+> ```html
+> @if (mostrarModalEliminar) {
+>   <app-ui-modal titulo="Eliminar [Elemento]" [mostrar]="mostrarModalEliminar"
+>     (cerrar)="cerrarModalEliminar()">
+>     <div class="modal-confirmacion">
+>       <p>¿Está seguro que desea eliminar "[Nombre del elemento]"?</p>
+>       <p class="warning-text">Esta acción no se puede deshacer.</p>
+> 
+>       <div footer class="form-footer">
+>         <ui-button texto="Eliminar [Elemento]" [noBackgroundColor]="true" 
+>           backgroundColor="#EF4444" (accion)="confirmarEliminacion()"></ui-button>
+>       </div>
+>     </div>
+>   </app-ui-modal>
+> }
+> ```
+> 
+> **TypeScript correspondiente:**
+> ```typescript
+> // Estados
+> mostrarModalEliminar = false;
+> elementoSeleccionado: Tipo | null = null;
+> 
+> // Método que abre el modal (llamado desde acción de tabla)
+> onEliminar(registro: Tipo): void {
+>   this.elementoSeleccionado = registro;
+>   this.mostrarModalEliminar = true;
+> }
+> 
+> // Cerrar modal
+> cerrarModalEliminar(): void {
+>   this.mostrarModalEliminar = false;
+>   this.elementoSeleccionado = null;
+> }
+> 
+> // Confirmación de eliminación
+> confirmarEliminacion(): void {
+>   if (!this.elementoSeleccionado) return;
+>   
+>   this.facade.delete(this.elementoSeleccionado.id).subscribe({
+>     next: () => {
+>       this.cerrarModalEliminar();
+>       this.recargarDatos();
+>     },
+>     error: (error) => console.error("Error al eliminar:", error)
+>   });
+> }
+> ```
+> 
+> **Ventajas del patrón:**
+> - Consistencia visual en toda la aplicación
+> - Menos clicks para el usuario (solo confirmar o cerrar con X)
+> - Color rojo distintivo para acciones destructivas
+> - Código predecible y mantenible
+
+---
 
     &.advertencia {
       font-size: 1rem;

@@ -24,14 +24,11 @@
 		<div class="seccion-agregar">
 			<h3>Agregar Producto</h3>
 
-			<ui-input
-				tituloInput="ID Producto"
-				tipo="number"
-				placeholder="123"
-				[(ngModel)]="nuevoProducto.idProducto"
-				name="idProducto"
-				required
-			></ui-input>
+			<app-ui-combobox
+				tituloInput="Producto"
+				[options]="productosOptions"
+				[(selectedOption)]="nuevoProducto.idProducto"
+			></app-ui-combobox>
 
 			<ui-input
 				tituloInput="Cantidad"
@@ -55,12 +52,7 @@
 
 		<!-- Footer -->
 		<div footer class="form-footer">
-			<ui-button
-				texto="Cerrar"
-				[noBackgroundColor]="true"
-				backgroundColor="#999999"
-				(accion)="onCerrar()"
-			></ui-button>
+
 		</div>
 	</app-ui-form>
 </app-ui-modal>

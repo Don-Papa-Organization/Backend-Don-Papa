@@ -1,0 +1,71 @@
+.statistics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #d4af37;
+  padding-bottom: 1rem;
+
+  h2 {
+    margin: 0;
+    color: #ffffff;
+    font-weight: 100;
+  }
+
+  .subtitle {
+    margin: 0.35rem 0 0;
+    color: #757575;
+  }
+}
+
+.acciones-header {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.controls-section {
+  margin-bottom: 1.25rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+  }
+}
+
+.input-field {
+  min-width: 170px;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 5px;
+
+  &:focus {
+    outline: none;
+    border-color: #d4af37;
+  }
+}
+
+@media (max-width: 900px) {
+  .statistics-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .acciones-header {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}

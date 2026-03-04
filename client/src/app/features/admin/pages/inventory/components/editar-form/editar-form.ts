@@ -22,6 +22,7 @@ export class EditarForm implements OnChanges {
     stockActual: 0,
     stockMinimo: 0,
     descripcion: '',
+    activo: true,
     idCategoria: 0
   };
 
@@ -35,6 +36,7 @@ export class EditarForm implements OnChanges {
         stockActual: this.registroSeleccionado.stockActual || 0,
         stockMinimo: this.registroSeleccionado.stockMinimo || 0,
         descripcion: this.registroSeleccionado.descripcion === 'N/A' ? '' : this.registroSeleccionado.descripcion || '',
+        activo: this.registroSeleccionado.activo !== undefined ? this.registroSeleccionado.activo : true,
         idCategoria: this.registroSeleccionado.idCategoria || 0
       };
     }
@@ -51,6 +53,7 @@ export class EditarForm implements OnChanges {
       stockActual: Number(this.productoEditado.stockActual),
       stockMinimo: Number(this.productoEditado.stockMinimo),
       descripcion: this.productoEditado.descripcion || null,
+      activo: this.productoEditado.activo,
       idCategoria: Number(this.productoEditado.idCategoria)
     };
 

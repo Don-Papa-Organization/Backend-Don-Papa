@@ -13,6 +13,7 @@ import { GetEmployeeResponseDto } from '../../../../../domain/users/dtos/respons
 import { CreateEmployeeResponseDto } from '../../../../../domain/users/dtos/response/create-employee.response.dto';
 import { UpdateEmployeeResponseDto } from '../../../../../domain/users/dtos/response/update-employee.response.dto';
 import { DeleteEmployeeResponseDto } from '../../../../../domain/users/dtos/response/delete-employee.response.dto';
+import { AdminFiltros } from '../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel';
 
 // ==================== ViewModels ====================
 
@@ -50,16 +51,28 @@ export interface EmployeeViewModel {
   providedIn: 'root'
 })
 export class UsersFacade {
-  constructor(private usersApi: UsersApi) {}
+  constructor(private usersApi: UsersApi) { }
 
   // ==================== USERS ====================
 
   /**
    * Obtiene la lista de todos los usuarios
    */
-  getUsers(): Observable<UserViewModel[]> {
+  getUsers(filtros?: AdminFiltros): Observable<UserViewModel[]> {
     return this.usersApi.listUsers().pipe(
-      map(response => this.mapUsersToViewModels(response.data!))
+      map(response => {
+        let usuarios = response.data || [];
+        if (filtros) {
+          if (filtros.busqueda) {
+            const term = filtros.busqueda.toLowerCase();
+            usuarios = usuarios.filter(u => u.correo.toLowerCase().includes(term));
+          }
+          if (filtros.estado !== null && filtros.estado !== undefined) {
+            usuarios = usuarios.filter(u => u.activo === (filtros.estado === 'true' || filtros.estado === true));
+          }
+        }
+        return this.mapUsersToViewModels(usuarios);
+      })
     );
   }
 
@@ -107,9 +120,25 @@ export class UsersFacade {
   /**
    * Obtiene la lista enriquecida de clientes
    */
-  getClientsEnriched(): Observable<ClienteEnrichedDto[]> {
+  getClientsEnriched(filtros?: AdminFiltros): Observable<ClienteEnrichedDto[]> {
     return this.usersApi.listClientsEnriched().pipe(
-      map(response => response.data!)
+      map(response => {
+        let clientes = response.data || [];
+        if (filtros) {
+          if (filtros.busqueda) {
+            const term = filtros.busqueda.toLowerCase();
+            clientes = clientes.filter(c =>
+              c.nombre.toLowerCase().includes(term) ||
+              c.correo.toLowerCase().includes(term) ||
+              c.direccion.toLowerCase().includes(term)
+            );
+          }
+          if (filtros.estado !== null && filtros.estado !== undefined) {
+            clientes = clientes.filter(c => c.activo === (filtros.estado === 'true' || filtros.estado === true));
+          }
+        }
+        return clientes;
+      })
     );
   }
 
@@ -150,9 +179,26 @@ export class UsersFacade {
   /**
    * Obtiene la lista de empleados
    */
-  getEmployees(): Observable<EmployeeViewModel[]> {
+  getEmployees(filtros?: AdminFiltros): Observable<EmployeeViewModel[]> {
     return this.usersApi.listEmployees().pipe(
-      map(response => this.mapEmployeesToViewModels(response.data!))
+      map(response => {
+        let empleados = response.data || [];
+        if (filtros) {
+          if (filtros.busqueda) {
+            const term = filtros.busqueda.toLowerCase();
+            empleados = empleados.filter(e =>
+              e.nombre.toLowerCase().includes(term) ||
+              e.documento.toLowerCase().includes(term) ||
+              (e.correo?.toLowerCase() || '').includes(term)
+            );
+          }
+          if (filtros.estado !== null && filtros.estado !== undefined) {
+            // Asumiendo que filtros.estado viene como 'true'/'false' o booleano
+            empleados = empleados.filter(e => e.activo === (filtros.estado === 'true' || filtros.estado === true));
+          }
+        }
+        return this.mapEmployeesToViewModels(empleados);
+      })
     );
   }
 

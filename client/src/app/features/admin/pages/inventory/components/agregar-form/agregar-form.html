@@ -1,27 +1,28 @@
 <app-ui-modal titulo="Agregar Producto" [mostrar]="mostrar" (cerrar)="onCerrar()">
     <app-ui-form maxHeight="50vh" maxWidth="1000px">
         <ui-input tituloInput="Nombre" [(ngModel)]="productoNuevo.nombre" name="nombreNuevo" required
-            #nombreNuevoModel="ngModel">
+            placeholder="Ej: Hamburguesa Clásica" #nombreNuevoModel="ngModel">
         </ui-input>
 
 
 
         <ui-input tituloInput="Precio" tipo="number" [(ngModel)]="productoNuevo.precio" name="precioNuevo" required
-            [min]="0" #precioNuevoModel="ngModel">
+            placeholder="Ej: 15.50" [min]="0" #precioNuevoModel="ngModel">
         </ui-input>
 
 
         <ui-input tituloInput="Stock Actual" tipo="number" [(ngModel)]="productoNuevo.stockActual"
-            name="stockActualNuevo" required [min]="0" #stockActualNuevoModel="ngModel">
+            name="stockActualNuevo" required placeholder="Ej: 50" [min]="0" #stockActualNuevoModel="ngModel">
         </ui-input>
 
 
         <ui-input tituloInput="Stock Mínimo" tipo="number" [(ngModel)]="productoNuevo.stockMinimo"
-            name="stockMinimoNuevo" required [min]="0" #stockMinimoNuevoModel="ngModel">
+            name="stockMinimoNuevo" required placeholder="Ej: 10" [min]="0" #stockMinimoNuevoModel="ngModel">
         </ui-input>
 
 
-        <ui-input tituloInput="Descripción" [(ngModel)]="productoNuevo.descripcion" name="descripcionNuevo">
+        <ui-input tituloInput="Descripción" [(ngModel)]="productoNuevo.descripcion" name="descripcionNuevo"
+            placeholder="Ej: Carne de res, lechuga, tomate...">
         </ui-input>
 
         <app-ui-combobox tituloInput="Categorias" [options]="categoriasOptions"
@@ -29,38 +30,43 @@
 
         </app-ui-combobox>
 
+        <div style="margin-top: 1rem; margin-bottom: 1rem;">
+            <app-ui-checkbox label="Producto Activo" name="activoNuevo" [(ngModel)]="productoNuevo.activo"></app-ui-checkbox>
+        </div>
+
         <!-- <app-ui-only-icon-button urlIcono="icons/addImage.svg" class="addImage" texto="Agregar Imagen"
             [showTextStyle]="showTextStyle">
         </app-ui-only-icon-button> -->
         <app-ui-image-upload (archivoSeleccionado)="onArchivoSeleccionado($event)"></app-ui-image-upload>
 
 
-        
+
 
         <div footer>
             <ui-button texto="Crear Producto" [noBackgroundColor]="true" (accion)="crearProducto()">
             </ui-button>
         </div>
-        
+
         <div>
             <app-ui-helper-text *ngIf="nombreNuevoModel.invalid && nombreNuevoModel.touched">
-            <ng-container *ngIf="nombreNuevoModel.errors?.['required']">El nombre es obligatorio.</ng-container>
-        </app-ui-helper-text>
-        <app-ui-helper-text *ngIf="precioNuevoModel.invalid && precioNuevoModel.touched">
-            <ng-container *ngIf="precioNuevoModel.errors?.['required']">El precio es obligatorio.</ng-container>
-            <ng-container *ngIf="precioNuevoModel.errors?.['min']">El precio no puede ser negativo.</ng-container>
-        </app-ui-helper-text>
-        <app-ui-helper-text *ngIf="stockActualNuevoModel.invalid && stockActualNuevoModel.touched">
-            <ng-container *ngIf="stockActualNuevoModel.errors?.['required']">El stock actual es
-                obligatorio.</ng-container>
-            <ng-container *ngIf="stockActualNuevoModel.errors?.['min']">El stock no puede ser negativo.</ng-container>
-        </app-ui-helper-text>
-        <app-ui-helper-text *ngIf="stockMinimoNuevoModel.invalid && stockMinimoNuevoModel.touched">
-            <ng-container *ngIf="stockMinimoNuevoModel.errors?.['required']">El stock mínimo es
-                obligatorio.</ng-container>
-            <ng-container *ngIf="stockMinimoNuevoModel.errors?.['min']">El stock mínimo no puede ser
-                negativo.</ng-container>
-        </app-ui-helper-text>
+                <ng-container *ngIf="nombreNuevoModel.errors?.['required']">El nombre es obligatorio.</ng-container>
+            </app-ui-helper-text>
+            <app-ui-helper-text *ngIf="precioNuevoModel.invalid && precioNuevoModel.touched">
+                <ng-container *ngIf="precioNuevoModel.errors?.['required']">El precio es obligatorio.</ng-container>
+                <ng-container *ngIf="precioNuevoModel.errors?.['min']">El precio no puede ser negativo.</ng-container>
+            </app-ui-helper-text>
+            <app-ui-helper-text *ngIf="stockActualNuevoModel.invalid && stockActualNuevoModel.touched">
+                <ng-container *ngIf="stockActualNuevoModel.errors?.['required']">El stock actual es
+                    obligatorio.</ng-container>
+                <ng-container *ngIf="stockActualNuevoModel.errors?.['min']">El stock no puede ser
+                    negativo.</ng-container>
+            </app-ui-helper-text>
+            <app-ui-helper-text *ngIf="stockMinimoNuevoModel.invalid && stockMinimoNuevoModel.touched">
+                <ng-container *ngIf="stockMinimoNuevoModel.errors?.['required']">El stock mínimo es
+                    obligatorio.</ng-container>
+                <ng-container *ngIf="stockMinimoNuevoModel.errors?.['min']">El stock mínimo no puede ser
+                    negativo.</ng-container>
+            </app-ui-helper-text>
         </div>
 
     </app-ui-form>

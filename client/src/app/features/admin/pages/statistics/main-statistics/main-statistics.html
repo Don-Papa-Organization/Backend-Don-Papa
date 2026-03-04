@@ -1,0 +1,62 @@
+<div class="statistics-page">
+  <!-- Header estandarizado según guia_DeEstilos.md -->
+  <div class="statistics-header">
+    <h1>Estadísticas</h1>
+    <div class="acciones-header">
+      <app-ui-only-icon-button
+        urlIcono="icons/reload.svg"
+        (action)="loadDashboard()"
+      ></app-ui-only-icon-button>
+    </div>
+  </div>
+
+  <!-- Filtros de rango de fechas -->
+  <app-statistics-filters
+    [filters]="filters"
+    [isLoading]="isLoading"
+    (filterChange)="onFilterChange()"
+    (refresh)="loadDashboard()"
+    (downloadPdf)="onDownloadPDF()"
+    (downloadJson)="onDownloadJSON()"
+  ></app-statistics-filters>
+
+  <!-- Dashboard con secciones modulares -->
+  <div *ngIf="dashboardState$ | async as state" class="dashboard-content">
+    <app-sales-section
+      class="sales-section"
+      [loading]="state.loadingState['salesSummary']"
+      [error]="state.errorState['salesSummary']"
+      [metrics]="buildSalesMetrics(state)"
+      [timelineRows]="buildSalesTimelineRows(state.salesTimeline)"
+    ></app-sales-section>
+
+    <app-inventory-section
+      class="inventory-section"
+      [topProductsLoading]="state.loadingState['topProducts']"
+      [topProductsError]="state.errorState['topProducts']"
+      [topProductsRows]="buildTopProductsRows(state.topProducts)"
+      [deadStockLoading]="state.loadingState['deadStock']"
+      [deadStockError]="state.errorState['deadStock']"
+      [deadStockRows]="buildDeadStockRows(state.deadStock)"
+    ></app-inventory-section>
+
+    <app-user-occupancy-section
+      [userGrowthLoading]="state.loadingState['userGrowth']"
+      [userGrowthError]="state.errorState['userGrowth']"
+      [userMetrics]="buildUserGrowthMetrics(state)"
+      [occupancyLoading]="state.loadingState['occupancy']"
+      [occupancyError]="state.errorState['occupancy']"
+      [occupancyRows]="buildOccupancyRows(state.occupancy)"
+    ></app-user-occupancy-section>
+
+    <app-misc-metrics-section
+      [promotionsLoading]="state.loadingState['promotions']"
+      [promotionsError]="state.errorState['promotions']"
+      [promotionsRows]="buildPromotionsRows(state.promotions)"
+      [frequentUsersLoading]="state.loadingState['frequentUsers']"
+      [frequentUsersError]="state.errorState['frequentUsers']"
+      [frequentUsersRows]="buildFrequentUsersRows(state.frequentUsers)"
+      [occupancyMetrics]="buildOccupancyMetrics(state.occupancy)"
+    ></app-misc-metrics-section>
+  </div>
+</div>

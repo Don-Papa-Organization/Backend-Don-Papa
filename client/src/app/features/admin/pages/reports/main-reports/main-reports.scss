@@ -1,0 +1,198 @@
+// ==================== CONTENEDOR PRINCIPAL ====================
+.reports-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+	padding: 1.5rem;
+	color: #ffffff;
+	min-width: 785px;
+	height: 100%;
+}
+
+// ==================== HEADER ====================
+.reports-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid #D4AF37;
+
+	h1 {
+		font-size: 2rem;
+		font-weight: 100;
+		color: #ffffff;
+		margin: 0;
+	}
+
+	.acciones-header {
+		display: flex;
+		gap: 0.75rem;
+	}
+}
+
+// ==================== CONTENIDO GENERAL ====================
+.reports-contenido {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.reportes-seccion {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.reportes-seccion-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	h2 {
+		font-size: 1.4rem;
+		font-weight: 100;
+		color: #ffffff;
+		margin: 0;
+	}
+}
+
+// ==================== FILTROS ====================
+.filtros-contenedor {
+	display: flex;
+	gap: 1rem;
+	align-items: flex-end;
+	flex-wrap: wrap;
+	padding: 1rem;
+	background-color: rgba(212, 175, 55, 0.05);
+	border-radius: 4px;
+	border-left: 3px solid #D4AF37;
+}
+
+.filtros-grupo {
+	flex: 1;
+	min-width: 200px;
+
+	ui-input {
+		width: 100%;
+	}
+}
+
+.filtros-acciones {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+
+	ui-button {
+		white-space: nowrap;
+	}
+}
+
+// ==================== TABLA ====================
+.tabla-contenedor {
+	flex: 1;
+	overflow-y: auto;
+
+	.mensaje-vacio {
+		text-align: center;
+		padding: 2rem;
+		color: #999;
+		font-style: italic;
+	}
+}
+
+// ==================== ESTADO CARGANDO ====================
+.cargando {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 300px;
+
+	p {
+		font-size: 1.2rem;
+		color: #999;
+	}
+}
+
+// ==================== MODALES ====================
+.contenido-detalle {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1rem;
+
+	.detalle-fila {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.75rem 0;
+		border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+
+		strong {
+			color: #D4AF37;
+			min-width: 120px;
+		}
+
+		span {
+			color: #ffffff;
+			word-break: break-word;
+		}
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+}
+
+// ==================== RESPONSIVE ====================
+@media (max-width: 768px) {
+	.reports-page {
+		padding: 1rem;
+		min-width: auto;
+	}
+
+	.reports-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+
+		h1 {
+			font-size: 1.5rem;
+		}
+
+		.acciones-header {
+			width: 100%;
+			justify-content: flex-start;
+		}
+	}
+
+	.filtros-contenedor {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.filtros-grupo {
+		min-width: unset;
+	}
+
+	.filtros-acciones {
+		justify-content: flex-start;
+	}
+
+	.reportes-seccion-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.contenido-detalle {
+		.detalle-fila {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+
+			strong {
+				min-width: unset;
+			}
+		}
+	}
+}

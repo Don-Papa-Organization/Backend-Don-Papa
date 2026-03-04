@@ -1,0 +1,79 @@
+<app-ui-modal titulo="Días del Evento" [mostrar]="mostrar" (cerrar)="onCerrar()">
+    <div class="modal-dias">
+        <p *ngIf="eventoSeleccionado">
+            Evento: {{ eventoSeleccionado.nombre }}
+        </p>
+
+        @if (diasEvento.length > 0) {
+        <div class="table-content">
+            <app-ui-tabla [theadData]="columnasDiasEvento" [tbodyData]="diasEvento" [acciones]="accionesDiasEvento">
+            </app-ui-tabla>
+        </div>
+        } @else {
+        <p class="warning-text">No hay días programados para este evento.</p>
+        }
+
+        <div footer class="form-footer">
+            <ui-button texto="Agregar Día" (accion)="mostrarModalAgregarDia = true"></ui-button>
+        </div>
+    </div>
+</app-ui-modal>
+
+<!-- MODAL PROMOCIONES DEL DÍA -->
+<app-ui-modal titulo="Promociones del Día" [mostrar]="mostrarModalPromocionesDelDia"
+    (cerrar)="mostrarModalPromocionesDelDia = false">
+    <div class="modal-promociones-dia">
+        <p *ngIf="diaEventoSeleccionadoParaPromociones">
+            <strong>Día:</strong> {{ diaEventoSeleccionadoParaPromociones.Fecha }}
+        </p>
+
+        @if (promocionesDelDia.length > 0) {
+        <div class="table-content">
+            <app-ui-tabla [theadData]="columnasPromocionesDelDia" [tbodyData]="promocionesDelDia"
+                [acciones]="accionesPromocionesDelDia">
+            </app-ui-tabla>
+        </div>
+        } @else {
+        <p class="warning-text">No hay promociones asociadas a este día.</p>
+        }
+
+        <div footer class="form-footer">
+            <ui-button texto="Asociar Promoción" (accion)="mostrarModalAgregarPromocionAlDia = true"></ui-button>
+        </div>
+    </div>
+</app-ui-modal>
+
+<!-- MODALES AUXILIARES -->
+<app-agregar-dia-evento-form [mostrar]="mostrarModalAgregarDia" [eventoId]="eventoSeleccionado?.idEvento || null"
+    (cerrar)="mostrarModalAgregarDia = false" (diaAgregado)="onDiaAgregado($event)">
+</app-agregar-dia-evento-form>
+
+<app-editar-dia-evento-form [mostrar]="mostrarModalEditarDia" [diaEvento]="diaEventoSeleccionado"
+    (cerrar)="mostrarModalEditarDia = false" (diaActualizado)="onDiaEventoActualizado($event)">
+</app-editar-dia-evento-form>
+
+@if (mostrarModalEliminarDia) {
+<app-ui-modal titulo="Eliminar Día de Evento" [mostrar]="mostrarModalEliminarDia"
+    (cerrar)="mostrarModalEliminarDia = false">
+    <div class="modal-confirmacion">
+        <ui-button texto="Eliminar Día" [noBackgroundColor]="true" backgroundColor="#EF4444"
+            (accion)="confirmarEliminacionDiaEvento()"></ui-button>
+    </div>
+</app-ui-modal>
+}
+
+<app-agregar-promocion-dia-evento-form [mostrar]="mostrarModalAgregarPromocionAlDia"
+    [diaEventoId]="diaEventoSeleccionadoParaPromociones?.idEventoSemana || null"
+    [promocionesOptions]="promocionesDisponibles" (cerrar)="mostrarModalAgregarPromocionAlDia = false"
+    (promocionAgregada)="onPromocionAgregadaAlDia($event)">
+</app-agregar-promocion-dia-evento-form>
+
+@if (mostrarModalEliminarPromocionDelDia) {
+<app-ui-modal titulo="Eliminar Promoción del Día" [mostrar]="mostrarModalEliminarPromocionDelDia"
+    (cerrar)="mostrarModalEliminarPromocionDelDia = false">
+    <div class="modal-confirmacion">
+        <ui-button texto="Eliminar Promoción" [noBackgroundColor]="true" backgroundColor="#EF4444"
+            (accion)="confirmarEliminacionPromocionDelDia()"></ui-button>
+    </div>
+</app-ui-modal>
+}

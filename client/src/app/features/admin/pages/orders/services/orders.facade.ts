@@ -14,6 +14,8 @@ import { PaymentHistoryRequestDto } from '../../../../../domain/orders/dtos/requ
 import { ApiResponse } from '../../../../../types/api-response.type';
 import { AddProductToOrderRequestDto } from '../../../../../domain/orders/dtos/request/add-product-to-order.request.dto';
 import { PendingPaymentOrderDto } from '../../../../../domain/orders/dtos/response/list-pending-payment-orders.response.dto';
+import { map } from 'rxjs/operators';
+import { AdminFiltros } from '../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel';
 
 /**
  * OrdersFacade
@@ -29,13 +31,39 @@ import { PendingPaymentOrderDto } from '../../../../../domain/orders/dtos/respon
  */
 @Injectable({ providedIn: 'root' })
 export class OrdersFacade {
-	constructor(private ordersApi: OrdersApi) {}
+	constructor(private ordersApi: OrdersApi) { }
 
 	/**
 	 * Obtiene todos los pedidos con filtros opcionales
 	 */
-	listAllOrders(filters?: ListAllOrdersRequestDto): Observable<ApiResponse<Pedido[]> & { pagination: any }> {
-		return this.ordersApi.listAllOrders(filters);
+	listAllOrders(filtros?: AdminFiltros): Observable<ApiResponse<Pedido[]> & { pagination: any }> {
+		return this.ordersApi.listAllOrders().pipe(
+			map(response => {
+				let pedidos = response.data || [];
+				if (filtros) {
+					if (filtros.busqueda) {
+						const term = filtros.busqueda.toLowerCase();
+						pedidos = pedidos.filter(p =>
+							p.idPedido.toString().includes(term) ||
+							p.idUsuario.toString().includes(term) ||
+							p.direccionEntrega?.toLowerCase().includes(term)
+						);
+					}
+					if (filtros.estado) {
+						pedidos = pedidos.filter(p => p.estado === filtros.estado);
+					}
+					if (filtros.fechaInicio) {
+						const fInicio = new Date(filtros.fechaInicio);
+						pedidos = pedidos.filter(p => new Date(p.fechaPedido) >= fInicio);
+					}
+					if (filtros.fechaFin) {
+						const fFin = new Date(filtros.fechaFin);
+						pedidos = pedidos.filter(p => new Date(p.fechaPedido) <= fFin);
+					}
+				}
+				return { ...response, data: pedidos };
+			})
+		);
 	}
 
 	/**
@@ -147,29 +175,40 @@ export class OrdersFacade {
 	/**
 	 * Mapea un pedido a ViewModel para presentación en tabla
 	 */
-	mapOrderToViewModel(pedido: Pedido): OrderViewModel {
+	mapOrderToViewModel(pedido: Pedido): any {
 		return {
+			"ID": pedido.idPedido,
+			"Usuario": `Usuario #${pedido.idUsuario}`,
+			"Total": `$${pedido.total}`,
+			"Estado": pedido.estado,
+			"Canal Venta": pedido.canalVenta,
+			"Fecha": this.formatDate(pedido.fechaPedido),
+			"Productos": pedido.productos?.length ?? 0,
+			"Dirección": pedido.direccionEntrega || 'N/A',
+			// Originales para lógica
 			idPedido: pedido.idPedido,
 			idUsuario: pedido.idUsuario,
 			total: pedido.total,
 			estado: pedido.estado,
-			canalVenta: pedido.canalVenta,
-			fechaPedido: pedido.fechaPedido,
-			cantidadProductos: pedido.productos?.length ?? 0,
-			direccionEntrega: pedido.direccionEntrega || 'N/A'
+			fechaPedido: pedido.fechaPedido
 		};
 	}
 
 	/**
 	 * Mapea un pago a ViewModel para presentación en tabla
 	 */
-	mapPaymentToViewModel(pago: Pago): PaymentViewModel {
+	mapPaymentToViewModel(pago: Pago): any {
 		return {
+			"ID Pago": pago.idPago,
+			"ID Pedido": pago.idPedido,
+			"Monto": `$${pago.monto}`,
+			"Fecha": this.formatDate(pago.fechaPago),
+			"Método": pago.metodoPago?.nombre || 'N/A',
+			// Originales para lógica
 			idPago: pago.idPago,
 			idPedido: pago.idPedido,
 			monto: pago.monto,
-			fechaPago: pago.fechaPago,
-			metodoPago: pago.metodoPago?.nombre || 'N/A'
+			fechaPago: pago.fechaPago
 		};
 	}
 
@@ -179,23 +218,46 @@ export class OrdersFacade {
 	mapPaymentMethodToViewModel(metodo: MetodoPago): PaymentMethodViewModel {
 		return {
 			idMetodoPago: metodo.idMetodoPago,
-			nombre: metodo.nombre
+			nombre: metodo.nombre,
+			"ID": metodo.idMetodoPago,
+			"Nombre": metodo.nombre
 		};
 	}
 
 	/**
 	 * Mapea una orden pendiente de pago a ViewModel
 	 */
-	mapPendingPaymentOrderToViewModel(pedido: PendingPaymentOrderDto): PendingPaymentOrderViewModel {
+	mapPendingPaymentOrderToViewModel(pedido: PendingPaymentOrderDto): any {
 		return {
+			"ID": pedido.idPedido,
+			"Usuario": `Usuario #${pedido.idUsuario}`,
+			"Total": `$${pedido.total}`,
+			"Estado": pedido.estado,
+			"Canal Venta": pedido.canalVenta,
+			"Fecha": this.formatDate(pedido.fechaPedido),
+			"Dirección": pedido.direccionEntrega || 'N/A',
+			// Originales
 			idPedido: pedido.idPedido,
-			idUsuario: pedido.idUsuario,
-			total: pedido.total,
-			estado: pedido.estado,
-			canalVenta: pedido.canalVenta,
-			fechaPedido: pedido.fechaPedido,
-			direccionEntrega: pedido.direccionEntrega || 'N/A'
+			total: pedido.total
 		};
+	}
+
+	private formatDate(dateString: string): string {
+		try {
+			if (!dateString) return 'N/A';
+			const date = new Date(dateString);
+			if (isNaN(date.getTime())) return dateString;
+
+			return date.toLocaleString('es-ES', {
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit',
+				hour: '2-digit',
+				minute: '2-digit'
+			});
+		} catch {
+			return dateString;
+		}
 	}
 }
 
@@ -230,6 +292,8 @@ export interface PaymentViewModel {
 export interface PaymentMethodViewModel {
 	idMetodoPago: number;
 	nombre: string;
+	"ID"?: number;
+	"Nombre"?: string;
 }
 
 /**

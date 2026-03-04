@@ -49,7 +49,7 @@ export class AgregarForm {
       precio: Number(this.productoNuevo.precio),
       stockActual: Number(this.productoNuevo.stockActual),
       stockMinimo: Number(this.productoNuevo.stockMinimo),
-      activo: true,
+      activo: this.productoNuevo.activo,
       descripcion: this.productoNuevo.descripcion,
       idCategoria: Number(this.productoNuevo.idCategoria) || undefined
     };

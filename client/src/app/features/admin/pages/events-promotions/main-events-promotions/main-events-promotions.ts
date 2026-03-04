@@ -1,14 +1,19 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { TabItem } from "../../../../../shared/ui/ui-tabs/ui-tabs";
+import { AdminFiltros, FiltroOpcion } from "../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel";
 import { AccionTabla } from "../../../../../shared/ui/ui-tabla/ui-tabla";
 import { Promocion } from "../../../../../domain/events&Promotions/models/promocion.model";
 import { Evento } from "../../../../../domain/events&Promotions/models/evento.model";
+import { PromotionEventDayItem } from "../../../../../domain/events&Promotions/models/promotioneventodia.model";
 import { EventsPromotionsFacade } from "../services/events-promotions.facade";
 import { InventoryFacade } from "../../inventory/services/inventory.facade";
 import { CreatePromotionRequestDto } from "../../../../../domain/events&Promotions/dtos/request/create-promotion.request.dto";
 import { UpdatePromotionRequestDto } from "../../../../../domain/events&Promotions/dtos/request/update-promotion.request.dto";
 import { CreateEventRequestDto } from "../../../../../domain/events&Promotions/dtos/request/create-event.request.dto";
 import { UpdateEventRequestDto } from "../../../../../domain/events&Promotions/dtos/request/update-event.request.dto";
+import { CreatePromotionEventDayRequestDto } from "../../../../../domain/events&Promotions/dtos/request/create-promotion-event-day.request.dto";
+import { ProductsSectionComponent } from "../components/products-section/products-section";
+import { DaysSectionComponent } from "../components/days-section/days-section";
 
 interface PromocionViewModel {
 	"ID": number;
@@ -31,6 +36,28 @@ interface EventoViewModel {
 	idEvento: number;
 }
 
+interface PromocionDelDiaViewModel {
+	idPromocionEventoDia: number;
+	idPromocion: number;
+	idEventoDiaSemana: number;
+	"Nombre": string;
+	"Descripción": string;
+	"% Descuento": string;
+	"Fecha Inicio": string;
+	"Fecha Fin": string;
+}
+
+interface EventoDiaSemanaViewModel {
+	idEventoSemana: number;
+	idEvento: number;
+	"Fecha": string;
+	"Hora Inicio": string;
+	"Hora Fin": string;
+	fecha?: string;
+	horaInicio?: string;
+	horaFin?: string;
+}
+
 @Component({
 	selector: "app-main-events-promotions",
 	templateUrl: "./main-events-promotions.html",
@@ -45,6 +72,17 @@ export class MainEventsPromotions implements OnInit {
 	];
 	tabActiva: string = "promociones";
 
+	// === INDICADORES DE CARGA ===
+	cargandoPromociones = false;
+	cargandoEventos = false;
+
+	// === FILTROS ===
+	filtrosActuales: AdminFiltros | null = null;
+	estadoOpciones: FiltroOpcion[] = [
+		{ value: 'true', label: 'Activa' },
+		{ value: 'false', label: 'Inactiva' }
+	];
+
 	// === DATOS PROMOCIONES ===
 	promociones: PromocionViewModel[] = [];
 	columnasPromociones = [
@@ -55,12 +93,16 @@ export class MainEventsPromotions implements OnInit {
 		"Fecha Fin",
 		"Tipo",
 		"Estado",
-        "Acciones"
+		"Acciones"
 	];
 
 	// === DATOS EVENTOS ===
 	eventos: EventoViewModel[] = [];
 	columnasEventos = ["ID", "Nombre", "Descripción", "Acciones"];
+
+	// === REFERENCIAS A COMPONENTES ENCAPSULADOS ===
+	@ViewChild(ProductsSectionComponent) productsSection!: ProductsSectionComponent;
+	@ViewChild(DaysSectionComponent) daysSection!: DaysSectionComponent;
 
 	// === ESTADOS DE MODALES - PROMOCIONES ===
 	mostrarModalAgregarPromocion = false;
@@ -74,20 +116,15 @@ export class MainEventsPromotions implements OnInit {
 	mostrarModalEliminarEvento = false;
 	eventoSeleccionado: Evento | null = null;
 
-	// === ESTADOS DE MODALES - PRODUCTOS DE PROMOCIÓN ===
+	// === ESTADOS DE PRODUCTOS (Delegados) ===
 	mostrarModalProductosPromocion = false;
 	productosPromocion: any[] = [];
-
-	// === ESTADOS DE MODALES - DÍAS DE EVENTO ===
-	mostrarModalDiasEvento = false;
-	diasEvento: any[] = [];
-
-	// === ESTADOS DE MODALES - AGREGAR PRODUCTO A PROMOCIÓN ===
-	mostrarModalAgregarProducto = false;
 	productosDisponibles: any[] = [];
 
-	// === ESTADOS DE MODALES - AGREGAR DÍA A EVENTO ===
-	mostrarModalAgregarDia = false;
+	// === ESTADOS DE DÍAS (Delegados) ===
+	mostrarModalDiasEvento = false;
+	diasEvento: any[] = [];
+	promocionesDisponibles: any[] = [];
 
 	// === ACCIONES DE TABLA ===
 	accionesPromociones: AccionTabla[] = [
@@ -96,11 +133,7 @@ export class MainEventsPromotions implements OnInit {
 			accion: (registro: PromocionViewModel) => this.onEditarPromocion(registro)
 		},
 		{
-			urlIcono: "icons/check.svg",
-			accion: (registro: PromocionViewModel) => this.onTogglePromocionActiva(registro)
-		},
-		{
-			urlIcono: "icons/eye.svg",
+			urlIcono: "icons/product.svg",
 			accion: (registro: PromocionViewModel) => this.onGestionarProductosDePromocion(registro)
 		},
 		{
@@ -115,7 +148,7 @@ export class MainEventsPromotions implements OnInit {
 			accion: (registro: EventoViewModel) => this.onEditarEvento(registro)
 		},
 		{
-			urlIcono: "icons/eye.svg",
+			urlIcono: "icons/calendar.svg",
 			accion: (registro: EventoViewModel) => this.onGestionarDiasDeEvento(registro)
 		},
 		{
@@ -123,6 +156,7 @@ export class MainEventsPromotions implements OnInit {
 			accion: (registro: EventoViewModel) => this.onEliminarEvento(registro)
 		}
 	];
+
 
 	constructor(
 		private facade: EventsPromotionsFacade,
@@ -142,11 +176,16 @@ export class MainEventsPromotions implements OnInit {
 
 	// ==================== PROMOCIONES ====================
 	cargarPromociones(): void {
-		this.facade.getPromociones().subscribe({
+		this.cargandoPromociones = true;
+		this.facade.getPromociones(this.filtrosActuales || undefined).subscribe({
 			next: (data) => {
 				this.promociones = data;
+				this.cargandoPromociones = false;
 			},
-			error: (error) => console.error("Error al cargar promociones:", error)
+			error: (error) => {
+				console.error("Error al cargar promociones:", error);
+				this.cargandoPromociones = false;
+			}
 		});
 	}
 
@@ -207,95 +246,50 @@ export class MainEventsPromotions implements OnInit {
 	}
 
 	onGestionarProductosDePromocion(registro: PromocionViewModel): void {
-		this.facade.getProductPromotions().subscribe({
-			next: (productos) => {
-				// Filtrar productos asociados a esta promoción
-				this.productosPromocion = productos.filter(
-					(p: any) => p.idPromocion === registro.idPromocion
-				);
-				this.promocionSeleccionada = null;
-				this.facade.getPromocionById(registro.idPromocion).subscribe({
-					next: (promocion) => {
-						this.promocionSeleccionada = promocion;
+		this.facade.getPromocionById(registro.idPromocion).subscribe({
+			next: (promocion) => {
+				this.promocionSeleccionada = promocion;
+				this.facade.getProductsByPromotion(registro.idPromocion).subscribe({
+					next: (respuesta: any) => {
+						this.productosPromocion = (respuesta.productos || []).map((item: any) => ({
+							idProductoPromocion: item.idProductoPromocion,
+							idProducto: item.idProducto,
+							idPromocion: item.idPromocion,
+							"Nombre": item.detalleProducto?.nombre || `Producto #${item.idProducto}`,
+							"Precio": `$${item.detalleProducto?.precio || 0}`,
+							"Cant. Mínima": item.cantidadMinima,
+							"Precio Promo": item.precioPromocional ? `$${item.precioPromocional}` : '-',
+							"% Descuento": item.porcentajeDescuento ? `${item.porcentajeDescuento}%` : '-',
+							nombre: item.detalleProducto?.nombre || `Producto #${item.idProducto}`,
+							precio: item.detalleProducto?.precio || 0,
+							descripcion: item.detalleProducto?.descripcion || '-',
+							cantidadMinima: item.cantidadMinima,
+							precioPromocional: item.precioPromocional,
+							porcentajeDescuento: item.porcentajeDescuento
+						}));
 						this.mostrarModalProductosPromocion = true;
-					},
-					error: (error) => console.error("Error al cargar promoción:", error)
+					}
 				});
-			},
-			error: (error) => console.error("Error al cargar productos de promoción:", error)
+			}
 		});
 	}
 
-	cerrarModalProductosPromocion(): void {
-		this.mostrarModalProductosPromocion = false;
-		this.productosPromocion = [];
-		this.promocionSeleccionada = null;
-	}
-
-	abrirModalAgregarProducto(): void {
-		if (!this.promocionSeleccionada) return;
-		// Cargar productos disponibles
-		this.facade.getPromociones().subscribe({
-			next: () => {
-				// Obtener lista de todos los productos (puedes usar un endpoint específico si existe)
-				this.mostrarModalAgregarProducto = true;
-			},
-			error: (error) => console.error("Error al cargar productos:", error)
-		});
-	}
-
-	onProductoAgregado(dto: any): void {
-		this.facade.createProductPromotion(dto).subscribe({
-			next: () => {
-				this.mostrarModalAgregarProducto = false;
-				// Recargar productos de la promoción
-				if (this.promocionSeleccionada) {
-					this.onGestionarProductosDePromocion({
-						"ID": this.promocionSeleccionada.idPromocion,
-						"Nombre": this.promocionSeleccionada.nombre,
-						"Descripción": this.promocionSeleccionada.descripcion || "",
-						"Fecha Inicio": "",
-						"Fecha Fin": "",
-						"Tipo": "",
-						"Estado": "",
-						idPromocion: this.promocionSeleccionada.idPromocion,
-						activo: ""
-					});
-				}
-			},
-			error: (error) => console.error("Error al agregar producto a promoción:", error)
-		});
-	}
-
-	cerrarModalAgregarProducto(): void {
-		this.mostrarModalAgregarProducto = false;
-	}
-
-	confirmarEliminacionPromocion(): void {
-		if (!this.promocionSeleccionada) return;
-
-		this.facade.deletePromocion(this.promocionSeleccionada.idPromocion).subscribe({
-			next: () => {
-				this.mostrarModalEliminarPromocion = false;
-				this.promocionSeleccionada = null;
-				this.cargarPromociones();
-			},
-			error: (error) => console.error("Error al eliminar promoción:", error)
-		});
-	}
-
-	cerrarModalEliminarPromocion(): void {
-		this.mostrarModalEliminarPromocion = false;
-		this.promocionSeleccionada = null;
+	onRecargarProductosDePromocion(idPromocion: number): void {
+		this.onGestionarProductosDePromocion({ idPromocion } as any);
 	}
 
 	// ==================== EVENTOS ====================
 	cargarEventos(): void {
-		this.facade.getEventos().subscribe({
+		this.cargandoEventos = true;
+		this.facade.getEventos(this.filtrosActuales || undefined).subscribe({
 			next: (data) => {
 				this.eventos = data;
+				this.cargandoEventos = false;
 			},
-			error: (error) => console.error("Error al cargar eventos:", error)
+			error: (error) => {
+				console.error("Error al cargar eventos:", error);
+				this.cargandoEventos = false;
+			}
 		});
 	}
 
@@ -304,7 +298,7 @@ export class MainEventsPromotions implements OnInit {
 	 */
 	private cargarProductos(): void {
 		this.inventoryFacade.getProductsWithCategories().subscribe({
-			next: (productos) => {
+			next: (productos: any[]) => {
 				console.log('Productos recibidos:', productos);
 				this.productosDisponibles = productos
 					.filter((p: any) => p.activo !== false && p.activo !== 0)
@@ -314,7 +308,7 @@ export class MainEventsPromotions implements OnInit {
 					}));
 				console.log('Opciones mapeadas:', this.productosDisponibles);
 			},
-			error: (error) => {
+			error: (error: any) => {
 				console.error('Error al cargar productos:', error);
 			}
 		});
@@ -368,52 +362,61 @@ export class MainEventsPromotions implements OnInit {
 
 	onGestionarDiasDeEvento(registro: EventoViewModel): void {
 		this.facade.getEventDays(registro.idEvento).subscribe({
-			next: (dias) => {
-				this.diasEvento = dias;
-				this.eventoSeleccionado = null;
+			next: (dias: any[]) => {
+				this.diasEvento = dias.map((dia: any) => ({
+					idEventoSemana: dia.idEventoSemana,
+					idEvento: dia.idEvento,
+					"Fecha": this.facade.formatDate(dia.fecha),
+					"Hora Inicio": dia.horaInicio,
+					"Hora Fin": dia.horaFin,
+					fecha: dia.fecha,
+					horaInicio: dia.horaInicio,
+					horaFin: dia.horaFin
+				}));
 				this.facade.getEventoById(registro.idEvento).subscribe({
 					next: (evento) => {
 						this.eventoSeleccionado = evento;
-						this.mostrarModalDiasEvento = true;
-					},
-					error: (error) => console.error("Error al cargar evento:", error)
+						this.facade.getPromociones().subscribe({
+							next: (promociones) => {
+								this.promocionesDisponibles = promociones
+									.filter(p => p.activo === "Activa")
+									.map(p => ({ value: p.idPromocion, label: p["Nombre"] }));
+								this.mostrarModalDiasEvento = true;
+							}
+						});
+					}
 				});
-			},
-			error: (error) => console.error("Error al cargar días del evento:", error)
+			}
 		});
 	}
 
-	cerrarModalDiasEvento(): void {
-		this.mostrarModalDiasEvento = false;
-		this.diasEvento = [];
-		this.eventoSeleccionado = null;
+	onRecargarEvento(idEvento: number): void {
+		this.onGestionarDiasDeEvento({ idEvento } as any);
 	}
 
-	abrirModalAgregarDia(): void {
-		if (!this.eventoSeleccionado) return;
-		this.mostrarModalAgregarDia = true;
-	}
-
-	onDiaAgregado(dto: any): void {
-		this.facade.createEventDay(dto).subscribe({
+	confirmarEliminacionPromocion(): void {
+		if (!this.promocionSeleccionada) return;
+		this.facade.deletePromocion(this.promocionSeleccionada.idPromocion).subscribe({
 			next: () => {
-				this.mostrarModalAgregarDia = false;
-				// Recargar días del evento
-				if (this.eventoSeleccionado) {
-					this.onGestionarDiasDeEvento({
-						"ID": this.eventoSeleccionado.idEvento,
-						"Nombre": this.eventoSeleccionado.nombre,
-						"Descripción": this.eventoSeleccionado.descripcion || "",
-						idEvento: this.eventoSeleccionado.idEvento
-					});
-				}
-			},
-			error: (error) => console.error("Error al agregar día al evento:", error)
+				this.mostrarModalEliminarPromocion = false;
+				this.promocionSeleccionada = null;
+				this.cargarPromociones();
+			}
 		});
 	}
 
-	cerrarModalAgregarDia(): void {
-		this.mostrarModalAgregarDia = false;
+	cerrarModalEliminarPromocion(): void {
+		this.mostrarModalEliminarPromocion = false;
+		this.promocionSeleccionada = null;
+	}
+
+	private formatearFecha(fecha: string | undefined): string {
+		if (!fecha) return '-';
+		try {
+			return new Date(fecha).toLocaleDateString('es-ES');
+		} catch {
+			return fecha;
+		}
 	}
 
 	confirmarEliminacionEvento(): void {
@@ -432,5 +435,25 @@ export class MainEventsPromotions implements OnInit {
 	cerrarModalEliminarEvento(): void {
 		this.mostrarModalEliminarEvento = false;
 		this.eventoSeleccionado = null;
+	}
+
+	// ==================== FILTROS ====================
+
+	onFiltrosAplicados(filtros: AdminFiltros): void {
+		this.filtrosActuales = filtros;
+		this.onRecargar();
+	}
+
+	onFiltrosLimpiados(): void {
+		this.filtrosActuales = null;
+		this.onRecargar();
+	}
+
+	onRecargar(): void {
+		if (this.tabActiva === 'promociones') {
+			this.cargarPromociones();
+		} else {
+			this.cargarEventos();
+		}
 	}
 }

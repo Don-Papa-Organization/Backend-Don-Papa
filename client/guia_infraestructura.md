@@ -383,7 +383,7 @@ Al crear un nuevo módulo (ej: Orders, Users, Events) sigue este checklist:
 ### 8.1 Cuándo Usar Componentes Encapsulados
 
 **Indicadores de necesidad:**
-- Tab o sección con **> 3 modales diferentes**
+- Tab o sección con **> 3 modales diferentes** (ej: `Orders`, `Events-Promotions`)
 - Lógica de UI compleja que **no debe estar en el componente principal**
 - **Reutilización potencial** de la sección en otros contextos
 - Estado interno complejo que el padre no necesita controlar

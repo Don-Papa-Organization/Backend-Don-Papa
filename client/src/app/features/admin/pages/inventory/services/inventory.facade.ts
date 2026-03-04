@@ -29,11 +29,26 @@ export interface ProductViewModel {
 export class InventoryFacade {
     constructor(private inventoryApi: InventoryApi) { }
 
-    getProductsWithCategories(): Observable<ProductViewModel[]> {
+    getProductsWithCategories(filtros?: any): Observable<ProductViewModel[]> {
         return this.inventoryApi.listProducts().pipe(
             switchMap(response => {
-                if (response.success && response.data && response.data.productos.length > 0) {
-                    const productos = response.data.productos;
+                if (response.success && response.data?.productos?.length) {
+                    let productos = response.data.productos;
+
+                    // Aplicar filtros si existen
+                    if (filtros) {
+                        if (filtros.busqueda) {
+                            const term = filtros.busqueda.toLowerCase();
+                            productos = productos.filter(p =>
+                                p.nombre.toLowerCase().includes(term) ||
+                                (p.descripcion && p.descripcion.toLowerCase().includes(term))
+                            );
+                        }
+                        if (filtros.estado) {
+                            productos = productos.filter(p => p.idCategoria === filtros.estado);
+                        }
+                        // Nota: El filtrado por fechas se puede implementar aquí si el modelo Producto tiene campos de fecha
+                    }
 
                     const productosConCategoria$ = productos.map(producto =>
                         producto.idCategoria
@@ -46,6 +61,8 @@ export class InventoryFacade {
                             )
                             : of({ ...producto, nombreCategoria: 'N/A' })
                     );
+
+                    if (productos.length === 0) return of([]);
 
                     return forkJoin(productosConCategoria$).pipe(
                         map(productosConCat =>
@@ -96,6 +113,40 @@ export class InventoryFacade {
 
     deleteCategory(id: number): Observable<ApiResponse<null>> {
         return this.inventoryApi.deleteCategory(id);
+    }
+
+    getCategoryOptions(): Observable<{ value: any, label: string }[]> {
+        return this.inventoryApi.listCategories().pipe(
+            map(response => {
+                const data = response.data;
+                let categoriesArray: any[] = [];
+
+                if (Array.isArray(data)) {
+                    categoriesArray = data;
+                } else if (data && typeof data === 'object') {
+                    const d = data as any;
+                    if (Array.isArray(d.categorias)) {
+                        categoriesArray = d.categorias;
+                    } else if (Array.isArray(d.categories)) {
+                        categoriesArray = d.categories;
+                    } else {
+                        const keys = Object.keys(d);
+                        if (keys.length > 0 && Array.isArray(d[keys[0]])) {
+                            categoriesArray = d[keys[0]];
+                        }
+                    }
+                }
+
+                return categoriesArray.map((categoria: any) => ({
+                    value: categoria.idCategoria,
+                    label: categoria.nombre
+                }));
+            }),
+            catchError(error => {
+                console.error('Error al obtener opciones de categorías:', error);
+                return of([]);
+            })
+        );
     }
 
     private mapToViewModel(producto: any): ProductViewModel {

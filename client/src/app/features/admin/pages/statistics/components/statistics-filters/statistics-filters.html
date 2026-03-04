@@ -1,0 +1,50 @@
+<div class="statistics-header">
+  <div>
+    <h2>Panel de Estadísticas</h2>
+    <p class="subtitle">Análisis completo de ventas, inventario, usuarios y ocupación</p>
+  </div>
+
+  <div class="acciones-header">
+    <ui-button
+      texto="Actualizar"
+      [disabled]="isLoading"
+      (accion)="refresh.emit()"
+    ></ui-button>
+    <ui-button
+      texto="Descargar PDF"
+      [noBackgroundColor]="true"
+      (accion)="downloadPdf.emit()"
+    ></ui-button>
+    <ui-button
+      texto="Descargar JSON"
+      [noBackgroundColor]="true"
+      (accion)="downloadJson.emit()"
+    ></ui-button>
+  </div>
+</div>
+
+<div class="controls-section">
+  <div class="filters">
+    <ui-input
+      tituloInput="Fecha Inicio"
+      tipo="date"
+      [(ngModel)]="filters.startDate"
+      (valorInputChange)="filterChange.emit()"
+    ></ui-input>
+
+    <ui-input
+      tituloInput="Fecha Fin"
+      tipo="date"
+      [(ngModel)]="filters.endDate"
+      (valorInputChange)="filterChange.emit()"
+    ></ui-input>
+
+    <ui-input
+      tituloInput="Límite de Registros"
+      tipo="number"
+      [min]="1"
+      [(ngModel)]="filters.limit"
+      (valorInputChange)="filterChange.emit()"
+    ></ui-input>
+  </div>
+</div>

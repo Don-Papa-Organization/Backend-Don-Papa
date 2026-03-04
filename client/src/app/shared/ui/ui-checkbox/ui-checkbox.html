@@ -1,0 +1,7 @@
+<div class="ui-checkbox-container">
+    <label [attr.for]="name">
+        <input type="checkbox" [id]="name" [name]="name" [checked]="checked" [disabled]="isDisabled"
+            (change)="onToggle()" />
+        <span *ngIf="label">{{ label }}</span>
+    </label>
+</div>

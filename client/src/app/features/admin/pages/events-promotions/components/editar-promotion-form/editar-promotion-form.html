@@ -21,12 +21,7 @@
 			#fechaFinField="ngModel"></ui-input>
 
 		<!-- Estado Activo -->
-		<div class="checkbox-container">
-			<label>
-				<input type="checkbox" [(ngModel)]="activo" name="activo" />
-				<span>Promoción activa</span>
-			</label>
-		</div>
+		<app-ui-checkbox label="Promoción activa" [(ngModel)]="activo" name="activo"></app-ui-checkbox>
 
 		<!-- Validaciones -->
 		<div class="form-errors">

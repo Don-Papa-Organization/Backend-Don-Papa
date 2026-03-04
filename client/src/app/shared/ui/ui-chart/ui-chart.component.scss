@@ -1,0 +1,29 @@
+.chart-container {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-loading,
+.chart-error,
+.chart-empty {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.chart-error {
+  color: #d32f2f;
+}
+
+.chart-content {
+  width: 100%;
+}
+
+.is-loading {
+  opacity: 0.6;
+}

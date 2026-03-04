@@ -1,0 +1,13 @@
+<section class="section">
+  <h2>{{ title }}</h2>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && metrics.length" class="section-content metrics-grid">
+    <div class="metric-card" *ngFor="let metric of metrics">
+      <h3>{{ metric.label }}</h3>
+      <p class="metric-value">{{ metric.value }}</p>
+    </div>
+  </div>
+</section>

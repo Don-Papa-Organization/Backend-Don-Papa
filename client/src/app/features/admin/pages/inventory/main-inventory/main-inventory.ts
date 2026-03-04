@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { InventoryFacade } from '../services/inventory.facade';
+import { AdminFiltros } from '../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel';
 import { Producto } from '../../../../../domain/inventory/models/producto.model';
 import { timer } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -19,9 +20,9 @@ export class MainInventory implements OnInit {
   noBackgroundColor: boolean = true;
 
   productosTableData: Array<Record<string, any>> = [];
+  cargandoProductos: boolean = false;
   columnas: string[] = ['idProducto', 'nombre', 'precio', 'stockActual', 'stockMinimo', 'activo', 'descripcion', 'categoria', 'imagen', 'Acciones'];
 
-  urlsIconos: string[] = ["icons/agregar.svg", "icons/editar.svg"];
   showTextStyle: boolean = true;
 
   mostrarModalEditar: boolean = false;
@@ -43,6 +44,7 @@ export class MainInventory implements OnInit {
 
 
   categoriasOptions: Array<{ value: any, label: string }> = [];
+  filtrosActuales: AdminFiltros | null = null;
 
   constructor(
     private inventoryFacade: InventoryFacade
@@ -132,7 +134,8 @@ export class MainInventory implements OnInit {
   }
 
   cargarProductos(): void {
-    this.inventoryFacade.getProductsWithCategories().subscribe({
+    this.cargandoProductos = true;
+    this.inventoryFacade.getProductsWithCategories(this.filtrosActuales).subscribe({
       next: (productos) => {
         this.productosTableData = productos;
 
@@ -143,46 +146,31 @@ export class MainInventory implements OnInit {
             this.registroSeleccionado = updatedRecord;
           }
         }
+        this.cargandoProductos = false;
       },
       error: (error) => {
         console.error('Error al cargar productos:', error);
+        this.cargandoProductos = false;
       }
     });
   }
 
   private cargarCategorias(): void {
-    this.inventoryFacade.listCategories().subscribe({
-      next: (response) => {
-        const data = response.data;
-        let categoriesArray: any[] = [];
-
-        if (Array.isArray(data)) {
-          categoriesArray = data;
-        } else if (data && typeof data === 'object') {
-          const d = data as any;
-          if (Array.isArray(d.categorias)) {
-            categoriesArray = d.categorias;
-          } else if (Array.isArray(d.categories)) {
-            categoriesArray = d.categories;
-          } else {
-            const keys = Object.keys(d);
-            if (keys.length > 0 && Array.isArray(d[keys[0]])) {
-              categoriesArray = d[keys[0]];
-            }
-          }
-        }
-
-        if (categoriesArray.length > 0) {
-          this.categoriasOptions = categoriesArray.map((categoria: any) => ({
-            value: categoria.idCategoria,
-            label: categoria.nombre
-          }));
-        }
-      },
-      error: (error) => {
-        console.error('Error al cargar categorías:', error);
+    this.inventoryFacade.getCategoryOptions().subscribe({
+      next: (options) => {
+        this.categoriasOptions = options;
       }
     });
+  }
+
+  onFiltrosAplicados(filtros: AdminFiltros): void {
+    this.filtrosActuales = filtros;
+    this.cargarProductos();
+  }
+
+  onFiltrosLimpiados(): void {
+    this.filtrosActuales = null;
+    this.cargarProductos();
   }
 
   onAgregarCategoria(): void {

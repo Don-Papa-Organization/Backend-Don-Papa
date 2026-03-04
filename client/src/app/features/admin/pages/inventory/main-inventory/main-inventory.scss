@@ -53,3 +53,15 @@ app-ui-modal {
     margin: -10px 0 5px 0;
   }
 }
+
+.cargando {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+
+  p {
+    font-size: 1.2rem;
+    color: #999;
+  }
+}

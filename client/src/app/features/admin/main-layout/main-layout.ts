@@ -20,8 +20,8 @@ export class MainLayout {
     { texto: 'Pedidos', urlIcono: 'icons/iconoReportes.svg', link: '/admin/orders' },
     { texto: 'Mesas', urlIcono: 'icons/iconoMesas.svg', link: '/admin/tables-reserves' },
     { texto: 'Promociones', urlIcono: 'icons/iconoPromociones.svg', link: '/admin/events-promotions' },
-    { texto: 'Bitacora', urlIcono: 'icons/iconoBitacora.svg', link: '/monitoreo' },
-    { texto: 'Estadisticas', urlIcono: 'icons/iconoEstadisticas.svg', link: '/admin/stats' }
+    { texto: 'Reportes', urlIcono: 'icons/iconoBitacora.svg', link: '/admin/reports' },
+    { texto: 'Estadisticas', urlIcono: 'icons/iconoEstadisticas.svg', link: '/admin/statistics' }
   ];
 
   onLogout(): void {

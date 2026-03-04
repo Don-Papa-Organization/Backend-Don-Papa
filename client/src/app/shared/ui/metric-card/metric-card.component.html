@@ -1,0 +1,14 @@
+<div class="metric-card" [ngClass]="{ 'is-loading': isLoading }">
+  <div class="metric-header">
+    <h3>{{ label }}</h3>
+    <span *ngIf="icon" class="metric-icon">{{ icon }}</span>
+  </div>
+
+  <div *ngIf="isLoading" class="skeleton-value"></div>
+
+  <div *ngIf="!isLoading" class="metric-value">
+    {{ value }}
+  </div>
+
+  <p *ngIf="subtitle" class="metric-subtitle">{{ subtitle }}</p>
+</div>

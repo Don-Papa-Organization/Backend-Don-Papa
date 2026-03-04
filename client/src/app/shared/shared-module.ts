@@ -15,6 +15,12 @@ import { UiCombobox } from './ui/ui-combobox/ui-combobox';
 import { UiImageUpload } from './ui/ui-image-upload/ui-image-upload';
 import { UiTabs } from './ui/ui-tabs/ui-tabs';
 import { UiHelperText } from './ui/ui-helper-text/ui-helper-text';
+import { UiCheckbox } from './ui/ui-checkbox/ui-checkbox';
+import { UiAdminFilterPanel } from './ui/ui-admin-filter-panel/ui-admin-filter-panel';
+import { DataTableComponent } from './ui/data-table/data-table.component';
+import { MetricCardComponent } from './ui/metric-card/metric-card.component';
+import { UiChartComponent } from './ui/ui-chart/ui-chart.component';
+import { FormatTableValuePipe } from './pipes/format-table-value.pipe';
 
 @NgModule({
   declarations: [
@@ -31,6 +37,13 @@ import { UiHelperText } from './ui/ui-helper-text/ui-helper-text';
     UiImageUpload,
     UiTabs,
     UiHelperText,
+    UiCheckbox,
+    UiAdminFilterPanel,
+    DataTableComponent,
+    MetricCardComponent,
+    UiChartComponent,
+    FormatTableValuePipe,
+
   ],
   imports: [
     CommonModule,
@@ -50,7 +63,13 @@ import { UiHelperText } from './ui/ui-helper-text/ui-helper-text';
     UiCombobox,
     UiImageUpload,
     UiTabs,
-    UiHelperText
+    UiHelperText,
+    UiCheckbox,
+    UiAdminFilterPanel,
+    DataTableComponent,
+    MetricCardComponent,
+    UiChartComponent,
+    FormatTableValuePipe
   ]
 })
 export class SharedModule { }

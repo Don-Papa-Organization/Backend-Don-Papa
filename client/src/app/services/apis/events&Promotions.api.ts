@@ -10,6 +10,10 @@ import {
 	ProductosPromocionEnriquecidosResponse,
 	ProductoPromocionItem
 } from "../../domain/events&Promotions/models/productoPromocion.model";
+import {
+	PromotionEventDayItem,
+	PromotionsByEventDayResponse
+} from "../../domain/events&Promotions/models/promotioneventodia.model";
 import { CreatePromotionRequestDto } from "../../domain/events&Promotions/dtos/request/create-promotion.request.dto";
 import { UpdatePromotionRequestDto } from "../../domain/events&Promotions/dtos/request/update-promotion.request.dto";
 import { TogglePromotionActiveRequestDto } from "../../domain/events&Promotions/dtos/request/toggle-promotion-active.request.dto";
@@ -20,6 +24,10 @@ import { CreateEventDayRequestDto } from "../../domain/events&Promotions/dtos/re
 import { UpdateEventDayRequestDto } from "../../domain/events&Promotions/dtos/request/update-event-day.request.dto";
 import { CreateProductPromoRequestDto } from "../../domain/events&Promotions/dtos/request/create-product-promo.request.dto";
 import { UpdateProductPromoRequestDto } from "../../domain/events&Promotions/dtos/request/update-product-promo.request.dto";
+import { CreatePromotionEventDayRequestDto } from "../../domain/events&Promotions/dtos/request/create-promotion-event-day.request.dto";
+import { UpdatePromotionEventDayRequestDto } from "../../domain/events&Promotions/dtos/request/update-promotion-event-day.request.dto";
+import { CreatePromotionEventDayResponseDto } from "../../domain/events&Promotions/dtos/response/create-promotion-event-day.response.dto";
+import { UpdatePromotionEventDayResponseDto } from "../../domain/events&Promotions/dtos/response/update-promotion-event-day.response.dto";
 import { UpcomingEventoDto } from "../../domain/events&Promotions/dtos/response/list-upcoming-events.response.dto";
 import { EventoDetalleDto } from "../../domain/events&Promotions/dtos/response/get-event-detail.response.dto";
 import { PromotionsByProductDataDto } from "../../domain/events&Promotions/dtos/response/get-promotions-by-product.response.dto";
@@ -31,6 +39,7 @@ export class EventsPromotionsApi {
 	private readonly promotionsUrl = buildApiUrl(API_ENDPOINTS.promotions.base());
 	private readonly eventDaysUrl = buildApiUrl(API_ENDPOINTS.eventDays.base());
 	private readonly productPromotionsUrl = buildApiUrl(API_ENDPOINTS.productPromotions.base());
+	private readonly promotionEventDaysUrl = buildApiUrl(API_ENDPOINTS.promotionEventDays.base());
 
 	constructor(private http: HttpClient) {}
 
@@ -146,5 +155,52 @@ export class EventsPromotionsApi {
 
 	deleteProductPromotion(id: number): Observable<ApiResponse<null>> {
 		return this.http.delete<ApiResponse<null>>(buildApiUrl(API_ENDPOINTS.productPromotions.detail(id)));
+	}
+
+	// ==================== PROMOTION EVENT DAYS ====================
+
+	listPromocionEventoDias(): Observable<ApiResponse<PromotionEventDayItem[]>> {
+		return this.http.get<ApiResponse<PromotionEventDayItem[]>>(this.promotionEventDaysUrl);
+	}
+
+	getPromocionEventoDiaById(id: number): Observable<ApiResponse<PromotionEventDayItem>> {
+		return this.http.get<ApiResponse<PromotionEventDayItem>>(buildApiUrl(API_ENDPOINTS.promotionEventDays.detail(id)));
+	}
+
+	getPromotionsByEventDay(idEventoDiaSemana: number): Observable<ApiResponse<PromotionEventDayItem[]>> {
+		return this.http.get<ApiResponse<PromotionEventDayItem[]>>(
+			buildApiUrl(API_ENDPOINTS.promotionEventDays.byEventDay(idEventoDiaSemana))
+		);
+	}
+
+	createPromocionEventoDia(dto: CreatePromotionEventDayRequestDto): Observable<ApiResponse<CreatePromotionEventDayResponseDto>> {
+		return this.http.post<ApiResponse<CreatePromotionEventDayResponseDto>>(this.promotionEventDaysUrl, dto);
+	}
+
+	updatePromocionEventoDia(id: number, dto: UpdatePromotionEventDayRequestDto): Observable<ApiResponse<UpdatePromotionEventDayResponseDto>> {
+		return this.http.put<ApiResponse<UpdatePromotionEventDayResponseDto>>(buildApiUrl(API_ENDPOINTS.promotionEventDays.detail(id)), dto);
+	}
+
+	deletePromocionEventoDia(id: number): Observable<ApiResponse<null>> {
+		return this.http.delete<ApiResponse<null>>(buildApiUrl(API_ENDPOINTS.promotionEventDays.detail(id)));
+	}
+
+	// Métodos deprecated (mantener compatibilidad)
+	getPromotionsByEventDay_deprecated(idEventoSemana: number): Observable<ApiResponse<PromotionsByEventDayResponse>> {
+		return this.http.get<ApiResponse<PromotionsByEventDayResponse>>(
+			buildApiUrl(API_ENDPOINTS.promotionEventDays.byEventDay(idEventoSemana))
+		);
+	}
+
+	createPromotionEventDay(dto: CreatePromotionEventDayRequestDto): Observable<ApiResponse<PromotionEventDayItem>> {
+		return this.http.post<ApiResponse<PromotionEventDayItem>>(this.promotionEventDaysUrl, dto);
+	}
+
+	updatePromotionEventDay(id: number, dto: UpdatePromotionEventDayRequestDto): Observable<ApiResponse<PromotionEventDayItem>> {
+		return this.http.put<ApiResponse<PromotionEventDayItem>>(buildApiUrl(API_ENDPOINTS.promotionEventDays.detail(id)), dto);
+	}
+
+	deletePromotionEventDay(id: number): Observable<ApiResponse<null>> {
+		return this.http.delete<ApiResponse<null>>(buildApiUrl(API_ENDPOINTS.promotionEventDays.detail(id)));
 	}
 }

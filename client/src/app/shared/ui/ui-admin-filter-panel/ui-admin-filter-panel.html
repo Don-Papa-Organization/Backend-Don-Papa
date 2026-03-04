@@ -1,0 +1,77 @@
+<div class="filter-panel-wrapper">
+
+  <!-- Barra de búsqueda rápida + botón de filtros avanzados -->
+  <div class="filter-bar">
+    <div class="search-quick">
+      <ui-input
+        [tituloInput]="labelBusqueda"
+        [placeholder]="placeholderBusqueda"
+        [(valorInput)]="filtros.busqueda"
+        (valorInputChange)="onBusquedaChange()">
+      </ui-input>
+    </div>
+
+    <div class="filter-actions">
+      <!-- Indicador de filtros activos -->
+      <span class="filtros-activos-badge" *ngIf="hayFiltrosActivos">
+        Filtros activos
+      </span>
+
+      <ui-button
+        texto="Filtros avanzados"
+        (accion)="abrirModal()">
+      </ui-button>
+    </div>
+  </div>
+
+  <!-- Modal de filtros avanzados -->
+  <app-ui-modal
+    *ngIf="mostrarModal"
+    titulo="Filtros avanzados"
+    [mostrar]="mostrarModal"
+    (cerrar)="cerrarModal()">
+    
+    <app-ui-form [showFooter]="false" maxHeight="70vh">
+
+      <div class="filtros-grid">
+
+        <app-ui-combobox
+          *ngIf="mostrarEstado"
+          tituloInput="Estado"
+          [options]="estadoOpciones"
+          [(selectedOption)]="filtros.estado">
+        </app-ui-combobox>
+
+        <ng-container *ngIf="mostrarFechas">
+          <ui-input
+            tituloInput="Desde"
+            tipo="date"
+            [(valorInput)]="filtros.fechaInicio">
+          </ui-input>
+
+          <ui-input
+            tituloInput="Hasta"
+            tipo="date"
+            [(valorInput)]="filtros.fechaFin">
+          </ui-input>
+        </ng-container>
+
+      </div>
+
+      <div class="modal-footer">
+        <ui-button
+          texto="Limpiar filtros"
+          [noBackgroundColor]="true"
+          (accion)="limpiarFiltrosAvanzados()">
+        </ui-button>
+        
+        <ui-button
+          texto="Aplicar filtros"
+          (accion)="aplicarFiltrosAvanzados()">
+        </ui-button>
+      </div>
+
+    </app-ui-form>
+  </app-ui-modal>
+
+</div>

@@ -3,6 +3,7 @@ import { UsersFacade, UserViewModel, ClientEnrichedViewModel, EmployeeViewModel 
 import { CreateEmployeeRequestDto } from '../../../../../domain/users/dtos/request/create-employee.request.dto';
 import { UpdateEmployeeRequestDto } from '../../../../../domain/users/dtos/request/update-employee.request.dto';
 import { TabItem } from '../../../../../shared/ui/ui-tabs/ui-tabs';
+import { AdminFiltros, FiltroOpcion } from '../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel';
 
 @Component({
   selector: 'app-main-users',
@@ -17,40 +18,47 @@ export class Main implements OnInit {
     { id: 'usuarios', label: 'Usuarios' },
     { id: 'clientes', label: 'Clientes' }
   ];
-  
+
   // Pestaña activa
   tabActiva: string = 'empleados';
 
   // Datos de empleados
   empleados: EmployeeViewModel[] = [];
   columnasEmpleados: string[] = ['idUsuario', 'nombre', 'documento', 'cargo', 'correo', 'activo', 'Acciones'];
-  
+
   // Datos de usuarios
   usuarios: UserViewModel[] = [];
   columnasUsuarios: string[] = ['idUsuario', 'correo', 'tipoUsuario', 'activo'];
-  
+
   // Datos de clientes
   clientes: ClientEnrichedViewModel[] = [];
   columnasClientes: string[] = ['idUsuario', 'nombre', 'correo', 'telefono', 'direccion', 'activo'];
-  
+
   // Control de modales
   mostrarModalDetalleUsuario = false;
   mostrarModalDetalleCliente = false;
   mostrarModalAgregarEmpleado = false;
   mostrarModalActualizarEmpleado = false;
   mostrarModalEliminarEmpleado = false;
-  
+
   // Registros seleccionados
   usuarioSeleccionado: UserViewModel | null = null;
   clienteSeleccionado: ClientEnrichedViewModel | null = null;
   empleadoSeleccionado: EmployeeViewModel | null = null;
-  
+
   // Estados de carga
   cargandoEmpleados = false;
   cargandoUsuarios = false;
   cargandoClientes = false;
 
-  constructor(private usersFacade: UsersFacade) {}
+  // Filtros
+  filtrosActuales: AdminFiltros | null = null;
+  estadoOpciones: FiltroOpcion[] = [
+    { value: 'true', label: 'Activo' },
+    { value: 'false', label: 'Inactivo' }
+  ];
+
+  constructor(private usersFacade: UsersFacade) { }
 
   ngOnInit(): void {
     this.cargarEmpleados();
@@ -72,7 +80,7 @@ export class Main implements OnInit {
    */
   cargarEmpleados(): void {
     this.cargandoEmpleados = true;
-    this.usersFacade.getEmployees().subscribe({
+    this.usersFacade.getEmployees(this.filtrosActuales || undefined).subscribe({
       next: (empleados) => {
         this.empleados = empleados;
         this.cargandoEmpleados = false;
@@ -103,7 +111,7 @@ export class Main implements OnInit {
       },
       error: (error) => {
         console.error('Error al crear empleado:', error);
-        alert('Error al crear empleado: ' + (error.error?.mensaje || 'Error desconocido'));
+        alert('Error al crear empleado: ' + (error.error?.message || 'Error desconocido'));
       }
     });
   }
@@ -188,7 +196,7 @@ export class Main implements OnInit {
    */
   cargarUsuarios(): void {
     this.cargandoUsuarios = true;
-    this.usersFacade.getUsers().subscribe({
+    this.usersFacade.getUsers(this.filtrosActuales || undefined).subscribe({
       next: (usuarios) => {
         this.usuarios = usuarios;
         this.cargandoUsuarios = false;
@@ -223,7 +231,7 @@ export class Main implements OnInit {
    */
   cargarClientes(): void {
     this.cargandoClientes = true;
-    this.usersFacade.getClientsEnriched().subscribe({
+    this.usersFacade.getClientsEnriched(this.filtrosActuales || undefined).subscribe({
       next: (clientes) => {
         this.clientes = clientes;
         this.cargandoClientes = false;
@@ -264,5 +272,17 @@ export class Main implements OnInit {
     } else {
       this.cargarClientes();
     }
+  }
+
+  // ==================== FILTROS ====================
+
+  onFiltrosAplicados(filtros: AdminFiltros): void {
+    this.filtrosActuales = filtros;
+    this.onRecargar();
+  }
+
+  onFiltrosLimpiados(): void {
+    this.filtrosActuales = null;
+    this.onRecargar();
   }
 }

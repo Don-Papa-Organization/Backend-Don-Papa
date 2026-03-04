@@ -1,0 +1,108 @@
+<div class="reports-page">
+	<!-- HEADER DE SECCIÓN -->
+	<div class="reports-header">
+		<h1>Reportes del Sistema</h1>
+		<div class="acciones-header">
+			<app-ui-only-icon-button
+				urlIcono="icons/reload.svg"
+				(action)="cargarReportes()"
+			></app-ui-only-icon-button>
+		</div>
+	</div>
+
+	<!-- FILTROS UNIFICADOS -->
+	<app-ui-admin-filter-panel
+		[estadoOpciones]="[]"
+		[mostrarFechas]="true"
+		[mostrarEstado]="false"
+		labelBusqueda="Buscar por ID de empleado"
+		placeholderBusqueda="ID del empleado..."
+		(filtrosAplicados)="onFiltrosAplicados($event)"
+		(filtrosLimpiados)="onFiltrosLimpiados()">
+	</app-ui-admin-filter-panel>
+
+	<!-- CONTENIDO DE TABS -->
+	<div class="reports-contenido">
+		<!-- TAB: BITÁCORA DE INCIDENCIAS -->
+		<div class="reportes-seccion">
+
+			<!-- TABLA BITÁCORA -->
+			<div class="tabla-contenedor" *ngIf="!cargandoBitacora">
+				<app-ui-tabla
+					[theadData]="columnasBitacora"
+					[tbodyData]="bitacoraItems"
+					[acciones]="accionesBitacora">
+				</app-ui-tabla>
+				<div *ngIf="bitacoraItems.length === 0" class="mensaje-vacio">
+					No hay incidencias registradas
+				</div>
+			</div>
+
+			<!-- CARGANDO -->
+			<div class="cargando" *ngIf="cargandoBitacora">
+				<p>Cargando bitácora...</p>
+			</div>
+		</div>
+
+        
+
+	<!-- MODAL: DETALLE BITÁCORA -->
+	<app-ui-modal 
+		*ngIf="mostrarModalDetalleBitacora"
+		titulo="Detalle de Incidencia"
+		[mostrar]="mostrarModalDetalleBitacora"
+		(cerrar)="cerrarModalDetalleBitacora()">
+		<div class="contenido-detalle" *ngIf="registroSeleccionado">
+			<div class="detalle-fila">
+				<strong>ID:</strong>
+				<span>{{ registroSeleccionado['ID'] }}</span>
+			</div>
+			<div class="detalle-fila">
+				<strong>Empleado:</strong>
+				<span>{{ registroSeleccionado['Empleado'] }}</span>
+			</div>
+			<div class="detalle-fila">
+				<strong>Descripción:</strong>
+				<span>{{ registroSeleccionado['Descripción'] }}</span>
+			</div>
+			<div class="detalle-fila">
+				<strong>Fecha:</strong>
+				<span>{{ registroSeleccionado['Fecha'] }}</span>
+			</div>
+			<div class="detalle-fila">
+				<strong>Tipo:</strong>
+				<span>{{ registroSeleccionado['Tipo'] }}</span>
+			</div>
+		</div>
+	</app-ui-modal>
+
+	<!-- MODAL: DETALLE VENTA -->
+	<app-ui-modal 
+		*ngIf="mostrarModalDetalleVenta"
+		titulo="Detalle de Venta"
+		[mostrar]="mostrarModalDetalleVenta"
+		(cerrar)="cerrarModalDetalleVenta()">
+		<div class="contenido-detalle" *ngIf="registroSeleccionado">
+			<div class="detalle-fila">
+				<strong>ID Pedido:</strong>
+				<span>{{ registroSeleccionado['ID'] }}</span>
+			</div>
+			<div class="detalle-fila">
+				<strong>Cliente:</strong>
+				<span>{{ registroSeleccionado['Cliente'] }}</span>
+			</div>
+			<div class="detalle-fila">
+				<strong>Monto:</strong>
+				<span>{{ registroSeleccionado['Monto'] }}</span>
+			</div>
+			<div class="detalle-fila">
+				<strong>Fecha:</strong>
+				<span>{{ registroSeleccionado['Fecha'] }}</span>
+			</div>
+			<div class="detalle-fila">
+				<strong>Estado:</strong>
+				<span>{{ registroSeleccionado['Estado'] }}</span>
+			</div>
+		</div>
+	</app-ui-modal>
+</div>

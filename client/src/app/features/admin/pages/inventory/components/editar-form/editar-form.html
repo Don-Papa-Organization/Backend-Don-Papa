@@ -1,28 +1,29 @@
 <app-ui-modal titulo="Editar Producto" [mostrar]="mostrar" (cerrar)="onCerrar()">
     <app-ui-form maxHeight="50vh" maxWidth="1000px">
         <ui-input tituloInput="Nombre" [(ngModel)]="productoEditado.nombre" name="nombre" required
-            #nombreModel="ngModel">
+            placeholder="Ej: Hamburguesa Clásica" #nombreModel="ngModel">
         </ui-input>
 
 
 
         <ui-input tituloInput="Precio" tipo="number" [(ngModel)]="productoEditado.precio" name="precio" required
-            [min]='0' #precioModel="ngModel">
+            placeholder="Ej: 15.50" [min]='0' #precioModel="ngModel">
         </ui-input>
 
 
         <ui-input tituloInput="Stock Actual" tipo="number" [(ngModel)]="productoEditado.stockActual" name="stockActual"
-            required [min]='0' #stockActualModel="ngModel">
+            required placeholder="Ej: 50" [min]='0' #stockActualModel="ngModel">
         </ui-input>
 
 
         <ui-input tituloInput="Stock Mínimo" tipo="number" [(ngModel)]="productoEditado.stockMinimo" name="stockMinimo"
-            required [min]="0" #stockMinimoModel="ngModel">
+            required placeholder="Ej: 10" [min]="0" #stockMinimoModel="ngModel">
         </ui-input>
 
 
 
-        <ui-input tituloInput="Descripción" [(ngModel)]="productoEditado.descripcion" name="descripcion">
+        <ui-input tituloInput="Descripción" [(ngModel)]="productoEditado.descripcion" name="descripcion"
+            placeholder="Ej: Carne de res, lechuga, tomate...">
         </ui-input>
 
 
@@ -31,6 +32,11 @@
             [(selectedOption)]="productoEditado.idCategoria">
 
         </app-ui-combobox>
+
+        <div style="margin-top: 1rem; margin-bottom: 1rem;">
+            <app-ui-checkbox label="Producto Activo" name="activoEditado"
+                [(ngModel)]="productoEditado.activo"></app-ui-checkbox>
+        </div>
 
         <!-- <app-ui-only-icon-button urlIcono="icons/addImage.svg" class="addImage" texto="Agregar Imagen"
             [showTextStyle]="showTextStyle">

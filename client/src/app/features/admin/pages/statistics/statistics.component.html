@@ -1,0 +1,60 @@
+<div class="statistics-page">
+  <app-statistics-filters
+    [filters]="filters"
+    [isLoading]="isLoading"
+    (filterChange)="onFilterChange()"
+    (refresh)="loadDashboard()"
+    (downloadPdf)="onDownloadPDF()"
+    (downloadJson)="onDownloadJSON()"
+  ></app-statistics-filters>
+
+  <div *ngIf="dashboardState$ | async as state" class="dashboard-content">
+    <app-statistics-metrics-grid
+      class="sales-section"
+      title="Ventas"
+      [loading]="state.loadingState['salesSummary']"
+      [error]="state.errorState['salesSummary']"
+      [metrics]="buildSalesMetrics(state)"
+    ></app-statistics-metrics-grid>
+
+    <app-statistics-data-table
+      class="inventory-section"
+      title="Top 10 Productos"
+      [loading]="state.loadingState['topProducts']"
+      [error]="state.errorState['topProducts']"
+      [columns]="['ID Producto', 'Unidades Vendidas', 'Ingresos']"
+      [rows]="buildTopProductsRows(state.topProducts)"
+    ></app-statistics-data-table>
+
+    <app-statistics-data-table
+      title="Stock Muerto"
+      [loading]="state.loadingState['deadStock']"
+      [error]="state.errorState['deadStock']"
+      [columns]="['ID Producto', 'Nombre', 'Días sin ventas']"
+      [rows]="buildDeadStockRows(state.deadStock)"
+    ></app-statistics-data-table>
+
+    <app-statistics-metrics-grid
+      title="Crecimiento de Usuarios"
+      [loading]="state.loadingState['userGrowth']"
+      [error]="state.errorState['userGrowth']"
+      [metrics]="buildUserGrowthMetrics(state)"
+    ></app-statistics-metrics-grid>
+
+    <app-statistics-data-table
+      title="Horas Pico"
+      [loading]="state.loadingState['occupancy']"
+      [error]="state.errorState['occupancy']"
+      [columns]="['Hora', 'Reservas']"
+      [rows]="buildOccupancyRows(state.occupancy)"
+    ></app-statistics-data-table>
+
+    <app-statistics-data-table
+      title="Efectividad de Promociones"
+      [loading]="state.loadingState['promotions']"
+      [error]="state.errorState['promotions']"
+      [columns]="['ID Promoción', 'Uso', 'Ingresos Generados']"
+      [rows]="buildPromotionsRows(state.promotions)"
+    ></app-statistics-data-table>
+  </div>
+</div>

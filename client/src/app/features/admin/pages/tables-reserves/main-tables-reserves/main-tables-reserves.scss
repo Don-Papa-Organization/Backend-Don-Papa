@@ -81,3 +81,15 @@
   justify-content: flex-start;
   margin-top: 1rem;
 }
+
+.cargando {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+
+  p {
+    font-size: 1.2rem;
+    color: #999;
+  }
+}

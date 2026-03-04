@@ -20,7 +20,10 @@ export const API_ROUTES = {
   promotions: "/promotions",
   eventDays: "/eventos-dias",
   productPromotions: "/productos-promocion",
-  reports: "/reports"
+  promotionEventDays: "/promocion-evento-dia",
+  reports: "/reports",
+  analytics: "/analytics",
+  export: "/export"
 };
 
 export const API_ENDPOINTS = {
@@ -130,6 +133,11 @@ export const API_ENDPOINTS = {
     byPromotionEnriched: (idPromocion: number) => `${API_ROUTES.productPromotions}/promocion/${idPromocion}/enriquecido`,
     byProduct: (idProducto: number) => `${API_ROUTES.productPromotions}/producto/${idProducto}/promociones`
   },
+  promotionEventDays: {
+    base: () => `${API_ROUTES.promotionEventDays}`,
+    detail: (id: number) => `${API_ROUTES.promotionEventDays}/${id}`,
+    byEventDay: (idEventoDiaSemana: number) => `${API_ROUTES.promotionEventDays}/evento-dia/${idEventoDiaSemana}`
+  },
   reports: {
     salesHistory: () => `${API_ROUTES.reports}/sales/history`,
     salesDetail: (idPedido: number) => `${API_ROUTES.reports}/sales/${idPedido}/detail`,
@@ -138,5 +146,21 @@ export const API_ENDPOINTS = {
     bitacoraComments: () => `${API_ROUTES.reports}/bitacora/comments`,
     bitacoraByEmployee: (idEmpleado: number) => `${API_ROUTES.reports}/bitacora/employee/${idEmpleado}`,
     bitacoraSearch: () => `${API_ROUTES.reports}/bitacora`
+  },
+  analytics: {
+    salesSummary: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/sales/summary`,
+    salesTimeline: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/sales/timeline`,
+    topProducts: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/products/top`,
+    deadStock: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/products/dead-stock`,
+    inventoryByCategory: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/inventory/by-category`,
+    userGrowth: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/users/growth`,
+    frequentUsers: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/users/frequent`,
+    peakHours: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/occupancy/peak-hours`,
+    noShowRate: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/occupancy/no-show`,
+    promotionEffectiveness: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/promotions/effectiveness`
+  },
+  export: {
+    pdf: () => `${API_ROUTES.reports}${API_ROUTES.export}/pdf`,
+    json: () => `${API_ROUTES.reports}${API_ROUTES.export}/data`
   }
 };

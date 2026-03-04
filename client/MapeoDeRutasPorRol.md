@@ -145,7 +145,7 @@ Reportes de ventas y bitácora de incidencias.
 
 ## 🪑 `tables&Reserves.api.ts`
 
-Gestión de mesas y reservaciones.
+Gestión de mesas y reservaciones.	
 
 ### 🛡️ Administrador
 
@@ -196,6 +196,12 @@ Eventos nocturnos, promociones y días destacados.
 - `createProductPromotion`: `POST /productos-promocion`
 - `updateProductPromotion`: `PUT /productos-promocion/:id`
 - `deleteProductPromotion`: `DELETE /productos-promocion/:id`
+- `listPromocionEventoDias`: `GET /promocion-evento-dia`
+- `getPromocionEventoDiaById`: `GET /promocion-evento-dia/:id`
+- `getPromotionsByEventDay`: `GET /promocion-evento-dia/evento-dia/:idEventoDiaSemana`
+- `createPromocionEventoDia`: `POST /promocion-evento-dia`
+- `updatePromocionEventoDia`: `PUT /promocion-evento-dia/:id`
+- `deletePromocionEventoDia`: `DELETE /promocion-evento-dia/:id`
 
 ### 🧑‍🍳 Empleado / Admin
 

@@ -29,10 +29,15 @@ export class AgregarProductoForm {
 		const dto: CreateProductPromoRequestDto = {
 			idProducto: this.productoSeleccionadoId,
 			idPromocion: this.promocionId,
-			cantidadMinima: this.cantidadMinima,
-			precioPromocional: this.precioPromocional || undefined,
-			porcentajeDescuento: this.porcentajeDescuento || undefined
+			cantidadMinima: this.cantidadMinima
 		};
+
+		// Solo enviar uno de los dos campos según cual tenga valor
+		if (this.precioPromocional !== null && this.precioPromocional > 0) {
+			dto.precioPromocional = this.precioPromocional;
+		} else if (this.porcentajeDescuento !== null && this.porcentajeDescuento > 0) {
+			dto.porcentajeDescuento = this.porcentajeDescuento;
+		}
 
 		this.productoAgregado.emit(dto);
 		this.limpiarFormulario();

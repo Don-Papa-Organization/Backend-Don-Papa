@@ -1,0 +1,39 @@
+<app-ui-modal titulo="Editar Producto en Promoción" [mostrar]="mostrar" (cerrar)="onCerrar()">
+	<app-ui-form maxHeight="50vh" maxWidth="600px">
+		<div class="producto-info">
+			<p><strong>Producto:</strong> {{ productoPromocion?.nombre }}</p>
+			<p><strong>Precio Original:</strong> ${{ productoPromocion?.precio }}</p>
+		</div>
+
+		<ui-input tituloInput="Cantidad Mínima" tipo="number" [(ngModel)]="cantidadMinima" name="cantidadMinima"
+			required #cantidadField="ngModel">
+		</ui-input>
+
+		<ui-input tituloInput="Precio Promocional" tipo="number" [(ngModel)]="precioPromocional"
+			name="precioPromocional" placeholder="Opcional" [disabled]="porcentajeDescuento !== null && porcentajeDescuento > 0">
+		</ui-input>
+
+		<ui-input tituloInput="Porcentaje de Descuento" tipo="number" [(ngModel)]="porcentajeDescuento"
+			name="porcentajeDescuento" placeholder="Opcional" [disabled]="precioPromocional !== null && precioPromocional > 0">
+		</ui-input>
+
+		<!-- Validaciones -->
+		<div class="form-errors">
+			@if (cantidadField.invalid && cantidadField.touched) {
+			<app-ui-helper-text>
+				<ng-container>La cantidad mínima es obligatoria</ng-container>
+			</app-ui-helper-text>
+			}
+
+			@if (precioPromocional === null && porcentajeDescuento === null) {
+			<app-ui-helper-text>
+				<ng-container>Debe ingresar un Precio Promocional O un Porcentaje de Descuento</ng-container>
+			</app-ui-helper-text>
+			}
+		</div>
+
+		<div footer class="form-footer">
+			<ui-button texto="Actualizar" (accion)="onSubmit()"></ui-button>
+		</div>
+	</app-ui-form>
+</app-ui-modal>

@@ -37,9 +37,9 @@ export class PaymentsSectionComponent {
 	metodoPagoSeleccionadoId: string | number | null = null;
 
 	// Columnas de tabla
-	columnasPagosPendientes = ['idPedido', 'idUsuario', 'total', 'estado', 'canalVenta', 'fechaPedido', 'direccionEntrega', 'Acciones'];
-	columnasTodosPagos = ['idPago', 'idPedido', 'monto', 'fechaPago', 'metodoPago', 'Acciones'];
-	columnasMetodosPago = ['idMetodoPago', 'nombre', 'Acciones'];
+	columnasPagosPendientes = ['ID', 'Usuario', 'Total', 'Estado', 'Canal Venta', 'Fecha', 'Dirección', 'Acciones'];
+	columnasTodosPagos = ['ID Pago', 'ID Pedido', 'Monto', 'Fecha', 'Método', 'Acciones'];
+	columnasMetodosPago = ['ID', 'Nombre', 'Acciones'];
 
 	// Acciones de tabla
 	accionesPagosPendientes: AccionTabla[] = [
@@ -67,7 +67,7 @@ export class PaymentsSectionComponent {
 		}
 	];
 
-	constructor(private ordersFacade: OrdersFacade, private sanitizer: DomSanitizer) {}
+	constructor(private ordersFacade: OrdersFacade, private sanitizer: DomSanitizer) { }
 
 	onAbrirModalMetodosPago(): void {
 		this.mostrarModalMetodosPago = true;
@@ -199,7 +199,7 @@ export class PaymentsSectionComponent {
 
 	onDescargarReciboDirecto(): void {
 		if (!this.reciboSeleccionado || !this.reciboObjectURL) return;
-		
+
 		const link = document.createElement('a');
 		link.href = this.reciboObjectURL;
 		link.download = `recibo-pago-${this.reciboSeleccionado.idPago}.pdf`;

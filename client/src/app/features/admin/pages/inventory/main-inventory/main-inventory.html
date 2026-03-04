@@ -2,16 +2,16 @@
     <div class="inventory-header">
         <h1 class="inventory-title">Productos</h1>
         <div class="buttons">
-            <app-ui-only-icon-button texto="Producto" [urlIcono]="urlsIconos[0]" [showTextStyle]="showTextStyle"
+            <app-ui-only-icon-button texto="Producto" urlIcono="icons/agregar.svg" [showTextStyle]="showTextStyle"
                 (action)="onAgregar()">
             </app-ui-only-icon-button>
 
 
-            <app-ui-only-icon-button texto="Categoria" [urlIcono]="urlsIconos[0]" [showTextStyle]="true"
+            <app-ui-only-icon-button texto="Categoria" urlIcono="icons/agregar.svg" [showTextStyle]="true"
                 (action)="onAgregarCategoria()">
             </app-ui-only-icon-button>
 
-            <app-ui-only-icon-button texto="Categoria" [urlIcono]="urlsIconos[1]" [showTextStyle]="true"
+            <app-ui-only-icon-button texto="Categoria" urlIcono="icons/editar.svg" [showTextStyle]="true"
                 (action)="onEditarCategoria()">
             </app-ui-only-icon-button>
 
@@ -24,9 +24,17 @@
 
     </div>
 
+    <app-ui-admin-filter-panel [estadoOpciones]="categoriasOptions" [mostrarFechas]="false" [mostrarEstado]="true"
+        labelBusqueda="Buscar productos" placeholderBusqueda="Nombre o descripción..."
+        (filtrosAplicados)="onFiltrosAplicados($event)" (filtrosLimpiados)="onFiltrosLimpiados()">
+    </app-ui-admin-filter-panel>
 
+    <!-- INDICADOR DE CARGA -->
+    <div class="cargando" *ngIf="cargandoProductos">
+        <p>Cargando productos...</p>
+    </div>
 
-    <div class="table-content">
+    <div class="table-content" *ngIf="!cargandoProductos">
         <app-ui-tabla name="table-content" [theadData]="columnas" [tbodyData]="productosTableData"
             (editarRegistro)="onEditar($event)" (eliminarRegistro)="onEliminar($event)">
         </app-ui-tabla>
@@ -52,7 +60,8 @@
     <app-ui-modal titulo="Agregar Categoría" [mostrar]="mostrarModalAgregarCategoria"
         (cerrar)="cerrarModalAgregarCategoria()">
         <app-ui-form maxHeight="50vh" maxWidth="600px">
-            <ui-input tituloInput="Nombre Categoría" [(ngModel)]="nuevaCategoriaNombre" name="nuevaCategoriaNombre">
+            <ui-input tituloInput="Nombre Categoría" [(ngModel)]="nuevaCategoriaNombre" name="nuevaCategoriaNombre"
+                placeholder="Ej: Bebidas, Postres, etc.">
             </ui-input>
             <div footer>
                 <ui-button [noBackgroundColor]="true" texto="Guardar" (accion)="guardarCategoria()"></ui-button>
@@ -69,7 +78,7 @@
             </app-ui-combobox>
 
             <ui-input tituloInput="Nuevo Nombre (Opcional)" [(ngModel)]="categoriaNombreEditado"
-                name="categoriaNombreEditado">
+                name="categoriaNombreEditado" placeholder="Ej: Refrescos">
             </ui-input>
 
             <div footer style="display: flex; gap: 10px; justify-content: flex-end;">

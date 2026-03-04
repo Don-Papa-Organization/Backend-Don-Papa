@@ -1,12 +1,18 @@
 import { Injectable } from "@angular/core";
-import { Observable, map } from "rxjs";
+import { Observable, map, catchError, of } from "rxjs";
 import { EventsPromotionsApi } from "../../../../../services/apis/events&Promotions.api";
 import { Promocion } from "../../../../../domain/events&Promotions/models/promocion.model";
 import { Evento } from "../../../../../domain/events&Promotions/models/evento.model";
+import { PromotionEventDayItem } from "../../../../../domain/events&Promotions/models/promotioneventodia.model";
 import { CreatePromotionRequestDto } from "../../../../../domain/events&Promotions/dtos/request/create-promotion.request.dto";
 import { UpdatePromotionRequestDto } from "../../../../../domain/events&Promotions/dtos/request/update-promotion.request.dto";
 import { CreateEventRequestDto } from "../../../../../domain/events&Promotions/dtos/request/create-event.request.dto";
 import { UpdateEventRequestDto } from "../../../../../domain/events&Promotions/dtos/request/update-event.request.dto";
+import { CreatePromotionEventDayRequestDto } from "../../../../../domain/events&Promotions/dtos/request/create-promotion-event-day.request.dto";
+import { UpdatePromotionEventDayRequestDto } from "../../../../../domain/events&Promotions/dtos/request/update-promotion-event-day.request.dto";
+import { CreatePromotionEventDayResponseDto } from "../../../../../domain/events&Promotions/dtos/response/create-promotion-event-day.response.dto";
+import { UpdatePromotionEventDayResponseDto } from "../../../../../domain/events&Promotions/dtos/response/update-promotion-event-day.response.dto";
+import { AdminFiltros } from "../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel";
 
 interface PromocionViewModel {
 	"ID": number;
@@ -35,11 +41,34 @@ export class EventsPromotionsFacade {
 
 	// ==================== PROMOCIONES ====================
 
-	getPromociones(): Observable<PromocionViewModel[]> {
+	getPromociones(filtros?: AdminFiltros): Observable<PromocionViewModel[]> {
 		return this.api.listPromotions().pipe(
 			map((response) => {
 				if (!response.data) return [];
-				return response.data.map((promo) => this.mapPromocionToViewModel(promo));
+				let promociones = response.data;
+
+				if (filtros) {
+					if (filtros.busqueda) {
+						const term = filtros.busqueda.toLowerCase();
+						promociones = promociones.filter(p =>
+							p.nombre.toLowerCase().includes(term) ||
+							p.descripcion.toLowerCase().includes(term)
+						);
+					}
+					if (filtros.estado !== null && filtros.estado !== undefined) {
+						promociones = promociones.filter(p => p.activo === (filtros.estado === 'true' || filtros.estado === true));
+					}
+					if (filtros.fechaInicio) {
+						const fInicio = new Date(filtros.fechaInicio);
+						promociones = promociones.filter(p => new Date(p.fechaInicio) >= fInicio);
+					}
+					if (filtros.fechaFin) {
+						const fFin = new Date(filtros.fechaFin);
+						promociones = promociones.filter(p => new Date(p.fechaFin) <= fFin);
+					}
+				}
+
+				return promociones.map((promo) => this.mapPromocionToViewModel(promo));
 			})
 		);
 	}
@@ -77,11 +106,23 @@ export class EventsPromotionsFacade {
 
 	// ==================== EVENTOS ====================
 
-	getEventos(): Observable<EventoViewModel[]> {
+	getEventos(filtros?: AdminFiltros): Observable<EventoViewModel[]> {
 		return this.api.listEvents().pipe(
 			map((response) => {
 				if (!response.data) return [];
-				return response.data.map((evento) => this.mapEventoToViewModel(evento));
+				let eventos = response.data;
+
+				if (filtros) {
+					if (filtros.busqueda) {
+						const term = filtros.busqueda.toLowerCase();
+						eventos = eventos.filter(e =>
+							e.nombre.toLowerCase().includes(term) ||
+							e.descripcion.toLowerCase().includes(term)
+						);
+					}
+				}
+
+				return eventos.map((evento) => this.mapEventoToViewModel(evento));
 			})
 		);
 	}
@@ -158,6 +199,12 @@ export class EventsPromotionsFacade {
 		);
 	}
 
+	getProductsByPromotion(idPromocion: number): Observable<any> {
+		return this.api.getProductsByPromotion(idPromocion).pipe(
+			map((response) => response.data)
+		);
+	}
+
 	createProductPromotion(dto: any): Observable<any> {
 		return this.api.createProductPromotion(dto).pipe(
 			map((response) => response.data)
@@ -172,6 +219,82 @@ export class EventsPromotionsFacade {
 
 	deleteProductPromotion(id: number): Observable<void> {
 		return this.api.deleteProductPromotion(id).pipe(map(() => { }));
+	}
+
+	// ==================== PROMOTION EVENT DAYS ====================
+
+	listPromocionEventoDias(): Observable<PromotionEventDayItem[]> {
+		return this.api.listPromocionEventoDias().pipe(
+			map((response) => response.data || [])
+		);
+	}
+
+	getPromocionEventoDiaById(id: number): Observable<PromotionEventDayItem> {
+		return this.api.getPromocionEventoDiaById(id).pipe(
+			map((response) => {
+				if (!response.data) throw new Error("Relación no encontrada");
+				return response.data;
+			})
+		);
+	}
+
+	getPromotionsByEventDay(idEventoDiaSemana: number): Observable<PromotionEventDayItem[]> {
+		return this.api.getPromotionsByEventDay(idEventoDiaSemana).pipe(
+			map((response) => {
+				console.log('Facade - respuesta del API:', response);
+				console.log('Facade - response.data:', response.data);
+				return response.data || [];
+			}),
+			catchError((error) => {
+				console.error('El endpoint de promociones por día no está disponible en el backend:', error);
+				return of([]);
+			})
+		);
+	}
+
+	createPromocionEventoDia(dto: CreatePromotionEventDayRequestDto): Observable<CreatePromotionEventDayResponseDto> {
+		return this.api.createPromocionEventoDia(dto).pipe(
+			map((response) => {
+				if (!response.data) throw new Error("Error al crear la relación");
+				return response.data;
+			})
+		);
+	}
+
+	updatePromocionEventoDia(id: number, dto: UpdatePromotionEventDayRequestDto): Observable<UpdatePromotionEventDayResponseDto> {
+		return this.api.updatePromocionEventoDia(id, dto).pipe(
+			map((response) => {
+				if (!response.data) throw new Error("Error al actualizar la relación");
+				return response.data;
+			})
+		);
+	}
+
+	deletePromocionEventoDia(id: number): Observable<void> {
+		return this.api.deletePromocionEventoDia(id).pipe(map(() => { }));
+	}
+
+	// Métodos deprecated (mantener compatibilidad)
+	getPromotionsByEventDay_deprecated(idEventoSemana: number): Observable<any> {
+		return this.api.getPromotionsByEventDay_deprecated(idEventoSemana).pipe(
+			map((response) => response.data)
+		);
+	}
+
+	createPromotionEventDay(dto: CreatePromotionEventDayRequestDto): Observable<PromotionEventDayItem | null> {
+		return this.api.createPromotionEventDay(dto).pipe(
+			map((response) => response.data)
+		);
+	}
+
+	updatePromotionEventDay(id: number, dto: UpdatePromotionEventDayRequestDto): Observable<PromotionEventDayItem | null> {
+		return this.api.updatePromotionEventDay(id, dto).pipe(
+			map((response) => response.data)
+		);
+	}
+
+	deletePromotionEventDay(id: number): Observable<void> {
+		return this.api.deletePromotionEventDay(id).pipe(map(() => { }));
 	}
 
 	// ==================== MAPPERS ====================
@@ -209,7 +332,7 @@ export class EventsPromotionsFacade {
 		return tipos[tipo] || tipo;
 	}
 
-	private formatDate(dateString: string): string {
+	public formatDate(dateString: string): string {
 		try {
 			const date = new Date(dateString);
 			return date.toLocaleDateString("es-ES", {

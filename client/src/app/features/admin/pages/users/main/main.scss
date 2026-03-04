@@ -72,13 +72,13 @@
 
   p {
     margin: 0;
-    
+
     color: #ffffff;
 
     &.advertencia {
       text-decoration: none;
       font-size: 1rem;
-      color: #999; 
+      color: #999;
     }
   }
 
@@ -92,4 +92,16 @@
   gap: 0.75rem;
   justify-content: flex-start;
   margin-top: 1rem;
+}
+
+.cargando {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+
+  p {
+    font-size: 1.2rem;
+    color: #999;
+  }
 }

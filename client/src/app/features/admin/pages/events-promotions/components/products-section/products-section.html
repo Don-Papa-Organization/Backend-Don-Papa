@@ -1,0 +1,42 @@
+<app-ui-modal titulo="Productos de la Promoción" [mostrar]="mostrar" (cerrar)="onCerrar()">
+    <div class="modal-productos">
+        <p *ngIf="promocionSeleccionada">
+            Promoción: {{ promocionSeleccionada.nombre }}
+        </p>
+
+        @if (productosPromocion.length > 0) {
+        <div class="table-content">
+            <app-ui-tabla [theadData]="columnasProductosPromocion" [tbodyData]="productosPromocion"
+                [acciones]="accionesProductosPromocion">
+            </app-ui-tabla>
+        </div>
+        } @else {
+        <p class="warning-text">No hay productos asociados a esta promoción.</p>
+        }
+
+        <div footer class="form-footer">
+            <ui-button texto="Agregar Producto" (accion)="abrirModalAgregarProducto()"></ui-button>
+        </div>
+    </div>
+</app-ui-modal>
+
+<!-- MODALES ANIDADOS -->
+<app-agregar-producto-form [mostrar]="mostrarModalAgregarProducto"
+    [promocionId]="promocionSeleccionada?.idPromocion || null" [productosOptions]="productosDisponibles"
+    (cerrar)="mostrarModalAgregarProducto = false" (productoAgregado)="onProductoAgregado($event)">
+</app-agregar-producto-form>
+
+<app-editar-producto-form [mostrar]="mostrarModalEditarProductoPromocion"
+    [productoPromocion]="productoPromocionSeleccionado" (cerrar)="mostrarModalEditarProductoPromocion = false"
+    (productoActualizado)="onProductoPromocionActualizado($event)">
+</app-editar-producto-form>
+
+@if (mostrarModalEliminarProductoPromocion) {
+<app-ui-modal titulo="Eliminar Producto de Promoción" [mostrar]="mostrarModalEliminarProductoPromocion"
+    (cerrar)="mostrarModalEliminarProductoPromocion = false">
+    <div class="modal-confirmacion">
+        <ui-button texto="Eliminar Producto" [noBackgroundColor]="true" backgroundColor="#EF4444"
+            (accion)="confirmarEliminacionProductoPromocion()"></ui-button>
+    </div>
+</app-ui-modal>
+}

@@ -1,0 +1,26 @@
+.statistics-page {
+  min-width: 785px;
+  padding: 1.5rem;
+}
+
+.dashboard-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.sales-section,
+.inventory-section {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .statistics-page {
+    min-width: auto;
+    padding: 1rem;
+  }
+
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+}
