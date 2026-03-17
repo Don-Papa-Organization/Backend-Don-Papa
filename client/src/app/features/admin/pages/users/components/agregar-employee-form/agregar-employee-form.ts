@@ -14,6 +14,8 @@ export class AgregarEmployeeForm {
   @Output() cerrar = new EventEmitter<void>();
   @Output() empleadoCreado = new EventEmitter<CreateEmployeeRequestDto>();
 
+  formSubmitted = false;
+
   // Datos del formulario
   empleadoNuevo = {
     nombre: '',
@@ -29,6 +31,7 @@ export class AgregarEmployeeForm {
    * Maneja el guardado del formulario
    */
   onGuardar(): void {
+    this.formSubmitted = true;
     const dto: CreateEmployeeRequestDto = {
       nombre: this.empleadoNuevo.nombre.trim(),
       documento: this.empleadoNuevo.documento.trim(),
@@ -54,6 +57,7 @@ export class AgregarEmployeeForm {
    * Limpia el formulario
    */
   private resetForm(): void {
+    this.formSubmitted = false;
     this.empleadoNuevo = {
       nombre: '',
       documento: '',

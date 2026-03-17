@@ -1,0 +1,13 @@
+<div class="pos-mesas">
+  <div class="pos-mesas__loading" *ngIf="cargando">Cargando mesas…</div>
+  <div class="pos-mesas__status" *ngIf="!cargando && mensajeEstadoMesa">{{ mensajeEstadoMesa }}</div>
+
+  <ng-container *ngIf="!cargando">
+    <app-pos-floor-plan
+      [grupos]="grupos"
+      (mesaClick)="abrirMesa($event)"
+      (mesaToggleEstado)="cambiarEstadoMesa($event)"
+      (confirmarReserva)="onConfirmarReserva($event)">
+    </app-pos-floor-plan>
+  </ng-container>
+</div>

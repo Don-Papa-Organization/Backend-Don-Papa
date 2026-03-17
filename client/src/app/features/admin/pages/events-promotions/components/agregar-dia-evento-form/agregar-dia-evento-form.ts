@@ -17,8 +17,10 @@ export class AgregarDiaEventoForm {
 	fecha: string = "";
 	horaInicio: string = "09:00";
 	horaFin: string = "18:00";
+	formSubmitted = false;
 
 	onSubmit(): void {
+		this.formSubmitted = true;
 		if (!this.fecha || !this.eventoId) {
 			console.error("Fecha o evento no configurados");
 			return;
@@ -39,6 +41,7 @@ export class AgregarDiaEventoForm {
 		this.fecha = "";
 		this.horaInicio = "09:00";
 		this.horaFin = "18:00";
+		this.formSubmitted = false;
 	}
 
 	onCerrar(): void {

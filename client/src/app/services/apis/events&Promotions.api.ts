@@ -20,6 +20,8 @@ import { TogglePromotionActiveRequestDto } from "../../domain/events&Promotions/
 import { CreateEventRequestDto } from "../../domain/events&Promotions/dtos/request/create-event.request.dto";
 import { UpdateEventRequestDto } from "../../domain/events&Promotions/dtos/request/update-event.request.dto";
 import { SearchEventsRequestDto } from "../../domain/events&Promotions/dtos/request/search-events.request.dto";
+import { ListEventsRequestDto } from "../../domain/events&Promotions/dtos/request/list-events.request.dto";
+import { ListPromotionsRequestDto } from "../../domain/events&Promotions/dtos/request/list-promotions.request.dto";
 import { CreateEventDayRequestDto } from "../../domain/events&Promotions/dtos/request/create-event-day.request.dto";
 import { UpdateEventDayRequestDto } from "../../domain/events&Promotions/dtos/request/update-event-day.request.dto";
 import { CreateProductPromoRequestDto } from "../../domain/events&Promotions/dtos/request/create-product-promo.request.dto";
@@ -43,8 +45,10 @@ export class EventsPromotionsApi {
 
 	constructor(private http: HttpClient) {}
 
-	listPromotions(): Observable<ApiResponse<Promocion[]>> {
-		return this.http.get<ApiResponse<Promocion[]>>(this.promotionsUrl);
+	listPromotions(dto?: ListPromotionsRequestDto): Observable<ApiResponse<Promocion[]>> {
+		return this.http.get<ApiResponse<Promocion[]>>(this.promotionsUrl, {
+			params: dto as any
+		});
 	}
 
 	getPromotion(id: number): Observable<ApiResponse<Promocion>> {
@@ -71,8 +75,10 @@ export class EventsPromotionsApi {
 		return this.http.patch<ApiResponse<Promocion>>(buildApiUrl(API_ENDPOINTS.promotions.toggleActive(id)), dto);
 	}
 
-	listEvents(): Observable<ApiResponse<Evento[]>> {
-		return this.http.get<ApiResponse<Evento[]>>(this.eventsUrl);
+	listEvents(dto?: ListEventsRequestDto): Observable<ApiResponse<Evento[]>> {
+		return this.http.get<ApiResponse<Evento[]>>(this.eventsUrl, {
+			params: dto as any
+		});
 	}
 
 	getEvent(id: number): Observable<ApiResponse<Evento>> {

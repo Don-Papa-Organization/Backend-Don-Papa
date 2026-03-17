@@ -11,11 +11,34 @@
     overflow-y: auto;
     overflow-x: hidden;
     transition: width 0.2s ease-out;
+
+    &.width{
+        width: 1rem;
+    }
 }
 
 .sidebar.is-collapsed {
     width: var(--sidebar-collapsed-width, 5rem);
 
+}
+
+.sidebar.is-collapsed.is-full-collapsed {
+    width: var(--sidebar-full-collapsed-width, 0px);
+    border-right: 0;
+}
+
+.sidebar.is-collapsed.is-full-collapsed .logotipo,
+.sidebar.is-collapsed.is-full-collapsed .menu-container {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar.without-logo {
+    .logotipo {
+        .img {
+            display: none;
+        }
+    }
 }
 
 .sidebar.is-collapsed {
@@ -143,6 +166,10 @@
             }
         }
 
-        
+        .icon-img {
+            width: 32px;
+            height: 32px;
+            filter: brightness(0) invert(1);
+        }
     }
 }

@@ -1,28 +1,38 @@
 <section 
 class="tabla-section"
-[ngClass]="{
-    'min-width': minWidth
-}"
+[style.min-width]="minWidth"
+[ngClass]="[
+  'tabla-section--' + variant,
+  'tabla-section--density-' + density,
+  stickyHeader ? 'tabla-section--sticky-header' : '',
+  hoverable ? 'tabla-section--hoverable' : ''
+]"
 >
     <table class="tabla">
     <thead class="tabla-encabezado">
-        @for (x of theadData; track $index) {
-            <th class="tabla-item">{{x}}</th>
+        <tr>
+        @for (column of renderedColumns; track trackColumn($index, column)) {
+            <th class="tabla-item" [ngClass]="getHeaderClass(column)" [ngStyle]="getCellStyle(column)">{{ getHeaderLabel(column) }}</th>
         }
+        </tr>
     </thead>
 
     <tbody class="tabla-body">
-        @for (objeto of tbodyData; track $index) {
+        @for (objeto of tbodyData; track $index; let rowIndex = $index) {
             <tr class="tabla-fila">
-                @for (columna of theadData; track $index) {
-                    <td class="tabla-item">
-                        @if (columna === 'imagen' && objeto[columna] && objeto[columna] !== 'N/A') {
+                @for (column of renderedColumns; track trackColumn($index, column)) {
+                    <td class="tabla-item" [ngClass]="getCellClassByColumn(objeto, column)" [ngStyle]="getCellStyle(column)">
+                        @if (hasCustomTemplate(column)) {
+                            <ng-container
+                                *ngTemplateOutlet="getCustomTemplate(column)?.templateRef || null; context: getCellTemplateContext(objeto, column, rowIndex)">
+                            </ng-container>
+                        } @else if (isImageColumn(column.key, objeto)) {
                             <img
-                                [src]="objeto[columna]"
+                                [src]="getColumnValue(objeto, column.key)"
                                 alt="Imagen"
                                 style="max-width: 52px; max-height: 52px; object-fit: cover;"
                             />
-                        } @else if (columna === 'Acciones') {
+                        } @else if (isActionsColumn(column.key)) {
                             <div class="acciones-container">
                                 @for (accion of acciones; track $index) {
                                     <app-ui-only-icon-button 
@@ -33,8 +43,38 @@ class="tabla-section"
                                     </app-ui-only-icon-button>
                                 }
                             </div>
+                        } @else if (isBadgeColumn(column.key)) {
+                            <span class="tabla-badge" [ngClass]="getBadgeClass(objeto, column.key)">
+                                {{ getBadgeLabel(objeto, column.key) }}
+                            </span>
+                        } @else if (isStepperColumn(column.key)) {
+                            <div class="tabla-stepper">
+                                <button
+                                    type="button"
+                                    class="tabla-stepper__button"
+                                    [disabled]="!canStepperDecrease(objeto, column.key)"
+                                    (click)="onStepperAction(objeto, column.key, -1)">
+                                    -
+                                </button>
+                                <span class="tabla-stepper__value">{{ getStepperValue(objeto, column.key) }}</span>
+                                <button
+                                    type="button"
+                                    class="tabla-stepper__button"
+                                    [disabled]="!canStepperIncrease(objeto, column.key)"
+                                    (click)="onStepperAction(objeto, column.key, 1)">
+                                    +
+                                </button>
+                            </div>
+                        } @else if (isToggleColumn(column.key)) {
+                            <button
+                                type="button"
+                                class="tabla-toggle"
+                                [ngClass]="{ 'tabla-toggle--on': getToggleValue(objeto, column.key) }"
+                                (click)="onToggleAction(objeto, column.key)">
+                                {{ getToggleLabel(objeto, column.key) }}
+                            </button>
                         } @else {
-                            {{objeto[columna]}}
+                            {{ getDisplayValue(objeto, column.key) }}
                         }
                     </td>
                 }

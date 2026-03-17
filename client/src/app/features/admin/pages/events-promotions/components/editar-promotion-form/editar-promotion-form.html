@@ -25,31 +25,31 @@
 
 		<!-- Validaciones -->
 		<div class="form-errors">
-			@if (nombreField.invalid && nombreField.touched) {
+			@if (nombreField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>El nombre es obligatorio</ng-container>
 			</app-ui-helper-text>
 			}
 
-			@if (descripcionField.invalid && descripcionField.touched) {
+			@if (descripcionField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>La descripción es obligatoria</ng-container>
 			</app-ui-helper-text>
 			}
 
-			@if (!tipoPromocionSeleccionado && nombreField.touched) {
+			@if (!tipoPromocionSeleccionado && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>Debe seleccionar un tipo de promoción</ng-container>
 			</app-ui-helper-text>
 			}
 
-			@if (fechaInicioField.invalid && fechaInicioField.touched) {
+			@if (fechaInicioField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>La fecha de inicio es obligatoria</ng-container>
 			</app-ui-helper-text>
 			}
 
-			@if (fechaFinField.invalid && fechaFinField.touched) {
+			@if (fechaFinField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>La fecha de fin es obligatoria</ng-container>
 			</app-ui-helper-text>

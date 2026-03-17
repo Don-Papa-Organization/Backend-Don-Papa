@@ -1,11 +1,20 @@
-<aside class="sidebar" [class.is-collapsed]="collapsed">
+<aside
+  class="sidebar"
+
+  [class.is-collapsed]="collapsed"
+  [class.is-full-collapsed]="isFullCollapsed"
+  [class.without-logo]="!showLogo"
+  [ngClass]="width"
+  >
     <div class="logotipo">
         <button class="collapse-toggle" type="button" (click)="onToggle()" aria-label="Alternar sidebar">
             <span class="toggle-icon">☰</span>
         </button>
 
-        <img src="/img/logoDonPapa.png" alt="Logo Don Papa" class="img">
-        <p class="texto" [class.is-hidden]="collapsed">Administración</p>
+        @if (showLogo) {
+            <img src="/img/logoDonPapa.png" alt="Logo Don Papa" class="img">
+        }
+        <p class="texto" [class.is-hidden]="collapsed">{{ titulo }}</p>
         
     </div>
     

@@ -42,7 +42,7 @@
     gap: 0.25rem;
 
     label {
-      font-weight: 600;
+      font-weight: 100;
       font-size: 0.9rem;
       color: #D4AF37;
     }
@@ -53,12 +53,12 @@
 
       &.activo {
         color: #10B981;
-        font-weight: 600;
+        font-weight: 100;
       }
 
       &.inactivo {
         color: #EF4444;
-        font-weight: 600;
+        font-weight: 100;
       }
     }
   }
@@ -82,7 +82,7 @@
     }
   }
 
-  strong {
+  .entity-highlight {
     color: #D4AF37;
   }
 }

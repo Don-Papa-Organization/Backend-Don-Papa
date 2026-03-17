@@ -1,5 +1,5 @@
-<div class="input-container">
-  <label>{{ tituloInput }}</label>
+<div class="input-container" [ngClass]="containerClasses">
+  <label *ngIf="showLabel">{{ tituloInput }}</label>
   <input 
     class="ui-input-field"
     [placeholder]="placeholder"
@@ -8,5 +8,6 @@
     [disabled]="isDisabled"
     [min]="min"
     (input)="onInput($event)"
+    (keyup.enter)="onEnterPressed()"
   />
 </div>

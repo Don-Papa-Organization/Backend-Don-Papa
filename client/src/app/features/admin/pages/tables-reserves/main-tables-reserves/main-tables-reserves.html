@@ -33,9 +33,11 @@
   }
 
   <app-agregar-mesa-form [mostrar]="mostrarModalAgregarMesa" (cerrar)="cerrarModalAgregarMesa()"
+    [tipoOptions]="tipoOptions"
     (mesaCreada)="onMesaCreada($event)"></app-agregar-mesa-form>
 
   <app-editar-mesa-form [mostrar]="mostrarModalEditarMesa" [registroSeleccionado]="mesaSeleccionada"
+    [tipoOptions]="tipoOptions"
     (cerrar)="cerrarModalEditarMesa()" (mesaActualizada)="onMesaActualizada($event)"></app-editar-mesa-form>
 
   @if (mostrarModalEliminarMesa) {

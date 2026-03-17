@@ -1,12 +1,12 @@
 <!-- template.component.html -->
-<div class="input-container">
+<div class="input-container" [ngClass]="inputContainerClasses">
   <label>{{ tituloInput }}</label>
-  <div class="combobox-container">
+  <div class="combobox-container" [ngClass]="comboboxClasses">
     <div class="combobox-search-wrapper">
       <input
         type="text"
         class="combobox-search"
-        placeholder="Buscar..."
+        [placeholder]="searchPlaceholder"
         [value]="searchTerm"
         [disabled]="isDisabled"
         (input)="onSearchChange($event.target.value)"
@@ -36,7 +36,7 @@
           *ngIf="filteredOptions.length === 0"
           class="combobox-no-results"
         >
-          No hay opciones disponibles
+          {{ emptyMessage }}
         </div>
         <button
           *ngFor="let option of filteredOptions"

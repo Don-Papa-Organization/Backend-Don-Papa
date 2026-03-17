@@ -1,0 +1,218 @@
+@use '../../../../../styles/variables' as *;
+
+.profile-page {
+  padding: 1.5rem;
+  max-width: 1120px;
+  margin: 0 auto;
+
+  &__loading,
+  &__error {
+    color: $color-gold;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  &__error {
+    color: $color-danger;
+  }
+}
+
+.profile-card,
+.profile-section {
+  background: $color-bg-primary;
+  border: 1px solid rgba($color-gold, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.profile-card {
+  max-width: 480px;
+  margin: 0 auto 1.5rem;
+
+  &__header {
+    padding: 2rem;
+    text-align: center;
+    border-bottom: 1px solid rgba($color-gold, 0.15);
+  }
+
+  &__avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba($color-gold, 0.15);
+    border: 2px solid rgba($color-gold, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: $color-gold;
+    margin: 0 auto 1rem;
+  }
+
+  &__email {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    color: $color-white;
+    word-break: break-all;
+  }
+
+  &__role {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba($color-gold, 0.7);
+    background: rgba($color-gold, 0.08);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  &__body {
+    padding: 1.25rem 1.5rem;
+  }
+
+  &__actions {
+    padding: 0 1.5rem 1.5rem;
+  }
+}
+
+.profile-section {
+  padding: 1.5rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba($color-gold, 0.2);
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    margin: 0;
+    color: $color-white;
+    font-size: 1rem;
+  }
+
+  &__subtitle {
+    margin: 0.35rem 0 0;
+    color: rgba($color-white, 0.6);
+    font-size: 0.85rem;
+  }
+}
+
+.profile-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba($color-gold, 0.08);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__label {
+    font-size: 0.78rem;
+    color: rgba($color-white, 0.5);
+  }
+
+  &__value {
+    font-size: 0.85rem;
+    color: $color-white;
+
+    &--status {
+      color: $color-danger;
+
+      &.active {
+        color: $color-success;
+      }
+    }
+  }
+}
+
+.change-password-form {
+  padding: 1.25rem 1.5rem 1.5rem;
+  border-top: 1px solid rgba($color-gold, 0.15);
+
+  &__title {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    color: $color-white;
+  }
+}
+
+.form-mensaje {
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+
+  &.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: $color-danger;
+  }
+
+  &.success {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+}
+
+.payments-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.payments-empty {
+  padding: 1rem;
+  text-align: center;
+  color: rgba($color-white, 0.65);
+  border: 1px dashed rgba($color-gold, 0.2);
+  border-radius: 8px;
+  background: rgba($color-white, 0.02);
+}
+
+.pagos-contenido {
+  width: 100%;
+}
+
+.preview-recibo-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pdf-viewer {
+  width: 100%;
+  background: rgba($color-white, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.acciones-preview {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 1rem;
+  }
+
+  .profile-card {
+    max-width: none;
+  }
+
+  .profile-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .profile-section {
+    padding: 1rem;
+  }
+}

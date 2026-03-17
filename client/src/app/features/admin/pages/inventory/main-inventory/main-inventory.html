@@ -25,7 +25,7 @@
     </div>
 
     <app-ui-admin-filter-panel [estadoOpciones]="categoriasOptions" [mostrarFechas]="false" [mostrarEstado]="true"
-        labelBusqueda="Buscar productos" placeholderBusqueda="Nombre o descripción..."
+        labelBusqueda="Buscar productos" placeholderBusqueda="Nombre o descripción..." tituloInput="Categorias"
         (filtrosAplicados)="onFiltrosAplicados($event)" (filtrosLimpiados)="onFiltrosLimpiados()">
     </app-ui-admin-filter-panel>
 
@@ -36,8 +36,42 @@
 
     <div class="table-content" *ngIf="!cargandoProductos">
         <app-ui-tabla name="table-content" [theadData]="columnas" [tbodyData]="productosTableData"
-            (editarRegistro)="onEditar($event)" (eliminarRegistro)="onEliminar($event)">
+            [columnasConfig]="columnasConfig"
+            (editarRegistro)="onEditar($event)"
+            (eliminarRegistro)="onEliminar($event)"
+            (stepperChange)="onStepperStockChange($event)"
+            (toggleChange)="onToggleActivoChange($event)">
         </app-ui-tabla>
+    </div>
+
+    <div class="paginacion" *ngIf="!cargandoProductos && totalItems > 0">
+        <div class="paginacion-info">
+            <span>Total: {{ totalItems }} productos</span>
+            <span>Pagina {{ currentPage }} de {{ totalPages }}</span>
+        </div>
+
+        <div class="paginacion-controles">
+            <app-ui-combobox
+                tituloInput="Items por pagina"
+                [options]="pageSizeOptions"
+                [(selectedOption)]="pageSize"
+                (selectedOptionChange)="onPageSizeChange($event)">
+            </app-ui-combobox>
+
+            <ui-button
+                texto="Anterior"
+                [noBackgroundColor]="true"
+                [disabled]="currentPage <= 1 || cargandoProductos"
+                (accion)="previousPage()">
+            </ui-button>
+
+            <ui-button
+                texto="Siguiente"
+                [noBackgroundColor]="true"
+                [disabled]="currentPage >= totalPages || cargandoProductos"
+                (accion)="nextPage()">
+            </ui-button>
+        </div>
     </div>
 
 

@@ -97,6 +97,7 @@ export interface FrequentUserDto {
   idUsuario: number;
   cantidadCompras: number;
   montoTotal: number;
+  fecha?: Date | string;
 }
 
 export interface PeakHourDto {

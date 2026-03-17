@@ -1,0 +1,122 @@
+<div class="floor-wrap">
+  <div class="floor">
+    <div class="layout-grid">
+
+      <!-- ══ Fila Superior: VIP + Entrada + Salón ══ -->
+      <div class="top-row">
+
+        <!-- Zona VIP -->
+        <div class="zone zone--vip">
+          <span class="zone__label">Zona VIP</span>
+          <div class="zone__header">
+            <span class="zone__badge" style="background: rgba(94, 25, 20, 0.8);">
+              {{ grupos.vip.length }} Mesas
+            </span>
+          </div>
+          <div class="zone__grid zone__grid--vip">
+            <app-ui-pos-floor-mesa
+              *ngFor="let mesa of grupos.vip"
+              [nombreMesa]="mesa.nombreMesa"
+              zona="vip"
+              [estadoVisual]="mesa.estadoVisual"
+              [tiempoOcupada]="mesa.tiempoOcupada"
+              [tieneReserva]="!!mesa.reservaHoy"
+              [franjaReserva]="mesa.reservaHoy?.hora || ''"
+              [puedeConfirmar]="!!mesa.reservaHoy"
+              [idReserva]="mesa.reservaHoy?.idReserva ?? null"
+              (mesaClick)="mesaClick.emit(mesa)"
+              (estadoToggle)="mesaToggleEstado.emit(mesa)"
+              (confirmarReserva)="confirmarReserva.emit($event)"
+            />
+          </div>
+        </div>
+
+        <!-- Referencia de entrada -->
+        <div class="entrada-espacio">
+          <span class="ref-label">Acceso Principal / Entrada</span>
+        </div>
+
+        <!-- Zona Salón -->
+        <div class="zone zone--salon">
+          <span class="zone__label">Salón Social</span>
+          <div class="zone__header">
+            <span class="zone__badge" style="background: rgba(139, 94, 60, 0.8);">
+              {{ grupos.salon.length }} Mesas
+            </span>
+          </div>
+          <div class="zone__grid">
+            <app-ui-pos-floor-mesa
+              *ngFor="let mesa of grupos.salon"
+              [nombreMesa]="mesa.nombreMesa"
+              zona="salon"
+              [estadoVisual]="mesa.estadoVisual"
+              [tiempoOcupada]="mesa.tiempoOcupada"
+              [tieneReserva]="!!mesa.reservaHoy"
+              [franjaReserva]="mesa.reservaHoy?.hora || ''"
+              [puedeConfirmar]="!!mesa.reservaHoy"
+              [idReserva]="mesa.reservaHoy?.idReserva ?? null"
+              (mesaClick)="mesaClick.emit(mesa)"
+              (estadoToggle)="mesaToggleEstado.emit(mesa)"
+              (confirmarReserva)="confirmarReserva.emit($event)"
+            />
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ Fila Inferior: Barra ══ -->
+      <div class="bottom-row">
+        <div class="zone zone--barra">
+          <span class="zone__label">Barra</span>
+          <div class="zone__header">
+            <span class="zone__badge" style="background: rgba(26, 18, 15, 0.8);">
+              {{ grupos.barra.length }} Mesas
+            </span>
+          </div>
+          <div class="zone__grid zone__grid--barra">
+            <app-ui-pos-floor-mesa
+              *ngFor="let mesa of grupos.barra"
+              [nombreMesa]="mesa.nombreMesa"
+              zona="barra"
+              [estadoVisual]="mesa.estadoVisual"
+              [tiempoOcupada]="mesa.tiempoOcupada"
+              [tieneReserva]="!!mesa.reservaHoy"
+              [franjaReserva]="mesa.reservaHoy?.hora || ''"
+              [puedeConfirmar]="!!mesa.reservaHoy"
+              [idReserva]="mesa.reservaHoy?.idReserva ?? null"
+              (mesaClick)="mesaClick.emit(mesa)"
+              (estadoToggle)="mesaToggleEstado.emit(mesa)"
+              (confirmarReserva)="confirmarReserva.emit($event)"
+            />
+          </div>
+        </div>
+
+        <div class="zone zone--varios">
+          <span class="zone__label">Zona Varios</span>
+          <div class="zone__header">
+            <span class="zone__badge" style="background: rgba(74, 85, 104, 0.85);">
+              {{ grupos.varios.length }} Mesas
+            </span>
+          </div>
+          <div class="zone__grid zone__grid--varios">
+            <app-ui-pos-floor-mesa
+              *ngFor="let mesa of grupos.varios"
+              [nombreMesa]="mesa.nombreMesa"
+              zona="varios"
+              [estadoVisual]="mesa.estadoVisual"
+              [tiempoOcupada]="mesa.tiempoOcupada"
+              [tieneReserva]="!!mesa.reservaHoy"
+              [franjaReserva]="mesa.reservaHoy?.hora || ''"
+              [puedeConfirmar]="!!mesa.reservaHoy"
+              [idReserva]="mesa.reservaHoy?.idReserva ?? null"
+              (mesaClick)="mesaClick.emit(mesa)"
+              (estadoToggle)="mesaToggleEstado.emit(mesa)"
+              (confirmarReserva)="confirmarReserva.emit($event)"
+            />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

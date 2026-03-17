@@ -1,0 +1,166 @@
+:host {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.table-sale-topbar {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: .75rem;
+	padding: 0 .75rem;
+	box-sizing: border-box;
+}
+
+.ui-button-header{
+	margin-left: 1vw;
+}
+
+.table-sale-topbar__title {
+	margin: 0;
+	text-align: center;
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 100;
+	flex: 1;
+}
+
+.table-sale-topbar__right {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	justify-content: flex-end;
+}
+
+.layout {
+	--sidebar-current-width: 0px;
+}
+
+.layout.table-sale-mode {
+	--sidebar-current-width: 0px;
+}
+
+.main-content {
+	position: fixed;
+	top: 70px;
+	left: var(--sidebar-current-width);
+	right: 0;
+	bottom: 0;
+	width: calc(100% - var(--sidebar-current-width));
+	height: calc(100vh - 70px);
+	overflow-y: auto;
+	overflow-x: auto;
+	background-color: #2B1D13;
+	padding: 1.25rem;
+	padding: 1.5rem;
+	transition: left 0.2s ease, width 0.2s ease;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+
+	scrollbar-color: grey #1A120B;
+}
+
+/* En modo POS el topbar mide 80px */
+.layout.pos-mode .main-content {
+	top: 80px;
+	height: calc(100vh - 80px);
+	padding: 0.75rem;
+}
+
+/* Sin padding extra ni scroll en el contenedor POS */
+.layout.pos-mode .main-content {
+	padding: 0;
+	overflow: hidden;
+}
+
+.header-nav {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-right: auto;
+}
+
+.header-nav__item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	text-decoration: none;
+	color: #f4f4f5;
+	color: #ffffff;
+	font-size: 0.85rem;
+	padding: 0.35rem 0.6rem;
+	border: 1px solid rgba(212, 175, 55, 0.25);
+	border-radius: 8px;
+	transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.header-nav__item:hover {
+	border-color: #D4AF37;
+	background-color: rgba(212, 175, 55, 0.1);
+	color: #D4AF37;
+}
+
+.header-nav__item.active {
+	border-color: #D4AF37;
+	background-color: rgba(212, 175, 55, 0.18);
+	color: #D4AF37;
+}
+
+.header-nav__item img {
+	width: 16px;
+	height: 16px;
+	object-fit: contain;
+}
+
+.header-nav--pos {
+	margin-left: 1rem;
+}
+
+@media (max-width: 980px) {
+	.table-sale-topbar {
+		flex-wrap: wrap;
+	}
+
+	.table-sale-topbar__title {
+		order: -1;
+		width: 100%;
+		text-align: left;
+	}
+
+	.table-sale-topbar__right {
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	.header-nav {
+		flex-wrap: wrap;
+	}
+
+	.header-nav__item span {
+		display: none;
+	}
+
+	.header-nav__item {
+		padding: 0.35rem;
+	}
+}
+
+.layout.pos-mode .main-content-body {
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	background-color: #2B1D13;
+}
+
+.main-content-body {
+	flex: 1 1 auto;
+	width: 100%;
+}
+
+/* Título de sección en topbar POS proyectado desde el layout */

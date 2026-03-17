@@ -29,6 +29,7 @@ export class UiAdminFilterPanel implements OnInit, OnDestroy {
   @Input() labelBusqueda: string = 'Buscar';
   @Input() placeholderBusqueda: string = 'Escribe para buscar...';
   @Input() debounceTime: number = 500; // Tiempo de espera en ms antes de aplicar búsqueda
+  @Input() tituloInput: string = "estado"
 
   @Output() filtrosAplicados = new EventEmitter<AdminFiltros>();
   @Output() filtrosLimpiados = new EventEmitter<void>();

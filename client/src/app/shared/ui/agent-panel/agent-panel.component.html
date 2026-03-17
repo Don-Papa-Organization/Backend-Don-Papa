@@ -1,0 +1,107 @@
+<div
+  *ngIf="isPanelOpen$ | async"
+  class="agent-panel"
+  [class.minimized]="isMinimized"
+  role="dialog"
+  aria-labelledby="agent-panel-title"
+>
+  <div class="agent-panel-header">
+    <h3 id="agent-panel-title">Asistente Virtual</h3>
+    <div class="header-actions">
+      <button
+        type="button"
+        class="header-btn"
+        (click)="toggleMinimize()"
+        [attr.aria-label]="isMinimized ? 'Expandir chat' : 'Minimizar chat'"
+      >
+        <svg *ngIf="!isMinimized" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="6" y1="12" x2="18" y2="12"></line>
+        </svg>
+        <svg *ngIf="isMinimized" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="6" x2="12" y2="18"></line>
+          <line x1="6" y1="12" x2="18" y2="12"></line>
+        </svg>
+      </button>
+
+      <button type="button" class="header-btn close-btn" (click)="closePanel()" aria-label="Cerrar panel">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="agent-panel-body" *ngIf="!isMinimized">
+    <div class="conversation-list" #conversationList>
+      <div *ngIf="(conversation$ | async)?.length === 0" class="empty-state">
+        <p>¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte?</p>
+      </div>
+
+      <div
+        *ngFor="let message of conversation$ | async"
+        class="message"
+        [class.user-message]="message.sender === 'user'"
+        [class.agent-message]="message.sender === 'agent'"
+      >
+        <div class="message-content">
+          <p>{{ message.message }}</p>
+        </div>
+        <span class="message-time">{{ message.createdAt | date: 'HH:mm' }}</span>
+      </div>
+
+      <div *ngIf="loading$ | async" class="loading-indicator">
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <div *ngIf="error$ | async as error" class="error-message">
+        <p>{{ error }}</p>
+      </div>
+
+      <!-- Image/Option Cards -->
+      <div
+        *ngIf="(lastResponse$ | async)?.view?.options as options"
+        class="option-cards"
+      >
+        <div
+          *ngFor="let option of options"
+          class="option-card"
+          (click)="selectOption(getOptionValue(option))"
+        >
+          <img *ngIf="getOptionImageUrl(option)" [src]="getOptionImageUrl(option)" [alt]="getOptionLabel(option)" />
+          <div class="option-card-content">
+            <h4>{{ getOptionLabel(option) }}</h4>
+            <p *ngIf="getOptionDescription(option)">{{ getOptionDescription(option) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <input
+        type="text"
+        class="message-input"
+        placeholder="Escribe tu mensaje..."
+        [(ngModel)]="messageInput"
+        (keypress)="handleKeyPress($event)"
+        [disabled]="(loading$ | async) ?? false"
+      />
+      <button
+        type="button"
+        class="send-btn"
+        (click)="sendMessage()"
+        [disabled]="!messageInput.trim() || ((loading$ | async) ?? false)"
+        aria-label="Enviar mensaje"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

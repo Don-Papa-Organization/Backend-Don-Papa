@@ -18,6 +18,7 @@ export class EditarEventForm implements OnChanges {
 	// Campos del formulario
 	nombre = "";
 	descripcion = "";
+	formSubmitted = false;
 
 	constructor() { }
 
@@ -35,10 +36,12 @@ export class EditarEventForm implements OnChanges {
 	}
 
 	onCerrar(): void {
+		this.formSubmitted = false;
 		this.cerrar.emit();
 	}
 
 	onSubmit(): void {
+		this.formSubmitted = true;
 		if (!this.nombre || !this.descripcion || !this.eventoSeleccionado) return;
 
 		const dto: UpdateEventRequestDto = {

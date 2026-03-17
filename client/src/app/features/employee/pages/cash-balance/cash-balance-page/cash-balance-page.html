@@ -1,0 +1,47 @@
+<section class="cash-balance-page">
+  <div class="cash-balance-page__header">
+    <div>
+      <h2 class="cash-balance-page__title">Cuadre de caja</h2>
+      <p class="cash-balance-page__subtitle">Corte visual del dia en hora Colombia: {{ horaColombia }}</p>
+    </div>
+  </div>
+
+  <div class="cash-balance-calculator">
+    <div class="cash-balance-row">
+      <span class="cash-balance-row__label">Dinero base</span>
+      <div class="cash-balance-row__input">
+        <ui-input
+          [showLabel]="false"
+          tipo="number"
+          [(ngModel)]="dineroBase"
+          placeholder="500000">
+        </ui-input>
+      </div>
+      <span class="cash-balance-row__value">{{ formatCOP(dineroBase) }}</span>
+    </div>
+
+    <div class="cash-balance-row">
+      <span class="cash-balance-row__label">Gastos</span>
+      <div class="cash-balance-row__input">
+        <ui-input
+          [showLabel]="false"
+          tipo="number"
+          [(ngModel)]="gastos"
+          placeholder="0">
+        </ui-input>
+      </div>
+      <span class="cash-balance-row__value cash-balance-row__value--danger">-{{ formatCOP(gastos) }}</span>
+    </div>
+
+    <div class="cash-balance-row cash-balance-row--readonly">
+      <span class="cash-balance-row__label">Ventas en efectivo</span>
+      <span class="cash-balance-row__value cash-balance-row__value--success">{{ formatCOP(dineroEfectivo) }}</span>
+    </div>
+
+    <div class="cash-balance-total">
+      <span class="cash-balance-total__label">Total dinero en caja</span>
+      <span class="cash-balance-total__formula">dinero base - gastos + dinero efectivo</span>
+      <span class="cash-balance-total__value">{{ formatCOP(igual) }}</span>
+    </div>
+  </div>
+</section>

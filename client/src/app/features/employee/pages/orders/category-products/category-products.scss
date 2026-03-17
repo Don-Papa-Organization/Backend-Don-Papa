@@ -1,0 +1,32 @@
+.pos-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.pos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #D4AF37;
+
+  h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 100;
+  }
+}
+
+.table-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.estado-carga {
+  color: #999999;
+}

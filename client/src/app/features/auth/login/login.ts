@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import * as AuthActions from '../../../domain/auth/state/auth.actions';
-import { selectAuthError, selectAuthLoading, selectIsAuthenticated, selectUser } from '../../../domain/auth/state/auth.selectors';
+import { selectAuthError, selectAuthLoading, selectAuthMessage, selectIsAuthenticated, selectUser } from '../../../domain/auth/state/auth.selectors';
 import { TipoUsuario } from '../../../types/tipo.usuario';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
@@ -18,17 +18,24 @@ export class Login implements OnInit, OnDestroy {
   password = '';
   loading$: any;
   error$: any;
+  message$: any;
   successMessage = '';
   private successTimeoutId: ReturnType<typeof setTimeout> | undefined;
+  private lastLoginEmail = '';
+  private autoResendTriggered = false;
   
   private destroy$ = new Subject<void>();
   
   constructor(private store: Store, private router: Router) {
     this.loading$ = this.store.select(selectAuthLoading);
     this.error$ = this.store.select(selectAuthError);
+    this.message$ = this.store.select(selectAuthMessage);
   }
 
   ngOnInit(): void {
+    // Limpiar mensajes previos al inicializar el componente
+    this.store.dispatch(AuthActions.clearAuthMessages());
+    
     combineLatest([
       this.store.select(selectIsAuthenticated),
       this.store.select(selectUser)
@@ -49,6 +56,37 @@ export class Login implements OnInit, OnDestroy {
 
         return;
       });
+
+    this.error$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((error: string | undefined) => {
+        if (!error || !this.lastLoginEmail || this.autoResendTriggered) {
+          return;
+        }
+
+        if (!this.isUnverifiedEmailError(error)) {
+          return;
+        }
+
+        this.autoResendTriggered = true;
+        this.successMessage = 'Tu correo no está verificado. Reenviando enlace de verificación...';
+
+        this.store.dispatch(
+          AuthActions.resendVerification({
+            payload: { correo: this.lastLoginEmail }
+          })
+        );
+      });
+
+    this.message$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((message: string | undefined) => {
+        if (!this.autoResendTriggered || !message) {
+          return;
+        }
+
+        this.successMessage = message;
+      });
   }
 
   ngOnDestroy(): void {
@@ -64,13 +102,26 @@ export class Login implements OnInit, OnDestroy {
       return;
     }
 
+    this.lastLoginEmail = this.email.trim();
+    this.autoResendTriggered = false;
+    this.successMessage = '';
+
     this.store.dispatch(
       AuthActions.login({
         payload: {
-          correo: this.email.trim(),
+          correo: this.lastLoginEmail,
           contrasena: this.password
         }
       })
+    );
+  }
+
+  private isUnverifiedEmailError(error: string): boolean {
+    const normalizedError = error.toLowerCase();
+    return (
+      normalizedError.includes('no esta verificado') ||
+      normalizedError.includes('no está verificado') ||
+      normalizedError.includes('not verified')
     );
   }
 

@@ -1,0 +1,17 @@
+<div class="qty-stepper" [ngClass]="hostClasses">
+  <button
+    type="button"
+    class="qty-stepper__btn qty-stepper__btn--minus"
+    [disabled]="disabled"
+    aria-label="Disminuir cantidad"
+    title="Disminuir cantidad"
+    (click)="decrementar.emit()">-</button>
+  <span class="qty-stepper__value" aria-live="polite">{{ cantidad }}</span>
+  <button
+    type="button"
+    class="qty-stepper__btn qty-stepper__btn--plus"
+    [disabled]="disabled"
+    aria-label="Aumentar cantidad"
+    title="Aumentar cantidad"
+    (click)="incrementar.emit()">+</button>
+</div>

@@ -1,0 +1,27 @@
+@use '../../../../../../styles/variables' as *;
+
+.config-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: $color-bg-primary;
+  border-radius: 4px;
+  border: 1px solid rgba($color-gold, 0.2);
+  font-size: 0.9rem;
+
+  &__title {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #999999;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 100;
+  }
+
+  app-ui-combobox,
+  ui-input {
+    font-size: 0.85rem;
+  }
+}

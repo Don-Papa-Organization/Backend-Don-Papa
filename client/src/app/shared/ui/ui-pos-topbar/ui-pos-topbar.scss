@@ -1,0 +1,66 @@
+@use '../../../styles/variables' as *;
+
+.pos-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  border-bottom: 1px solid $color-gold;
+  background: $color-bg-secondary;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 100;
+
+  &__left,
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  &__center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+  }
+
+  &__brand {
+    color: $color-white;
+    font-size: .85rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 100;
+  }
+
+  &__menu {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba($color-gold, 0.3);
+    border-radius: 6px;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+
+    &:hover {
+      border-color: $color-gold;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-gold;
+      outline-offset: 2px;
+    }
+
+    img {
+      width: 16px;
+      height: 16px;
+      opacity: .85;
+    }
+  }
+}

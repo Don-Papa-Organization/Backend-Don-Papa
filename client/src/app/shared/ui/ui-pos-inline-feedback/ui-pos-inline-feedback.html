@@ -1,0 +1,4 @@
+<div class="pos-feedback" *ngIf="visible && message" [ngClass]="hostClasses" role="status" [attr.aria-live]="ariaLiveMode">
+  <span class="pos-feedback__text">{{ message }}</span>
+  <button *ngIf="dismissible" class="pos-feedback__close" type="button" (click)="dismiss.emit()" aria-label="Cerrar mensaje">x</button>
+</div>

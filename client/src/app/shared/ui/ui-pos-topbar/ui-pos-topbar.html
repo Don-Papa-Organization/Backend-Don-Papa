@@ -1,0 +1,32 @@
+<div class="pos-topbar">
+  <div class="pos-topbar__left">
+    <button
+      class="pos-topbar__menu"
+      type="button"
+      (click)="toggleSidebar.emit()"
+      title="Mostrar u ocultar menu POS"
+      aria-label="Mostrar u ocultar menu POS">
+      <img src="icons/iconoMesas.svg" alt="menú">
+    </button>
+    <span class="pos-topbar__brand">POS Empleado</span>
+  </div>
+
+  <div class="pos-topbar__center">
+    <ng-content select="[center]"></ng-content>
+  </div>
+
+  <div class="pos-topbar__right">
+    <app-ui-checkbox
+      name="topbarAutoPrint"
+      label="Autoimpresión"
+      [checked]="autoPrint"
+      (checkedChange)="onAutoPrintChange($event)">
+    </app-ui-checkbox>
+
+    <app-ui-only-icon-button
+      texto="Salir"
+      urlIcono="icons/iconoSalir.svg"
+      (action)="logout.emit()">
+    </app-ui-only-icon-button>
+  </div>
+</div>

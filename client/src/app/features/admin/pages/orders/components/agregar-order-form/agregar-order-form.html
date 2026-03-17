@@ -45,8 +45,12 @@
 				<ng-container>Cargando productos disponibles...</ng-container>
 			</app-ui-helper-text>
 
-			<app-ui-helper-text *ngIf="cantidadModel.invalid && (cantidadModel.touched || formSubmitted)">
+			<app-ui-helper-text *ngIf="cantidadModel.invalid && formSubmitted">
 				<ng-container *ngIf="cantidadModel.errors?.['required']">La cantidad es obligatoria.</ng-container>
+			</app-ui-helper-text>
+
+			<app-ui-helper-text *ngIf="mensajeValidacionProducto">
+				<ng-container>{{ mensajeValidacionProducto }}</ng-container>
 			</app-ui-helper-text>
 		</div>
 

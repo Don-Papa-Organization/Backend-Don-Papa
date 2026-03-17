@@ -1,0 +1,99 @@
+<div class="sale-shell" *ngIf="!cargando">
+  <div class="pos-page table-sale-dual">
+    <!-- Panel izquierdo: Categorías / Productos -->
+    <div class="panel panel-left">
+      <div class="panel-izq-header" *ngIf="vistaPanelIzq === 'categorias'">
+        <h3>Categorías</h3>
+      </div>
+      <div class="panel-izq-header" *ngIf="vistaPanelIzq === 'productos'">
+        <ui-button texto="← Volver categorías" [disabled]="false" (accion)="volverACategorias()"></ui-button>
+        <h3>{{ categoriaActiva?.nombre || 'Productos' }}</h3>
+      </div>
+
+      <div class="panel-izq-content">
+        <div class="categorias-grid" *ngIf="vistaPanelIzq === 'categorias'">
+          <button class="categoria-card" *ngFor="let categoria of categorias" [attr.aria-label]="'Abrir categoria ' + categoria.nombre" (click)="abrirCategoria(categoria.idCategoria)">
+            {{ categoria.nombre }}
+          </button>
+        </div>
+
+        <div class="productos-grid" *ngIf="vistaPanelIzq === 'productos'">
+          <div *ngIf="cargandoProductos" class="loading">Cargando productos...</div>
+          <div class="producto-card" *ngFor="let producto of productosCategoria">
+            <div class="producto-card__img-wrap">
+              <img class="producto-card__img" [src]="producto.urlImagen" [alt]="producto.nombre" loading="lazy" />
+            </div>
+            <h4>{{ producto.nombre }}</h4>
+            <ng-container *ngIf="producto.tienePromocion; else precioNormalTpl">
+              <p class="precio precio--original">${{ producto.precioOriginal | number:'1.0-2' }}</p>
+              <p class="precio precio--promo">${{ producto.precio | number:'1.0-2' }}</p>
+              <p class="promo-badge">Promoción activa</p>
+            </ng-container>
+            <ng-template #precioNormalTpl>
+              <p class="precio">${{ producto.precio | number:'1.0-2' }}</p>
+            </ng-template>
+            <p class="stock">Stock: {{ producto.stockActual }}</p>
+            <ui-button
+              [disabled]="procesando || producto.stockActual === 0"
+              [texto]="'+ Agregar x' + cantidadRapida"
+              (accion)="agregarProducto(producto.idProducto)">
+            </ui-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel derecho: Configuración + Pedido + Footer -->
+    <div class="panel panel-right">
+      <div class="panel-right-header">
+        <h2>{{ mesa?.nombreMesa || ('Mesa ' + idMesa) }}</h2>
+      </div>
+
+      <div class="panel-right-top">
+        <app-ui-pos-inline-feedback
+          [visible]="feedbackVisible"
+          [message]="feedbackMessage"
+          [type]="feedbackType"
+          density="compact"
+          (dismiss)="cerrarFeedback()">
+        </app-ui-pos-inline-feedback>
+      </div>
+
+      <div class="panel-right-main panel-right-main--card">
+        <app-table-sale-footer-actions
+          *ngIf="pedidoActual"
+          [totalPedido]="pedidoActual.total"
+          [lineasCount]="pedidoActual.lineas.length"
+          [autoImpresion]="autoImpresion"
+          [reciboPendienteId]="reciboPendienteId"
+          [procesando]="procesando"
+          [descargandoRecibo]="descargandoRecibo"
+          (descargarReciboPendiente)="descargarReciboPendiente()"
+          (abrirPago)="abrirPago()">
+        </app-table-sale-footer-actions>
+
+        <!-- Lineas del pedido -->
+        <app-table-sale-order-lines
+          [pedidoActual]="pedidoActual"
+          [procesando]="procesando"
+          (incrementarLinea)="sumarCantidad($event)"
+          (decrementarLinea)="restarCantidad($event)"
+          (eliminarLinea)="eliminarProductoDirecto($event)">
+        </app-table-sale-order-lines>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal Pago -->
+  <app-registrar-pago-form
+    [mostrar]="mostrarModalPago"
+    [totalPedido]="pedidoActual?.total || 0"
+    [direccionEntrega]="direccionEntrega || ''"
+    [metodosPagoOptions]="metodosPagoOptions"
+    (cerrar)="cerrarPago()"
+    (pagoRegistrado)="registrarPago($event)">
+  </app-registrar-pago-form>
+</div>
+
+<div class="estado-carga" *ngIf="cargando" role="status" aria-live="polite">Cargando vista de mesa...</div>

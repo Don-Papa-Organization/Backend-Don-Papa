@@ -37,7 +37,7 @@
 
         <app-ui-combobox
           *ngIf="mostrarEstado"
-          tituloInput="Estado"
+          [tituloInput]="tituloInput"
           [options]="estadoOpciones"
           [(selectedOption)]="filtros.estado">
         </app-ui-combobox>

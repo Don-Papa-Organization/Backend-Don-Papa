@@ -32,6 +32,8 @@ export class AgregarForm {
   /** Archivo seleccionado por el usuario */
   imagenPendiente: File | null = null;
 
+  formSubmitted = false;
+
   constructor() { }
 
   onCerrar(): void {
@@ -44,6 +46,7 @@ export class AgregarForm {
   }
 
   crearProducto(): void {
+    this.formSubmitted = true;
     const dto: CreateProductRequestDto = {
       nombre: this.productoNuevo.nombre,
       precio: Number(this.productoNuevo.precio),
@@ -60,6 +63,7 @@ export class AgregarForm {
   }
 
   private resetForm(): void {
+    this.formSubmitted = false;
     this.productoNuevo = {
       nombre: '',
       precio: 0,

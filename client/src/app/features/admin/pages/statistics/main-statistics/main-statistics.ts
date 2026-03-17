@@ -32,6 +32,7 @@ export class MainStatistics implements OnInit, OnDestroy {
 	};
 
 	private destroy$ = new Subject<void>();
+	private autoRefreshIntervalId: ReturnType<typeof setInterval> | null = null;
 
 	constructor(private statisticsFacade: StatisticsFacade) {
 		this.dashboardState$ = this.statisticsFacade.getDashboardState();
@@ -39,6 +40,7 @@ export class MainStatistics implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.loadDashboard();
+		this.startAutoRefresh();
 
 		this.dashboardState$
 			.pipe(takeUntil(this.destroy$))
@@ -167,14 +169,26 @@ export class MainStatistics implements OnInit, OnDestroy {
 		}));
 	}
 
-	buildFrequentUsersRows(frequentUsers: FrequentUserDto[] | null): Array<Record<string, string | number>> {
+	buildFrequentUsersRows(frequentUsers: FrequentUserDto[] | null): Array<Record<string, string | number>> | any{
 		if (!frequentUsers?.length) return [];
 
-		return frequentUsers.map(user => ({
-			'ID Usuario': user.idUsuario,
-			'Compras': user.cantidadCompras,
-			'Monto Total': this.toCurrency(user.montoTotal)
-		}));
+		return frequentUsers.map(user => {
+			const hasUserId = Number(user.idUsuario) > 0;
+
+			if (!hasUserId && user.fecha) {
+				return {
+					'Fecha': new Date(user.fecha).toLocaleDateString('es-CR'),
+					'Clientes Frecuentes': user.cantidadCompras,
+					'Nuevos Registros': user.montoTotal
+				};
+			}
+
+			return {
+				'ID Usuario': user.idUsuario,
+				'Compras': user.cantidadCompras,
+				'Monto Total': this.toCurrency(user.montoTotal)
+			};
+		});
 	}
 
 	buildOccupancyMetrics(occupancy: OccupancyResponseDto | null): StatisticMetricItem[] {
@@ -212,7 +226,23 @@ export class MainStatistics implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
+		if (this.autoRefreshIntervalId) {
+			clearInterval(this.autoRefreshIntervalId);
+			this.autoRefreshIntervalId = null;
+		}
 		this.destroy$.next();
 		this.destroy$.complete();
+	}
+
+	private startAutoRefresh(): void {
+		const refreshMs = 20000;
+
+		if (this.autoRefreshIntervalId) {
+			clearInterval(this.autoRefreshIntervalId);
+		}
+
+		this.autoRefreshIntervalId = setInterval(() => {
+			this.loadDashboard();
+		}, refreshMs);
 	}
 }

@@ -1,9 +1,9 @@
-<div class="modal-backdrop" *ngIf="mostrar">
+<div class="modal-backdrop" *ngIf="mostrar" (click)="onBackdropClick()">
 
-    <div class="modal-container">
+    <div [ngClass]="containerClasses" [ngStyle]="containerStyles" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <h3>{{ titulo }}</h3>
-            <button class="cerrar-btn" (click)="onCerrar()">✕</button>
+            <button class="cerrar-btn" type="button" (click)="onCerrar()">✕</button>
         </div>
 
 

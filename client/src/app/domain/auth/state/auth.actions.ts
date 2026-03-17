@@ -179,3 +179,7 @@ export const resetPasswordFailure = createAction(
   "[Auth] Reset Password Failure",
   props<{ error: string }>()
 );
+
+export const clearAuthMessages = createAction(
+  "[Auth] Clear Messages"
+);

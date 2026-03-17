@@ -1,0 +1,165 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* ── Contenedor con cuadrícula blueprint ── */
+.floor-wrap {
+  border: 1px solid rgba(139, 94, 60, 0.3);
+  border-radius: 16px;
+  background-color: #e7d4a0;
+  background-image:
+    linear-gradient(rgba(139, 94, 60, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 94, 60, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 8px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.floor {
+  padding: 40px;
+  position: relative;
+  min-height: 520px;
+}
+
+/* ── Layout Grid ── */
+.layout-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+/* ── Referencia de entrada ── */
+.entrada-espacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 30px;
+  flex-shrink: 0;
+}
+
+.ref-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(184, 134, 11, 0.8);
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* ── Zonas ── */
+.zone {
+  padding: 30px 20px 20px 20px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
+
+  &--vip {
+    border-color: rgba(94, 25, 20, 0.3);
+  }
+
+  &--salon {
+    border-color: rgba(139, 94, 60, 0.3);
+    flex: 1;
+  }
+
+  &--barra {
+    border-color: rgba(26, 18, 15, 0.2);
+  }
+
+  &--varios {
+    border-color: rgba(74, 85, 104, 0.35);
+    min-width: 280px;
+  }
+
+  &__label {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #1a120f;
+    opacity: 0.85;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+
+  &__badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 9px;
+    font-weight: 600;
+    color: white;
+    opacity: 0.9;
+  }
+
+  /* ── Grids de mesas por zona ── */
+  &__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+
+    &--vip {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      width: fit-content;
+      margin: 0 auto;
+    }
+
+    &--barra {
+      gap: 25px;
+      align-items: center;
+    }
+
+    &--varios {
+      gap: 20px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .top-row {
+    flex-direction: column;
+  }
+
+  .floor {
+    padding: 24px;
+    min-height: 0;
+  }
+
+  .layout-grid {
+    gap: 24px;
+  }
+}

@@ -1,5 +1,7 @@
+import { MesaTipo } from '../../../../types/mesa-tipo.type';
+
 export interface UpdateMesaRequestDto {
   numero?: number;
-  tipo?: 'VIP' | 'Regular';
+  tipo?: MesaTipo;
   estado?: 'Disponible' | 'Reservada' | 'Ocupada' | 'Fuera de servicio';
 }

@@ -1,0 +1,137 @@
+<div class="profile-page">
+  <div class="profile-page__loading" *ngIf="cargando">Cargando perfil...</div>
+  <div class="profile-page__error" *ngIf="error">{{ error }}</div>
+
+  <ng-container *ngIf="!cargando && !error && perfil">
+    <div class="profile-card">
+      <div class="profile-card__header">
+        <div class="profile-card__avatar">
+          {{ perfil.correo[0].toUpperCase() }}
+        </div>
+        <h2 class="profile-card__email">{{ perfil.correo }}</h2>
+        <span class="profile-card__role">{{ perfil.tipoUsuario }}</span>
+      </div>
+
+      <div class="profile-card__body">
+        <div class="profile-field">
+          <span class="profile-field__label">ID de usuario</span>
+          <span class="profile-field__value">#{{ perfil.id }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Correo</span>
+          <span class="profile-field__value">{{ perfil.correo }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Rol</span>
+          <span class="profile-field__value">{{ perfil.tipoUsuario }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Estado</span>
+          <span class="profile-field__value profile-field__value--status" [class.active]="perfil.activo">
+            {{ perfil.activo ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="profile-card__actions">
+          <ui-button
+            [texto]="mostrarFormClave ? 'Cancelar' : 'Cambiar contraseña'"
+            [noBackgroundColor]="true"
+            backgroundColor="#D4AF37"
+            customWidth="100%"
+            (accion)="toggleFormClave()">
+          </ui-button>
+      </div>
+
+      <div class="change-password-form" *ngIf="mostrarFormClave">
+        <h3 class="change-password-form__title">Cambiar contraseña</h3>
+
+          <ui-input
+            tituloInput="Contraseña actual"
+            tipo="password"
+            [(ngModel)]="formClave.contrasenaActual"
+            name="claveActual">
+          </ui-input>
+
+          <ui-input
+            tituloInput="Nueva contraseña"
+            tipo="password"
+            [(ngModel)]="formClave.nuevaContrasena"
+            name="claveNueva">
+          </ui-input>
+
+          <ui-input
+            tituloInput="Confirmar contraseña"
+            tipo="password"
+            [(ngModel)]="formClave.confirmarContrasena"
+            name="claveConfirmar">
+          </ui-input>
+
+        <p class="form-mensaje" *ngIf="mensajeClave" [class.error]="tipoClave === 'error'" [class.success]="tipoClave === 'success'">
+          {{ mensajeClave }}
+        </p>
+
+          <ui-button
+            [texto]="procesandoClave ? 'Guardando...' : 'Guardar cambios'"
+            [disabled]="procesandoClave"
+            customWidth="100%"
+            (accion)="cambiarContrasena()">
+          </ui-button>
+      </div>
+    </div>
+
+    <section class="profile-section profile-section--payments">
+      <div class="profile-section__header">
+        <div>
+          <h3 class="profile-section__title">Pagos y recibos</h3>
+          <p class="profile-section__subtitle">Historial reciente de pagos registrados en tu cuenta.</p>
+        </div>
+      </div>
+
+      <div class="profile-page__loading" *ngIf="cargandoPagos">Cargando pagos...</div>
+      <div class="profile-page__error" *ngIf="!cargandoPagos && errorPagos">{{ errorPagos }}</div>
+
+      <div class="pagos-contenido" *ngIf="!cargandoPagos && !errorPagos">
+        <div class="payments-empty" *ngIf="!pagosHistorial.length">
+          No hay pagos registrados todavía.
+        </div>
+
+        <div class="payments-table" *ngIf="pagosHistorial.length">
+          <app-ui-tabla
+            [columns]="pagosColumns"
+            [tbodyData]="pagosHistorial"
+            [acciones]="accionesRecibos"
+            minWidth="100%">
+          </app-ui-tabla>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODAL PREVIEW RECIBO -->
+    <app-ui-modal
+      [mostrar]="mostrarModalPreviewRecibo"
+      titulo="Previsualización de Recibo"
+      (cerrar)="cerrarModalPreviewRecibo()"
+    >
+      <div class="preview-recibo-contenedor">
+        <div class="pdf-viewer" *ngIf="reciboURL">
+          <iframe 
+            [src]="reciboURL" 
+            width="100%" 
+            height="500px"
+            frameborder="0">
+          </iframe>
+        </div>
+
+        <div class="acciones-preview">
+          <ui-button
+            texto="Descargar Recibo"
+            [noBackgroundColor]="true"
+            variant="success"
+            (accion)="onDescargarReciboDirecto()"
+          ></ui-button>
+        </div>
+      </div>
+    </app-ui-modal>
+  </ng-container>
+</div>

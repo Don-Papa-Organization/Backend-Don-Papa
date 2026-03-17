@@ -1,3 +1,5 @@
+@use '../../../styles/variables' as *;
+
 /*Diseño del input ingresar campo*/
 .input-container {
   max-width: fit-content;
@@ -8,28 +10,62 @@
   gap: 5px;
 
   label {
-  color: #ffffff;        
-  font-size: 14px;
-  display: block;
+    color: $color-white;
+    font-size: 14px;
+    display: block;
   }
 
-  input {
-    width: 300px;
-    font-size: 14px;
-    height: 50px;
-    background-color: #2B1D13;
-    border: 2px solid #D4AF37;
-    border-radius: 5px;
-    padding: 5px 10px;
-    color: #fff;
+  &--stretch {
+    max-width: none;
+    width: 100%;
 
-    &::placeholder {
-      color: rgba(255, 255, 255, 0.5);
+    .ui-input-field {
+      width: 100%;
+    }
+  }
+
+  &--compact {
+    height: auto;
+    gap: 4px;
+
+    label {
+      font-size: 12px;
+    }
+
+    .ui-input-field {
+      height: 42px;
+      font-size: 13px;
+    }
+  }
+
+  &--theme-pos {
+    .ui-input-field {
+      background-color: rgba($color-bg-primary, 0.72);
+      border-width: 1px;
+      border-color: rgba($color-gold, 0.35);
     }
   }
 }
 
-:host(.ng-invalid.ng-touched) .input-container input {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+.ui-input-field {
+  width: 300px;
+  font-size: 14px;
+  height: 50px;
+  background-color: $color-bg-secondary;
+  border: 2px solid $color-gold;
+  border-radius: $radius-md;
+  padding: 5px 10px;
+  color: $color-white;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &::placeholder {
+    color: rgba($color-white, 0.5);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-gold;
+    box-shadow: 0 0 0 2px rgba($color-gold, 0.16);
+  }
 }

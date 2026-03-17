@@ -1,1 +1,4 @@
-export interface ListEventsRequestDto {}
+export interface ListEventsRequestDto {
+	busqueda?: string;
+	nombre?: string;
+}

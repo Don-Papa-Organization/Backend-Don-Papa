@@ -1,0 +1,41 @@
+<div
+  class="floor-mesa"
+  [class.floor-mesa--disponible]="estadoVisual === 'Disponible'"
+  [class.floor-mesa--ocupada]="estadoVisual === 'Ocupada'"
+  [class.floor-mesa--otro]="estadoVisual === 'Otro'"
+  (click)="mesaClick.emit()"
+  (keydown)="onKeydown($event)"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="'Mesa ' + nombreMesa + ', estado: ' + estadoVisual"
+>
+  <div class="floor-mesa__surface" [ngClass]="'floor-mesa__surface--' + zona">
+    <span class="floor-mesa__label">{{ nombreMesa }}</span>
+    <span *ngIf="tieneReserva" class="floor-mesa__reserva-badge" title="Reserva hoy">R</span>
+  </div>
+
+  <div class="floor-mesa__tooltip">
+    {{ nombreMesa }}
+    <ng-container *ngIf="estadoVisual === 'Ocupada'">
+      <br /><span class="floor-mesa__tooltip-time">⏱ {{ tiempoOcupada }}</span>
+    </ng-container>
+    <br /><span class="floor-mesa__tooltip-status">{{ estadoVisual }}</span>
+    <ng-container *ngIf="tieneReserva">
+      <br /><span class="floor-mesa__tooltip-reserva">📅 Reserva: {{ franjaReserva || 'Hoy' }}</span>
+    </ng-container>
+    <br />
+    <button
+      type="button"
+      class="floor-mesa__toggle-btn"
+      (click)="onToggleEstado($event)">
+      {{ estadoVisual === 'Ocupada' ? 'Marcar disponible' : 'Marcar ocupada' }}
+    </button>
+    <button
+      *ngIf="tieneReserva && puedeConfirmar"
+      type="button"
+      class="floor-mesa__confirm-btn"
+      (click)="onConfirmarReserva($event)">
+      Confirmar reserva
+    </button>
+  </div>
+</div>

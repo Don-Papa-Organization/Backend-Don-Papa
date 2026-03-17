@@ -19,8 +19,10 @@ export class AgregarProductoForm {
 	cantidadMinima: number = 1;
 	precioPromocional: number | null = null;
 	porcentajeDescuento: number | null = null;
+	formSubmitted = false;
 
 	onSubmit(): void {
+		this.formSubmitted = true;
 		if (!this.productoSeleccionadoId || !this.promocionId) {
 			console.error("Producto o promoción no seleccionados");
 			return;
@@ -48,6 +50,7 @@ export class AgregarProductoForm {
 		this.cantidadMinima = 1;
 		this.precioPromocional = null;
 		this.porcentajeDescuento = null;
+		this.formSubmitted = false;
 	}
 
 	onCerrar(): void {

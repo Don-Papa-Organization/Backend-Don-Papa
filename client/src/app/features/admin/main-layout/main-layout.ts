@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as AuthActions from '../../../domain/auth/state/auth.actions';
+import * as AgentActions from '../../../domain/agent/state/agent.actions';
 import { MenuItem } from '../../../shared/interfaces/menu-item';
 
 @Component({
@@ -30,5 +31,9 @@ export class MainLayout {
 
   toggleSidebar(): void {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+  toggleAgentPanel(): void {
+    this.store.dispatch(AgentActions.toggleAgentPanel());
   }
 }

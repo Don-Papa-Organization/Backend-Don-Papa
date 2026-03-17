@@ -12,6 +12,9 @@ import { CreatePromotionEventDayRequestDto } from "../../../../../domain/events&
 import { UpdatePromotionEventDayRequestDto } from "../../../../../domain/events&Promotions/dtos/request/update-promotion-event-day.request.dto";
 import { CreatePromotionEventDayResponseDto } from "../../../../../domain/events&Promotions/dtos/response/create-promotion-event-day.response.dto";
 import { UpdatePromotionEventDayResponseDto } from "../../../../../domain/events&Promotions/dtos/response/update-promotion-event-day.response.dto";
+import { ListEventsRequestDto } from "../../../../../domain/events&Promotions/dtos/request/list-events.request.dto";
+import { ListPromotionsRequestDto } from "../../../../../domain/events&Promotions/dtos/request/list-promotions.request.dto";
+import { NormalizedEventsPromotionsAdminFilters } from "../../../../../types/events-promotions-admin-filters.type";
 import { AdminFiltros } from "../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel";
 
 interface PromocionViewModel {
@@ -24,7 +27,7 @@ interface PromocionViewModel {
 	"Estado": string;
 	// Propiedades adicionales para acceso mediante notación de punto
 	idPromocion: number;
-	activo: string;
+	activo: boolean;
 }
 
 interface EventoViewModel {
@@ -42,35 +45,16 @@ export class EventsPromotionsFacade {
 	// ==================== PROMOCIONES ====================
 
 	getPromociones(filtros?: AdminFiltros): Observable<PromocionViewModel[]> {
-		return this.api.listPromotions().pipe(
+		return this.api.listPromotions(this.buildPromotionFilters(filtros)).pipe(
 			map((response) => {
 				if (!response.data) return [];
-				let promociones = response.data;
-
-				if (filtros) {
-					if (filtros.busqueda) {
-						const term = filtros.busqueda.toLowerCase();
-						promociones = promociones.filter(p =>
-							p.nombre.toLowerCase().includes(term) ||
-							p.descripcion.toLowerCase().includes(term)
-						);
-					}
-					if (filtros.estado !== null && filtros.estado !== undefined) {
-						promociones = promociones.filter(p => p.activo === (filtros.estado === 'true' || filtros.estado === true));
-					}
-					if (filtros.fechaInicio) {
-						const fInicio = new Date(filtros.fechaInicio);
-						promociones = promociones.filter(p => new Date(p.fechaInicio) >= fInicio);
-					}
-					if (filtros.fechaFin) {
-						const fFin = new Date(filtros.fechaFin);
-						promociones = promociones.filter(p => new Date(p.fechaFin) <= fFin);
-					}
-				}
-
-				return promociones.map((promo) => this.mapPromocionToViewModel(promo));
+				return response.data.map((promo) => this.mapPromocionToViewModel(promo));
 			})
 		);
+	}
+
+	searchPromotions(filtros?: AdminFiltros): Observable<PromocionViewModel[]> {
+		return this.getPromociones(filtros);
 	}
 
 	getPromocionById(id: number): Observable<Promocion> {
@@ -107,24 +91,16 @@ export class EventsPromotionsFacade {
 	// ==================== EVENTOS ====================
 
 	getEventos(filtros?: AdminFiltros): Observable<EventoViewModel[]> {
-		return this.api.listEvents().pipe(
+		return this.api.listEvents(this.buildEventFilters(filtros)).pipe(
 			map((response) => {
 				if (!response.data) return [];
-				let eventos = response.data;
-
-				if (filtros) {
-					if (filtros.busqueda) {
-						const term = filtros.busqueda.toLowerCase();
-						eventos = eventos.filter(e =>
-							e.nombre.toLowerCase().includes(term) ||
-							e.descripcion.toLowerCase().includes(term)
-						);
-					}
-				}
-
-				return eventos.map((evento) => this.mapEventoToViewModel(evento));
+				return response.data.map((evento) => this.mapEventoToViewModel(evento));
 			})
 		);
+	}
+
+	getEventosBySearch(filtros?: AdminFiltros): Observable<EventoViewModel[]> {
+		return this.getEventos(filtros);
 	}
 
 	getEventoById(id: number): Observable<Evento> {
@@ -297,6 +273,55 @@ export class EventsPromotionsFacade {
 		return this.api.deletePromotionEventDay(id).pipe(map(() => { }));
 	}
 
+	private normalizeAdminFilters(filtros?: AdminFiltros): NormalizedEventsPromotionsAdminFilters {
+		if (!filtros) {
+			return {};
+		}
+
+		const busqueda = typeof filtros.busqueda === "string" ? filtros.busqueda.trim() : "";
+		const fechaInicio = typeof filtros.fechaInicio === "string" ? filtros.fechaInicio.trim() : "";
+		const fechaFin = typeof filtros.fechaFin === "string" ? filtros.fechaFin.trim() : "";
+
+		const estado = filtros.estado;
+		const activo = estado === null || estado === undefined || estado === ""
+			? undefined
+			: estado === true || estado === "true";
+
+		return {
+			busqueda: busqueda || undefined,
+			activo,
+			fechaInicio: fechaInicio || undefined,
+			fechaFin: fechaFin || undefined
+		};
+	}
+
+	private buildPromotionFilters(filtros?: AdminFiltros): ListPromotionsRequestDto | undefined {
+		const normalized = this.normalizeAdminFilters(filtros);
+
+		if (!normalized.busqueda && normalized.activo === undefined && !normalized.fechaInicio && !normalized.fechaFin) {
+			return undefined;
+		}
+
+		return {
+			busqueda: normalized.busqueda,
+			activo: normalized.activo,
+			fechaInicio: normalized.fechaInicio,
+			fechaFin: normalized.fechaFin
+		};
+	}
+
+	private buildEventFilters(filtros?: AdminFiltros): ListEventsRequestDto | undefined {
+		const normalized = this.normalizeAdminFilters(filtros);
+
+		if (!normalized.busqueda) {
+			return undefined;
+		}
+
+		return {
+			busqueda: normalized.busqueda
+		};
+	}
+
 	// ==================== MAPPERS ====================
 
 	private mapPromocionToViewModel(promo: Promocion): PromocionViewModel {
@@ -310,7 +335,7 @@ export class EventsPromotionsFacade {
 			"Estado": promo.activo ? "Activa" : "Inactiva",
 			// Propiedades adicionales para acceso mediante notación de punto
 			idPromocion: promo.idPromocion,
-			activo: promo.activo ? "Activa" : "Inactiva"
+			activo: !!promo.activo
 		};
 	}
 

@@ -1,3 +1,5 @@
+@use './app/styles/variables' as *;
+
 /* You can add global styles to this file, and also import other style files */
 
 /* Reset de valores predeterminados */
@@ -16,13 +18,27 @@ html, body {
 }
 
 body {
-  background-color: #2B1D13;
+  background-color: $color-bg-secondary;
+  color: $color-white;
+  font-weight: 100;
 }
+
+strong,
+b {
+  font-weight: 100 !important;
+}
+
+.text-huge { font-size: 2rem; font-weight: 100 !important; }
+.text-title { font-size: 1.5rem; font-weight: 100 !important; }
+.text-subtitle { font-size: 1.2rem; font-weight: 100 !important; }
+.text-body { font-size: 1rem; font-weight: 100 !important; }
+.text-small { font-size: 0.85rem; font-weight: 100 !important; }
 
 /* Reset para elementos comunes */
 h1, h2, h3, h4, h5, h6, p, ul, ol, li, figure, blockquote {
   margin: 0;
   padding: 0;
+  font-weight: 100;
 }
 
 ul, ol {

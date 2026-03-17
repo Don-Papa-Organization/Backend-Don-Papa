@@ -16,6 +16,8 @@ export class EditarForm implements OnChanges {
   @Output() cerrar = new EventEmitter<void>();
   @Output() productoActualizado = new EventEmitter<UpdateProductRequestDto>();
 
+  formSubmitted = false;
+
   productoEditado: UpdateProductRequestDto = {
     nombre: '',
     precio: 0,
@@ -43,10 +45,12 @@ export class EditarForm implements OnChanges {
   }
 
   onCerrar(): void {
+    this.formSubmitted = false;
     this.cerrar.emit();
   }
 
   actualizarProducto(): void {
+    this.formSubmitted = true;
     const dto: UpdateProductRequestDto = {
       nombre: this.productoEditado.nombre,
       precio: Number(this.productoEditado.precio),

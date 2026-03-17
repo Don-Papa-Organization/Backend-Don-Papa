@@ -12,6 +12,12 @@ import { MesaViewModel } from '../../services/tables-reserves.facade';
 export class EditarMesaForm implements OnChanges {
   @Input() mostrar = false;
   @Input() registroSeleccionado: MesaViewModel | null = null;
+  @Input() tipoOptions: Array<{ value: MesaTipo; label: string }> = [
+    { value: 'VIP', label: 'VIP' },
+    { value: 'Barra', label: 'Barra' },
+    { value: 'Salon', label: 'Salon' },
+    { value: 'Varios', label: 'Varios' },
+  ];
   @Output() cerrar = new EventEmitter<void>();
   @Output() mesaActualizada = new EventEmitter<UpdateMesaRequestDto>();
 
@@ -21,11 +27,6 @@ export class EditarMesaForm implements OnChanges {
     estado: ''
   };
 
-  tipoOptions = [
-    { value: 'VIP', label: 'VIP' },
-    { value: 'Regular', label: 'Regular' }
-  ];
-
   estadoOptions = [
     { value: 'Disponible', label: 'Disponible' },
     { value: 'Reservada', label: 'Reservada' },
@@ -33,8 +34,7 @@ export class EditarMesaForm implements OnChanges {
     { value: 'Fuera de servicio', label: 'Fuera de servicio' }
   ];
 
-  tipoTouched = false;
-  estadoTouched = false;
+  formSubmitted = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['registroSeleccionado'] && this.registroSeleccionado) {
@@ -43,20 +43,18 @@ export class EditarMesaForm implements OnChanges {
         tipo: this.registroSeleccionado.tipo,
         estado: this.registroSeleccionado.estado
       };
-      this.tipoTouched = false;
-      this.estadoTouched = false;
+      this.formSubmitted = false;
     }
   }
 
   onGuardar(): void {
-    this.tipoTouched = true;
-    this.estadoTouched = true;
+    this.formSubmitted = true;
 
     if (!this.mesaEditada.numero || !this.mesaEditada.tipo || !this.mesaEditada.estado) return;
 
     const dto: UpdateMesaRequestDto = {
       numero: Number(this.mesaEditada.numero),
-      tipo: this.mesaEditada.tipo as 'VIP' | 'Regular',
+      tipo: this.mesaEditada.tipo as MesaTipo,
       estado: this.mesaEditada.estado as any
     };
 
@@ -65,13 +63,5 @@ export class EditarMesaForm implements OnChanges {
 
   onCerrar(): void {
     this.cerrar.emit();
-  }
-
-  onTipoTouched(): void {
-    this.tipoTouched = true;
-  }
-
-  onEstadoTouched(): void {
-    this.estadoTouched = true;
   }
 }

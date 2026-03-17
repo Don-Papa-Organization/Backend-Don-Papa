@@ -17,6 +17,7 @@ export class EditarDiaEventoForm implements OnChanges {
 	fecha: string = "";
 	horaInicio: string = "09:00";
 	horaFin: string = "18:00";
+	formSubmitted = false;
 
 	ngOnChanges(): void {
 		if (this.diaEvento) {
@@ -27,6 +28,7 @@ export class EditarDiaEventoForm implements OnChanges {
 	}
 
 	onSubmit(): void {
+		this.formSubmitted = true;
 		if (!this.fecha) {
 			console.error("La fecha es requerida");
 			return;
@@ -42,6 +44,7 @@ export class EditarDiaEventoForm implements OnChanges {
 	}
 
 	onCerrar(): void {
+		this.formSubmitted = false;
 		this.cerrar.emit();
 	}
 }

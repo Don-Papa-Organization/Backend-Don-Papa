@@ -1,0 +1,212 @@
+:host {
+  display: block;
+}
+
+.floor-mesa {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+
+  &:hover,
+  &:focus-visible {
+    transform: scale(1.05) translateY(-4px);
+    z-index: 10;
+  }
+
+  &--disponible:hover,
+  &--disponible:focus-visible {
+    filter: drop-shadow(0 0 8px #8bc34a);
+  }
+
+  &--ocupada:hover,
+  &--ocupada:focus-visible {
+    filter: drop-shadow(0 0 8px #ff5252);
+  }
+
+  &--otro:hover,
+  &--otro:focus-visible {
+    filter: drop-shadow(0 0 8px #ffb300);
+  }
+
+  /* ── Surface ── */
+  &__surface {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid rgba(184, 134, 11, 0.4);
+    box-shadow:
+      0 6px 16px rgba(0, 0, 0, 0.12),
+      0 2px 4px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #8b5e3c;
+
+    /* Forma según zona */
+    &--vip {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+    }
+
+    &--salon {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+    }
+
+    &--barra {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      border-width: 3px;
+    }
+
+    &--varios {
+      width: 72px;
+      height: 58px;
+      border-radius: 10px;
+      border-width: 2px;
+    }
+  }
+
+  &:hover &__surface,
+  &:focus-visible &__surface {
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.18),
+      0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Colores de estado */
+  &--disponible &__surface {
+    background-color: #8bc34a;
+  }
+
+  &--ocupada &__surface {
+    background-color: #ff5252;
+  }
+
+  &--otro &__surface {
+    background-color: #ffb300;
+  }
+
+  /* ── Label ── */
+  &__label {
+    font-family: 'DM Sans', 'Lora', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+    pointer-events: none;
+    max-width: 64px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 4px;
+  }
+
+  /* ── Tooltip ── */
+  &__tooltip {
+    position: absolute;
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.85);
+    background: rgba(15, 25, 35, 0.95);
+    border: 1px solid rgba(184, 134, 11, 0.3);
+    color: white;
+    font-size: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 200;
+    text-align: center;
+  }
+
+  &:hover &__tooltip,
+  &:focus-visible &__tooltip {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+
+  &__tooltip-time {
+    color: #ffb300;
+    font-size: 9px;
+  }
+
+  &__tooltip-status {
+    font-size: 9px;
+    opacity: 0.7;
+  }
+
+  &__toggle-btn {
+    margin-top: 4px;
+    border: 1px solid rgba(184, 134, 11, 0.5);
+    background: rgba(11, 17, 22, 0.9);
+    color: #f3f4f6;
+    border-radius: 4px;
+    font-size: 9px;
+    line-height: 1;
+    padding: 4px 6px;
+    cursor: pointer;
+  }
+
+  /* ── Reserva badge (esquina superior derecha de la surface) ── */
+  &__surface {
+    position: relative;
+  }
+
+  &__reserva-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #6366F1;
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  &__tooltip-reserva {
+    color: #A5B4FC;
+    font-size: 9px;
+  }
+
+  &__confirm-btn {
+    display: block;
+    margin-top: 4px;
+    border: 1px solid rgba(99, 102, 241, 0.6);
+    background: rgba(99, 102, 241, 0.15);
+    color: #A5B4FC;
+    border-radius: 4px;
+    font-size: 9px;
+    line-height: 1;
+    padding: 4px 6px;
+    cursor: pointer;
+    width: 100%;
+
+    &:hover {
+      background: rgba(99, 102, 241, 0.3);
+      color: #fff;
+    }
+  }
+}
+
+/* Hacer que el tooltip sea interactivo al hover para poder hacer click en botones */
+.floor-mesa:hover .floor-mesa__tooltip,
+.floor-mesa:focus-visible .floor-mesa__tooltip {
+  pointer-events: auto;
+}

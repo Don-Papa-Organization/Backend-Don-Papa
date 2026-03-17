@@ -9,6 +9,11 @@ import { CreateProductRequestDto } from '../../../../../domain/inventory/dtos/re
 import { UpdateProductRequestDto } from '../../../../../domain/inventory/dtos/request/update-product.request.dto';
 import { CreateCategoryRequestDto } from '../../../../../domain/inventory/dtos/request/create-category.request.dto';
 import { UpdateCategoryRequestDto } from '../../../../../domain/inventory/dtos/request/update-category.request.dto';
+import {
+  TablaColumnaConfig,
+  TablaStepperChangeEvent,
+  TablaToggleChangeEvent
+} from '../../../../../shared/ui/ui-tabla/ui-tabla';
 
 @Component({
   selector: 'app-main-inventory',
@@ -22,6 +27,22 @@ export class MainInventory implements OnInit {
   productosTableData: Array<Record<string, any>> = [];
   cargandoProductos: boolean = false;
   columnas: string[] = ['idProducto', 'nombre', 'precio', 'stockActual', 'stockMinimo', 'activo', 'descripcion', 'categoria', 'imagen', 'Acciones'];
+  columnasConfig: TablaColumnaConfig[] = [
+    {
+      header: 'stockActual',
+      type: 'stepper',
+      stepper: { min: 0, step: 1 }
+    },
+    {
+      header: 'stockMinimo',
+      type: 'stepper',
+      stepper: { min: 0, step: 1 }
+    },
+    {
+      header: 'activo',
+      type: 'toggle'
+    }
+  ];
 
   showTextStyle: boolean = true;
 
@@ -45,6 +66,15 @@ export class MainInventory implements OnInit {
 
   categoriasOptions: Array<{ value: any, label: string }> = [];
   filtrosActuales: AdminFiltros | null = null;
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalItems: number = 0;
+  totalPages: number = 1;
+  pageSizeOptions: Array<{ value: number, label: string }> = [
+    { value: 10, label: '10' },
+    { value: 20, label: '20' },
+    { value: 50, label: '50' }
+  ];
 
   constructor(
     private inventoryFacade: InventoryFacade
@@ -79,6 +109,52 @@ export class MainInventory implements OnInit {
         }
       });
     }
+  }
+
+  onStepperStockChange(event: TablaStepperChangeEvent): void {
+    const idProducto = Number(event.registro?.idProducto);
+    if (!idProducto || event.nextValue < 0) {
+      return;
+    }
+
+    const payload: UpdateProductRequestDto = {
+      [event.columna]: event.nextValue
+    } as UpdateProductRequestDto;
+
+    this.inventoryFacade.updateProduct(idProducto, payload).subscribe({
+      next: (response) => {
+        if (response.success) {
+          event.registro[event.columna] = event.nextValue;
+          return;
+        }
+        this.cargarProductos();
+      },
+      error: (error) => {
+        console.error(`Error al actualizar ${event.columna}:`, error);
+        this.cargarProductos();
+      }
+    });
+  }
+
+  onToggleActivoChange(event: TablaToggleChangeEvent): void {
+    const idProducto = Number(event.registro?.idProducto);
+    if (!idProducto) {
+      return;
+    }
+
+    this.inventoryFacade.updateProduct(idProducto, { activo: event.nextValue }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          event.registro[event.columna] = event.nextValue;
+          return;
+        }
+        this.cargarProductos();
+      },
+      error: (error) => {
+        console.error('Error al actualizar estado activo:', error);
+        this.cargarProductos();
+      }
+    });
   }
 
 
@@ -135,9 +211,12 @@ export class MainInventory implements OnInit {
 
   cargarProductos(): void {
     this.cargandoProductos = true;
-    this.inventoryFacade.getProductsWithCategories(this.filtrosActuales).subscribe({
-      next: (productos) => {
-        this.productosTableData = productos;
+    this.inventoryFacade.getProductsWithCategoriesPaginated(this.filtrosActuales, this.currentPage, this.pageSize).subscribe({
+      next: (result) => {
+        this.productosTableData = result.items;
+        this.totalItems = result.meta.total;
+        this.totalPages = result.meta.totalPages;
+        this.currentPage = result.meta.page;
 
         // Update selected record if exists to reflect changes in the open modal
         if (this.registroSeleccionado) {
@@ -165,11 +244,42 @@ export class MainInventory implements OnInit {
 
   onFiltrosAplicados(filtros: AdminFiltros): void {
     this.filtrosActuales = filtros;
+    this.currentPage = 1;
     this.cargarProductos();
   }
 
   onFiltrosLimpiados(): void {
     this.filtrosActuales = null;
+    this.currentPage = 1;
+    this.cargarProductos();
+  }
+
+  onPageSizeChange(pageSize: number): void {
+    const newSize = Number(pageSize);
+    if (!newSize || newSize <= 0) {
+      return;
+    }
+
+    this.pageSize = newSize;
+    this.currentPage = 1;
+    this.cargarProductos();
+  }
+
+  previousPage(): void {
+    if (this.currentPage <= 1 || this.cargandoProductos) {
+      return;
+    }
+
+    this.currentPage -= 1;
+    this.cargarProductos();
+  }
+
+  nextPage(): void {
+    if (this.currentPage >= this.totalPages || this.cargandoProductos) {
+      return;
+    }
+
+    this.currentPage += 1;
     this.cargarProductos();
   }
 

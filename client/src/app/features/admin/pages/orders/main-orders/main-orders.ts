@@ -8,6 +8,8 @@ import type { TabItem } from '../../../../../shared/ui/ui-tabs/ui-tabs';
 import { AdminFiltros, FiltroOpcion } from '../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel';
 import { AccionTabla } from '../../../../../shared/ui/ui-tabla/ui-tabla';
 import { PaymentsSectionComponent } from '../components/payments-section/payments-section';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-main-orders',
@@ -53,6 +55,22 @@ export class MainOrdersComponent implements OnInit {
 	// Columnas de tabla
 	columnasTabla = ['ID', 'Usuario', 'Total', 'Estado', 'Canal Venta', 'Fecha', 'Productos', 'Dirección', 'Acciones'];
 
+	// Acciones de tabla para pedidos
+	accionesPedidos: AccionTabla[] = [
+		{
+			urlIcono: 'icons/editar.svg',
+			accion: (registro: OrderViewModel) => this.onEditar(registro)
+		},
+		{
+			urlIcono: 'icons/product.svg',
+			accion: (registro: OrderViewModel) => this.onGestionarProductos(registro)
+		},
+		{
+			urlIcono: 'icons/eliminar.svg',
+			accion: (registro: OrderViewModel) => this.onEliminar(registro)
+		}
+	];
+
 	// Estados disponibles para actualización
 	estadosDisponibles = [
 		{ valor: EstadoPedido.PENDIENTE, etiqueta: 'Pendiente' },
@@ -62,7 +80,7 @@ export class MainOrdersComponent implements OnInit {
 	];
 
 	// Opciones para combobox de productos
-	productosOptions: Array<{ value: any, label: string }> = [];
+	productosOptions: Array<{ value: any, label: string, stockActual?: number }> = [];
 
 	// Opciones para combobox de métodos de pago
 	metodosPagoOptions: Array<{ value: any, label: string }> = [];
@@ -104,16 +122,56 @@ export class MainOrdersComponent implements OnInit {
 		this.cargandoPedidos = true;
 		this.ordersFacade.listAllOrders(this.filtrosActuales || undefined).subscribe({
 			next: (response: any) => {
-				if (response.data) {
-					this.pedidos = response.data.map((pedido: Pedido) =>
+				const pedidosData: Pedido[] = response.data || [];
+
+				if (pedidosData.length) {
+					this.pedidos = pedidosData.map((pedido: Pedido) =>
 						this.ordersFacade.mapOrderToViewModel(pedido)
 					);
+
+					const todosEnCero = this.pedidos.every((pedido: any) => Number(pedido['Productos'] ?? 0) === 0);
+					if (todosEnCero) {
+						this.hidratarCantidadProductos(pedidosData);
+					}
+				} else {
+					this.pedidos = [];
 				}
 				this.cargandoPedidos = false;
 			},
 			error: (err) => {
 				console.error('Error al cargar pedidos:', err);
 				this.cargandoPedidos = false;
+			}
+		});
+	}
+
+	private hidratarCantidadProductos(pedidosBase: Pedido[]): void {
+		const solicitudes = pedidosBase.map((pedido) =>
+			this.ordersFacade.getOrderById(pedido.idPedido).pipe(
+				map((detalle: any) => {
+					const productos = detalle?.data?.productos ?? detalle?.data?.pedido?.productos ?? [];
+					return {
+						idPedido: pedido.idPedido,
+						cantidad: Array.isArray(productos) ? productos.length : 0
+					};
+				}),
+				catchError(() => of({ idPedido: pedido.idPedido, cantidad: 0 }))
+			)
+		);
+
+		forkJoin(solicitudes).subscribe({
+			next: (resultados) => {
+				const cantidadesPorPedido = new Map<number, number>(
+					resultados.map((item) => [item.idPedido, item.cantidad])
+				);
+
+				this.pedidos = this.pedidos.map((pedido: any) => ({
+					...pedido,
+					'Productos': cantidadesPorPedido.get(pedido.idPedido) ?? pedido['Productos']
+				}));
+			},
+			error: (err) => {
+				console.error('Error al hidratar cantidad de productos por pedido:', err);
 			}
 		});
 	}
@@ -130,10 +188,12 @@ export class MainOrdersComponent implements OnInit {
 					.map((producto: any) => {
 						const tienePromocion = producto.promotion && producto.promotion !== null;
 						const indicadorPromo = tienePromocion ? ' 🏷️ (Promo Activa)' : '';
+						const indicadorStock = Number(producto.stockActual) <= 0 ? ' (Sin stock)' : ` (Stock: ${producto.stockActual})`;
 
 						return {
 							value: producto.idProducto,
-							label: `${producto.nombre} - $${producto.precio}${indicadorPromo}`
+							label: `${producto.nombre} - $${producto.precio}${indicadorPromo}${indicadorStock}`,
+							stockActual: Number(producto.stockActual ?? 0)
 						};
 					});
 				console.log('Opciones mapeadas:', this.productosOptions);
@@ -159,7 +219,12 @@ export class MainOrdersComponent implements OnInit {
 		this.cargandoPedidos = true;
 		this.ordersFacade.getOrderById(registro.idPedido).subscribe({
 			next: (response: any) => {
-				this.pedidoSeleccionado = response.data.pedido;
+				const pedido = response?.data?.pedido;
+				const productos = response?.data?.productos ?? [];
+				this.pedidoSeleccionado = {
+					...pedido,
+					productos
+				};
 				this.mostrarModalEditar = true;
 				this.cargandoPedidos = false;
 			},
@@ -185,7 +250,12 @@ export class MainOrdersComponent implements OnInit {
 		this.cargandoPedidos = true;
 		this.ordersFacade.getOrderById(registro.idPedido).subscribe({
 			next: (response: any) => {
-				this.pedidoSeleccionado = response.data.pedido;
+				const pedido = response?.data?.pedido;
+				const productos = response?.data?.productos ?? [];
+				this.pedidoSeleccionado = {
+					...pedido,
+					productos
+				};
 				this.mostrarModalProductos = true;
 				this.cargandoPedidos = false;
 			},
@@ -233,9 +303,24 @@ export class MainOrdersComponent implements OnInit {
 		});
 	}
 
-	onProductosActualizados(): void {
-		this.mostrarModalProductos = false;
-		this.cargarPedidos();
+	onProductosActualizados(event: { idPedido: number; productos: any[]; cantidadProductos: number }): void {
+		if (this.pedidoSeleccionado?.idPedido === event.idPedido) {
+			this.pedidoSeleccionado = {
+				...this.pedidoSeleccionado,
+				productos: event.productos
+			};
+		}
+
+		this.pedidos = this.pedidos.map((pedido: any) => {
+			if (pedido.idPedido !== event.idPedido) {
+				return pedido;
+			}
+
+			return {
+				...pedido,
+				'Productos': event.cantidadProductos
+			};
+		});
 	}
 
 	/**

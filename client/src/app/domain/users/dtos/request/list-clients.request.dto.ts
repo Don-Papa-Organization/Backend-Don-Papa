@@ -1,1 +1,4 @@
-export interface ListClientsRequestDto {}
+export interface ListClientsRequestDto {
+	nombre?: string;
+	activo?: boolean;
+}

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Subject, takeUntil } from "rxjs";
 import * as AuthActions from "../../../domain/auth/state/auth.actions";
@@ -11,7 +11,7 @@ import { NgForm } from "@angular/forms";
   templateUrl: "./forgot-password.html",
   styleUrl: "./forgot-password.scss"
 })
-export class ForgotPassword implements OnDestroy {
+export class ForgotPassword implements OnInit, OnDestroy {
   email = "";
   loading$;
   error$;
@@ -30,6 +30,11 @@ export class ForgotPassword implements OnDestroy {
           this.successMessage = message;
         }
       });
+  }
+
+  ngOnInit(): void {
+    // Limpiar mensajes previos al inicializar el componente
+    this.store.dispatch(AuthActions.clearAuthMessages());
   }
 
   ngOnDestroy(): void {

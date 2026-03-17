@@ -15,6 +15,8 @@ export class ActualizarEmployeeForm {
   @Output() cerrar = new EventEmitter<void>();
   @Output() empleadoActualizado = new EventEmitter<UpdateEmployeeRequestDto>();
 
+  formSubmitted = false;
+
   // Datos del formulario
   empleadoActual = {
     nombre: '',
@@ -53,6 +55,7 @@ export class ActualizarEmployeeForm {
    * Maneja el guardado del formulario
    */
   onGuardar(): void {
+    this.formSubmitted = true;
     const dto: UpdateEmployeeRequestDto = {
       nombre: this.empleadoActual.nombre.trim(),
       documento: this.empleadoActual.documento.trim(),
@@ -82,6 +85,7 @@ export class ActualizarEmployeeForm {
    * Limpia el formulario
    */
   private resetForm(): void {
+    this.formSubmitted = false;
     this.empleadoActual = {
       nombre: '',
       documento: '',

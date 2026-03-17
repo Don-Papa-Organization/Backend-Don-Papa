@@ -10,6 +10,10 @@
 		font-weight: 100;
 	}
 
+	app-ui-combobox {
+		margin-bottom: 1.5rem;
+	}
+
 	ui-input {
 		margin-bottom: 1rem;
 	}
@@ -40,7 +44,7 @@
 		margin-bottom: 1rem;
 
 		app-ui-tabla {
-			width: 100%;
+			width: fit-content;
 		}
 	}
 

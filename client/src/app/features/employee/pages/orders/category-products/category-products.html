@@ -1,0 +1,19 @@
+<div class="pos-page" *ngIf="!cargando">
+  <div class="pos-header">
+    <h1>Mesa {{ idMesa }} - {{ categoriaNombre }}</h1>
+    <div class="acciones-header">
+      <ui-button texto="Volver" (accion)="volverAMesa()"></ui-button>
+    </div>
+  </div>
+
+  <div class="table-content">
+    <app-ui-tabla
+      [theadData]="columnasTabla"
+      [tbodyData]="productosTablaData"
+      [acciones]="accionesProductos"
+      minWidth="680px">
+    </app-ui-tabla>
+  </div>
+</div>
+
+<div class="estado-carga" *ngIf="cargando">Cargando productos...</div>

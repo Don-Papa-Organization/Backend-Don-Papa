@@ -1,0 +1,15 @@
+<div class="payment-summary">
+  <div class="payment-summary__item">
+    <span class="payment-summary__label">Total a pagar</span>
+    <span class="payment-summary__value payment-summary__value--total">${{ totalPagar.toFixed(2) }}</span>
+  </div>
+
+  <div class="payment-summary__item payment-summary__item--right">
+    <span class="payment-summary__label">Diferencia</span>
+    <span
+      class="payment-summary__value"
+      [class.payment-summary__value--difference-negative]="diferencia <= 0"
+      [class.payment-summary__value--difference-positive]="diferencia > 0"
+    >{{ formatSigned(diferencia) }}</span>
+  </div>
+</div>

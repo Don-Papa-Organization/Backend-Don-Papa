@@ -1,8 +1,8 @@
 <app-ui-modal titulo="Editar Producto en Promoción" [mostrar]="mostrar" (cerrar)="onCerrar()">
 	<app-ui-form maxHeight="50vh" maxWidth="600px">
 		<div class="producto-info">
-			<p><strong>Producto:</strong> {{ productoPromocion?.nombre }}</p>
-			<p><strong>Precio Original:</strong> ${{ productoPromocion?.precio }}</p>
+			<p><span class="text-body">Producto:</span> {{ productoPromocion?.nombre }}</p>
+			<p><span class="text-body">Precio Original:</span> ${{ productoPromocion?.precio }}</p>
 		</div>
 
 		<ui-input tituloInput="Cantidad Mínima" tipo="number" [(ngModel)]="cantidadMinima" name="cantidadMinima"
@@ -19,7 +19,7 @@
 
 		<!-- Validaciones -->
 		<div class="form-errors">
-			@if (cantidadField.invalid && cantidadField.touched) {
+			@if (cantidadField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>La cantidad mínima es obligatoria</ng-container>
 			</app-ui-helper-text>

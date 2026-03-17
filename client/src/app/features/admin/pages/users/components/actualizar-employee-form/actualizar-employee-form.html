@@ -86,23 +86,23 @@
     </div>
 
     <div>
-      <app-ui-helper-text *ngIf="nombreModel.invalid && nombreModel.touched">
+      <app-ui-helper-text *ngIf="nombreModel.invalid && formSubmitted">
         <ng-container *ngIf="nombreModel.errors?.['required']">El nombre es obligatorio.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="documentoModel.invalid && documentoModel.touched">
+      <app-ui-helper-text *ngIf="documentoModel.invalid && formSubmitted">
         <ng-container *ngIf="documentoModel.errors?.['required']">El documento es obligatorio.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="correoModel.invalid && correoModel.touched">
+      <app-ui-helper-text *ngIf="correoModel.invalid && formSubmitted">
         <ng-container *ngIf="correoModel.errors?.['required']">El correo es obligatorio.</ng-container>
         <ng-container *ngIf="correoModel.errors?.['email']">El correo debe ser válido.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="telefonoModel.invalid && telefonoModel.touched">
+      <app-ui-helper-text *ngIf="telefonoModel.invalid && formSubmitted">
         <ng-container *ngIf="telefonoModel.errors?.['required']">El teléfono es obligatorio.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="cargoModel.invalid && cargoModel.touched">
+      <app-ui-helper-text *ngIf="cargoModel.invalid && formSubmitted">
         <ng-container *ngIf="cargoModel.errors?.['required']">El cargo es obligatorio.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="contrasenaModel.invalid && contrasenaModel.touched && empleadoActual.contrasena">
+      <app-ui-helper-text *ngIf="contrasenaModel.invalid && formSubmitted && empleadoActual.contrasena">
         <ng-container *ngIf="contrasenaModel.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</ng-container>
       </app-ui-helper-text>
       <app-ui-helper-text *ngIf="empleadoActual.contrasena && empleadoActual.contrasena !== empleadoActual.confirmarContrasena">

@@ -1,3 +1,5 @@
+@use '../../../styles/variables' as *;
+
 :host {
     display: block;
     width: 100%;
@@ -7,28 +9,36 @@ p {
     max-width: 300px;
     margin: 0;
     padding: 0;
+    text-align: center;
+    font-weight: 100;
+    line-height: 1.4;
+    font-size: 12px;
 }
 
 .error {
-    color: #ef4444;
-    font-size: 12px;
-    text-align: center;
-    font-weight: 500;
-    line-height: 1.4;
+    color: $color-danger;
 }
 
 .success {
-    color: #2ecc71;
-    font-size: 12px;
-    text-align: center;
-    font-weight: 500;
-    line-height: 1.4;
+    color: $color-success;
 }
 
 .info {
-    color: #3498db;
-    font-size: 12px;
-    text-align: center;
-    font-weight: 500;
-    line-height: 1.4;
+    color: $color-info;
+}
+
+.warning {
+    color: $color-gold;
+}
+
+.helper-text--left {
+    text-align: left;
+}
+
+.helper-text--compact {
+    font-size: 11px;
+}
+
+.helper-text--stretch {
+    max-width: none;
 }

@@ -32,18 +32,23 @@
 .detalle-reserva {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   gap: 1rem;
   padding: 1rem;
+  
 
   .campo {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.25rem;
+    align-items: center;
+
 
     label {
-      font-weight: 600;
-      font-size: 0.9rem;
+      font-weight: 100;
+      font-size: 1.2rem;
       color: #D4AF37;
+      
     }
 
     span {
@@ -70,9 +75,6 @@
     }
   }
 
-  strong {
-    color: #D4AF37;
-  }
 }
 
 .acciones-eliminacion {

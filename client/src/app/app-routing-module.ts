@@ -27,7 +27,7 @@ const routes: Routes = [
   },
   {
     path: 'employee',
-    loadChildren: () => import('./features/features-module').then(m => m.FeaturesModule),
+    loadChildren: () => import('./features/employee/employee-module').then(m => m.EmployeeModule),
     canActivate: [authGuard, roleGuard],
     data: { roles: [TipoUsuario.empleado] }
   }

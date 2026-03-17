@@ -5,6 +5,12 @@ export interface MetodoPago {
     nombre: string;
 }
 
+export interface PagoDetalle {
+    idMetodoPago: number;
+    nombre?: string;
+    monto: number;
+}
+
 export interface Pago {
     idPago: number;
     urlComprobante: string;
@@ -12,6 +18,7 @@ export interface Pago {
     fechaPago: string;
     idPedido: number;
     idMetodoPago: number;
+    detalles?: PagoDetalle[];
     metodoPago?: MetodoPago;
-    pedido?: Pedido;
+    pedido?: Pedido & { tipoAtencion?: 'local' | 'llevar' };
 }

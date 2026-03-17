@@ -1,64 +1,91 @@
-.data-table-wrapper {
+.data-table-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 100;
+    color: #ffffff;
+  }
+}
+
+.table-content {
+  width: 100%;
   overflow-x: auto;
-}
-
-.table-loading,
-.table-error,
-.table-empty {
-  padding: 20px;
-  text-align: center;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.table-loading {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.table-error {
-  background-color: #ffebee;
-  color: #c62828;
-}
-
-.table-empty {
-  background-color: #f5f5f5;
-  color: #757575;
-}
-
-.table-responsive {
-  overflow-x: auto;
+  background-color: transparent;
+  border-radius: 8px;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
 
   thead {
-    background-color: #f5f5f5;
-
     th {
-      padding: 12px;
+      padding: 0.75rem;
       text-align: left;
-      font-weight: 600;
-      color: #424242;
-      border-bottom: 2px solid #bdbdbd;
+      font-weight: 100;
+      color: #d4af37;
+      border-bottom: 1px solid #d4af37;
+      background-color: rgba(212, 175, 55, 0.08);
     }
   }
 
   tbody {
     tr {
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
       &:hover {
-        background-color: #fafafa;
+        background-color: rgba(212, 175, 55, 0.04);
       }
 
       td {
-        padding: 12px;
-        color: #212121;
+        padding: 0.75rem;
+        color: #ffffff;
       }
     }
+  }
+}
+
+.state {
+  padding: 1rem;
+  border-radius: 8px;
+
+  p {
+    margin: 0;
+  }
+
+  &.loading {
+    color: #d4af37;
+  }
+
+  &.error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    color: #ffd6d6;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background-color: rgba(239, 68, 68, 0.1);
+
+    .retry-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d4af37;
+      border-radius: 5px;
+      background-color: transparent;
+      color: #d4af37;
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba(212, 175, 55, 0.12);
+      }
+    }
+  }
+
+  &.empty {
+    color: #999999;
+    font-style: italic;
   }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { TabItem } from "../../../../../shared/ui/ui-tabs/ui-tabs";
 import { AdminFiltros, FiltroOpcion } from "../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel";
-import { AccionTabla } from "../../../../../shared/ui/ui-tabla/ui-tabla";
+import { AccionTabla, TablaColumnaConfig, TablaToggleChangeEvent } from "../../../../../shared/ui/ui-tabla/ui-tabla";
 import { Promocion } from "../../../../../domain/events&Promotions/models/promocion.model";
 import { Evento } from "../../../../../domain/events&Promotions/models/evento.model";
 import { PromotionEventDayItem } from "../../../../../domain/events&Promotions/models/promotioneventodia.model";
@@ -25,7 +25,7 @@ interface PromocionViewModel {
 	"Estado": string;
 	// Propiedades adicionales para acceso mediante notación de punto
 	idPromocion: number;
-	activo: string;
+	activo: boolean;
 }
 
 interface EventoViewModel {
@@ -94,6 +94,16 @@ export class MainEventsPromotions implements OnInit {
 		"Tipo",
 		"Estado",
 		"Acciones"
+	];
+	columnasPromocionesConfig: TablaColumnaConfig[] = [
+		{
+			header: 'Estado',
+			type: 'toggle',
+			toggle: {
+				trueLabel: 'Activa',
+				falseLabel: 'Inactiva'
+			}
+		}
 	];
 
 	// === DATOS EVENTOS ===
@@ -236,12 +246,34 @@ export class MainEventsPromotions implements OnInit {
 	}
 
 	onTogglePromocionActiva(registro: PromocionViewModel): void {
-		const nuevoEstado = registro.activo === "Inactiva";
+		const nuevoEstado = !registro.activo;
 		this.facade.togglePromotionActive(registro.idPromocion, nuevoEstado).subscribe({
 			next: () => {
 				this.cargarPromociones();
 			},
 			error: (error) => console.error("Error al cambiar estado de promoción:", error)
+		});
+	}
+
+	onEstadoPromocionToggle(event: TablaToggleChangeEvent): void {
+		if (event.columna.toLowerCase() !== 'estado') {
+			return;
+		}
+
+		const registro = event.registro as PromocionViewModel;
+		if (!registro?.idPromocion) {
+			return;
+		}
+
+		this.facade.togglePromotionActive(registro.idPromocion, event.nextValue).subscribe({
+			next: () => {
+				registro.activo = event.nextValue;
+				registro['Estado'] = event.nextValue ? 'Activa' : 'Inactiva';
+			},
+			error: (error) => {
+				console.error('Error al cambiar estado de promoción desde tabla:', error);
+				this.cargarPromociones();
+			}
 		});
 	}
 
@@ -379,7 +411,7 @@ export class MainEventsPromotions implements OnInit {
 						this.facade.getPromociones().subscribe({
 							next: (promociones) => {
 								this.promocionesDisponibles = promociones
-									.filter(p => p.activo === "Activa")
+									.filter(p => p.activo)
 									.map(p => ({ value: p.idPromocion, label: p["Nombre"] }));
 								this.mostrarModalDiasEvento = true;
 							}

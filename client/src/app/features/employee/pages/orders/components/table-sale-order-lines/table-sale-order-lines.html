@@ -1,0 +1,39 @@
+<div class="pedido-section">
+  <div class="tabla-contenedor">
+    <app-ui-tabla
+      [columns]="columns"
+      [tbodyData]="lineasTabla"
+      variant="pos"
+      density="compact"
+      [stickyHeader]="true"
+      [hoverable]="true"
+      minWidth="100%">
+      <ng-template uiTablaCell="eliminar" let-linea>
+        <button
+          *ngIf="!linea.__empty"
+          class="btn-eliminar-linea"
+          [disabled]="procesando"
+          title="Eliminar producto"
+          (click)="eliminarLinea.emit(linea.idProductoPedido)">
+          ✕
+        </button>
+      </ng-template>
+
+      <ng-template uiTablaCell="cantidad" let-linea>
+        <ng-container *ngIf="!linea.__empty; else cantidadVacia">
+          <app-ui-pos-qty-stepper
+            [cantidad]="linea.cantidad"
+            [disabled]="procesando"
+            size="compact"
+            tone="primary"
+            (incrementar)="incrementarLinea.emit(linea.idProducto)"
+            (decrementar)="decrementarLinea.emit(linea.idProducto)">
+          </app-ui-pos-qty-stepper>
+        </ng-container>
+        <ng-template #cantidadVacia>
+          <span class="cantidad-vacia">-</span>
+        </ng-template>
+      </ng-template>
+    </app-ui-tabla>
+  </div>
+</div>

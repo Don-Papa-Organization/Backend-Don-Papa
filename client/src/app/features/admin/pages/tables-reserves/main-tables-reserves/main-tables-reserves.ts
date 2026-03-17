@@ -5,6 +5,7 @@ import type { MesaViewModel, ReservationViewModel } from '../services/tables-res
 import type { CreateMesaRequestDto } from '../../../../../domain/tables&Reserves/dtos/request/create-mesa.request.dto';
 import type { UpdateMesaRequestDto } from '../../../../../domain/tables&Reserves/dtos/request/update-mesa.request.dto';
 import { AccionTabla } from '../../../../../shared/ui/ui-tabla/ui-tabla';
+import { MESA_TIPOS, MesaTipo } from '../../../../../types/mesa-tipo.type';
 
 @Component({
   selector: 'app-main-tables-reserves',
@@ -13,6 +14,11 @@ import { AccionTabla } from '../../../../../shared/ui/ui-tabla/ui-tabla';
   styleUrl: './main-tables-reserves.scss'
 })
 export class MainTablesReserves implements OnInit {
+
+  tipoOptions: Array<{ value: MesaTipo; label: string }> = MESA_TIPOS.map(tipo => ({
+    value: tipo,
+    label: tipo
+  }));
 
   accionesMesas: AccionTabla[] = [
     {
@@ -48,10 +54,10 @@ export class MainTablesReserves implements OnInit {
   cargandoReservas = false;
 
   mesas: MesaViewModel[] = [];
-  columnasMesas: string[] = ['idMesa', 'numero', 'tipo', 'estado', 'Acciones'];
+  columnasMesas: string[] = ['idMesa', 'Numero', 'Tipo', 'Estado', 'Acciones'];
 
   reservas: ReservationViewModel[] = [];
-  columnasReservas: string[] = ['idReserva', 'fecha', 'hora', 'numeroMesa', 'tipoMesa', 'cantidadPersonas', 'estado', 'Acciones'];
+  columnasReservas: string[] = ['idReserva', 'Fecha', 'Hora', 'numeroMesa', 'tipoMesa', 'cantidadPersonas', 'Estado', 'Acciones'];
 
   mostrarModalAgregarMesa = false;
   mostrarModalEditarMesa = false;
@@ -66,8 +72,23 @@ export class MainTablesReserves implements OnInit {
   constructor(@Inject(TablesReservesFacade) private tablesReservesFacade: TablesReservesFacade) { }
 
   ngOnInit(): void {
+    this.cargarTiposMesa();
     this.cargarMesas();
     this.cargarReservas();
+  }
+
+  cargarTiposMesa(): void {
+    this.tablesReservesFacade.getTableTypes().subscribe({
+      next: (response) => {
+        const tipos = (response.data?.tipos ?? []).filter(Boolean) as MesaTipo[];
+        if (tipos.length) {
+          this.tipoOptions = tipos.map(tipo => ({ value: tipo, label: tipo }));
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar tipos de mesa:', error);
+      }
+    });
   }
 
   cambiarTab(tabId: string): void {

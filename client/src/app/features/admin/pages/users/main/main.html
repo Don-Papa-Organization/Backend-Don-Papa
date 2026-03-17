@@ -60,7 +60,7 @@
   <app-ui-modal *ngIf="mostrarModalEliminarEmpleado" [mostrar]="mostrarModalEliminarEmpleado"
     titulo="¿Desea eliminar empleado?" (cerrar)="cerrarModalEliminarEmpleado()">
     <div class="contenido-eliminacion">
-      <p>¿Estás seguro de que deseas eliminar al empleado <strong>{{ empleadoSeleccionado?.nombre }}</strong>?</p>
+      <p>¿Estás seguro de que deseas eliminar al empleado <span class="entity-highlight">{{ empleadoSeleccionado?.nombre }}</span>?</p>
       <p class="advertencia">Esta acción desactivará el empleado en el sistema.</p>
 
       <div class="acciones-eliminacion">

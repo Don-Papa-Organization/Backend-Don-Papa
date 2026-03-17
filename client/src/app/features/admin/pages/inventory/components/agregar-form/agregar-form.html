@@ -48,20 +48,20 @@
         </div>
 
         <div>
-            <app-ui-helper-text *ngIf="nombreNuevoModel.invalid && nombreNuevoModel.touched">
+            <app-ui-helper-text *ngIf="nombreNuevoModel.invalid && formSubmitted">
                 <ng-container *ngIf="nombreNuevoModel.errors?.['required']">El nombre es obligatorio.</ng-container>
             </app-ui-helper-text>
-            <app-ui-helper-text *ngIf="precioNuevoModel.invalid && precioNuevoModel.touched">
+            <app-ui-helper-text *ngIf="precioNuevoModel.invalid && formSubmitted">
                 <ng-container *ngIf="precioNuevoModel.errors?.['required']">El precio es obligatorio.</ng-container>
                 <ng-container *ngIf="precioNuevoModel.errors?.['min']">El precio no puede ser negativo.</ng-container>
             </app-ui-helper-text>
-            <app-ui-helper-text *ngIf="stockActualNuevoModel.invalid && stockActualNuevoModel.touched">
+            <app-ui-helper-text *ngIf="stockActualNuevoModel.invalid && formSubmitted">
                 <ng-container *ngIf="stockActualNuevoModel.errors?.['required']">El stock actual es
                     obligatorio.</ng-container>
                 <ng-container *ngIf="stockActualNuevoModel.errors?.['min']">El stock no puede ser
                     negativo.</ng-container>
             </app-ui-helper-text>
-            <app-ui-helper-text *ngIf="stockMinimoNuevoModel.invalid && stockMinimoNuevoModel.touched">
+            <app-ui-helper-text *ngIf="stockMinimoNuevoModel.invalid && formSubmitted">
                 <ng-container *ngIf="stockMinimoNuevoModel.errors?.['required']">El stock mínimo es
                     obligatorio.</ng-container>
                 <ng-container *ngIf="stockMinimoNuevoModel.errors?.['min']">El stock mínimo no puede ser

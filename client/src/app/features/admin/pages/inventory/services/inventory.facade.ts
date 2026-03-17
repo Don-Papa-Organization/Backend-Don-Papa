@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { InventoryApi } from '../../../../../services/apis/inventory.api';
-import { forkJoin, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CreateProductRequestDto } from '../../../../../domain/inventory/dtos/request/create-product.request.dto';
 import { UpdateProductRequestDto } from '../../../../../domain/inventory/dtos/request/update-product.request.dto';
@@ -9,6 +9,8 @@ import { UpdateCategoryRequestDto } from '../../../../../domain/inventory/dtos/r
 import { ApiResponse } from '../../../../../types/api-response.type';
 import { Producto } from '../../../../../domain/inventory/models/producto.model';
 import { CategoriaProducto } from '../../../../../domain/inventory/models/categoriaProducto.model';
+import { InventoryProductEnriched } from '../../../../../types/inventory-product-enriched.type';
+import { PaginationMetaDto } from '../../../../../types/pagination-meta.dto';
 
 export interface ProductViewModel {
     idProducto: number;
@@ -16,11 +18,16 @@ export interface ProductViewModel {
     precio: number;
     stockActual: number;
     stockMinimo: number;
-    activo: string;
+    activo: boolean;
     descripcion: string;
     categoria: string;
     idCategoria: number;
     imagen: string;
+}
+
+export interface PaginatedProductsResult {
+    items: ProductViewModel[];
+    meta: PaginationMetaDto;
 }
 
 @Injectable({
@@ -30,48 +37,82 @@ export class InventoryFacade {
     constructor(private inventoryApi: InventoryApi) { }
 
     getProductsWithCategories(filtros?: any): Observable<ProductViewModel[]> {
-        return this.inventoryApi.listProducts().pipe(
-            switchMap(response => {
-                if (response.success && response.data?.productos?.length) {
-                    let productos = response.data.productos;
+        const busqueda = String(filtros?.busqueda || '').trim();
+        const categoria = filtros?.estado !== null && filtros?.estado !== undefined
+            ? Number(filtros.estado)
+            : undefined;
 
-                    // Aplicar filtros si existen
-                    if (filtros) {
-                        if (filtros.busqueda) {
-                            const term = filtros.busqueda.toLowerCase();
-                            productos = productos.filter(p =>
-                                p.nombre.toLowerCase().includes(term) ||
-                                (p.descripcion && p.descripcion.toLowerCase().includes(term))
-                            );
-                        }
-                        if (filtros.estado) {
-                            productos = productos.filter(p => p.idCategoria === filtros.estado);
-                        }
-                        // Nota: El filtrado por fechas se puede implementar aquí si el modelo Producto tiene campos de fecha
+        if (busqueda && categoria && !Number.isNaN(categoria)) {
+            return this.inventoryApi.listProductsEnriched({ nombre: busqueda, categoria }).pipe(
+                map(response => this.mapProductsDataToViewModels(response.data?.productos ?? []))
+            );
+        }
+
+        if (busqueda) {
+            return this.inventoryApi.searchProductsByName({ nombre: busqueda }).pipe(
+                map(response => this.mapProductsDataToViewModels(response.data?.productos ?? []))
+            );
+        }
+
+        if (categoria && !Number.isNaN(categoria)) {
+            return this.inventoryApi.listProductsByCategory(categoria).pipe(
+                switchMap(response => {
+                    const productos = response.data?.productos ?? [];
+                    if (!productos.length) {
+                        return of([]);
                     }
 
-                    const productosConCategoria$ = productos.map(producto =>
-                        producto.idCategoria
-                            ? this.inventoryApi.getCategory(producto.idCategoria).pipe(
-                                map(catResponse => ({
-                                    ...producto,
-                                    nombreCategoria: catResponse.data?.nombre || 'N/A'
-                                })),
-                                catchError(() => of({ ...producto, nombreCategoria: 'N/A' }))
-                            )
-                            : of({ ...producto, nombreCategoria: 'N/A' })
+                    return this.inventoryApi.listProductsEnriched({ categoria }).pipe(
+                        map(enrichedResponse => {
+                            const byId = new Map((enrichedResponse.data?.productos ?? []).map(item => [item.idProducto, item]));
+                            return productos.map(producto => byId.get(producto.idProducto) ?? producto);
+                        }),
+                        map(items => this.mapProductsDataToViewModels(items))
                     );
+                })
+            );
+        }
 
-                    if (productos.length === 0) return of([]);
+        return this.inventoryApi.listProductsEnriched().pipe(
+            map(response => this.mapProductsDataToViewModels(response.data?.productos ?? []))
+        );
+    }
 
-                    return forkJoin(productosConCategoria$).pipe(
-                        map(productosConCat =>
-                            productosConCat.map(producto => this.mapToViewModel(producto))
-                                .sort((a, b) => a.idProducto - b.idProducto)
-                        )
-                    );
-                }
-                return of([]);
+    getProductsWithCategoriesOptimized(filtros?: any): Observable<ProductViewModel[]> {
+        return this.getProductsWithCategories(filtros);
+    }
+
+    getProductsWithCategoriesPaginated(
+        filtros?: any,
+        page: number = 1,
+        limit: number = 10
+    ): Observable<PaginatedProductsResult> {
+        const busqueda = String(filtros?.busqueda || '').trim();
+        const categoria = filtros?.estado !== null && filtros?.estado !== undefined
+            ? Number(filtros.estado)
+            : undefined;
+
+        const activo = typeof filtros?.activo === 'boolean' ? filtros.activo : undefined;
+
+        return this.inventoryApi.listProductsEnriched({
+            nombre: busqueda || undefined,
+            categoria: categoria !== undefined && !Number.isNaN(categoria) ? categoria : undefined,
+            activo,
+            page,
+            limit
+        }).pipe(
+            map(response => {
+                const data = response.data;
+                const items = this.mapProductsDataToViewModels(data?.productos ?? []);
+                return {
+                    items,
+                    meta: {
+                        page: data?.pagina ?? page,
+                        limit,
+                        total: data?.total ?? items.length,
+                        totalPages: data?.totalPaginas ?? 1
+                    }
+                };
             })
         );
     }
@@ -149,17 +190,26 @@ export class InventoryFacade {
         );
     }
 
-    private mapToViewModel(producto: any): ProductViewModel {
+    private mapProductsDataToViewModels(productos: Array<Producto | InventoryProductEnriched>): ProductViewModel[] {
+        return productos
+            .map(producto => this.mapToViewModel(producto))
+            .sort((a, b) => a.idProducto - b.idProducto);
+    }
+
+    private mapToViewModel(producto: Producto | InventoryProductEnriched): ProductViewModel {
+        const enriched = producto as InventoryProductEnriched;
+        const nombreCategoria = enriched.nombreCategoria || enriched.categoria?.nombre || 'N/A';
+
         return {
             idProducto: producto.idProducto,
             nombre: producto.nombre,
             precio: producto.precio,
             stockActual: producto.stockActual,
             stockMinimo: producto.stockMinimo,
-            activo: producto.activo ? 'Sí' : 'No',
+            activo: !!producto.activo,
             descripcion: producto.descripcion || 'N/A',
-            categoria: producto.nombreCategoria,
-            idCategoria: producto.idCategoria,
+            categoria: nombreCategoria,
+            idCategoria: Number(producto.idCategoria || 0),
             imagen: this.inventoryApi.resolveImageUrl(
                 producto.urlImagen && producto.urlImagen.startsWith("/images")
                     ? this.inventoryApi.getProductImageUrl(producto.idProducto)

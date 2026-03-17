@@ -16,6 +16,7 @@ export class AgregarEventForm {
 	// Campos del formulario
 	nombre = "";
 	descripcion = "";
+	formSubmitted = false;
 
 	constructor() { }
 
@@ -25,6 +26,7 @@ export class AgregarEventForm {
 	}
 
 	onSubmit(): void {
+		this.formSubmitted = true;
 		if (!this.nombre || !this.descripcion) return;
 
 		const dto: CreateEventRequestDto = {
@@ -39,5 +41,6 @@ export class AgregarEventForm {
 	private limpiarFormulario(): void {
 		this.nombre = "";
 		this.descripcion = "";
+		this.formSubmitted = false;
 	}
 }

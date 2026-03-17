@@ -10,13 +10,13 @@
 
 		<!-- Validaciones -->
 		<div class="form-errors">
-			@if (nombreField.invalid && nombreField.touched) {
+			@if (nombreField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>El nombre es obligatorio</ng-container>
 			</app-ui-helper-text>
 			}
 
-			@if (descripcionField.invalid && descripcionField.touched) {
+			@if (descripcionField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>La descripción es obligatoria</ng-container>
 			</app-ui-helper-text>

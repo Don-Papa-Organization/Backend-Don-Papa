@@ -1,31 +1,29 @@
-<div class="data-table-wrapper">
-  <div *ngIf="isLoading" class="table-loading">
-    <p>Cargando datos...</p>
+<section class="data-table-section">
+  <h3 *ngIf="title">{{ title }}</h3>
+
+  <div *ngIf="loading" class="state loading">Cargando...</div>
+
+  <div *ngIf="error" class="state error">
+    <p>{{ error }}</p>
+    <button type="button" class="retry-btn" (click)="onRetry()">Reintentar</button>
   </div>
 
-  <div *ngIf="!isLoading && hasError" class="table-error">
-    <p>{{ errorMessage }}</p>
-    <ui-button texto="Reintentar" (accion)="onRetry.emit()"></ui-button>
-  </div>
-
-  <div *ngIf="!isLoading && !hasError && data.length === 0" class="table-empty">
+  <div *ngIf="!loading && !error && !rows.length" class="state empty">
     <p>{{ emptyMessage }}</p>
   </div>
 
-  <div *ngIf="!isLoading && !hasError && data.length" class="table-responsive">
-    <table class="data-table">
+  <div *ngIf="!loading && !error && rows.length" class="table-content">
+    <table class="data-table" [style.minWidth]="minWidth">
       <thead>
         <tr>
-          <th *ngFor="let column of columns">{{ column }}</th>
+          <th *ngFor="let col of columns">{{ col }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let row of data">
-          <td *ngFor="let column of columns">
-            {{ getValueByPath(row, column) | formatTableValue }}
-          </td>
+        <tr *ngFor="let row of rows">
+          <td *ngFor="let col of columns">{{ row[col] ?? '-' }}</td>
         </tr>
       </tbody>
     </table>
   </div>
-</div>
+</section>

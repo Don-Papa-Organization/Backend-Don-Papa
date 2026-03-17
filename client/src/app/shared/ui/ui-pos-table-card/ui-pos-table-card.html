@@ -1,0 +1,30 @@
+<article class="mesa-card"
+         [ngClass]="hostClasses"
+         role="button"
+         tabindex="0"
+         [attr.aria-label]="'Abrir ' + numeroMesa + ', estado ' + estadoVisual"
+         (click)="abrir.emit()"
+         (keydown)="onCardKeydown($event)">
+  <div class="mesa-card__image" [ngClass]="tableImageClass">
+    <img src="icons/iconoMesas.svg" alt="mesa">
+  </div>
+
+  <div class="mesa-card__content">
+    <div class="mesa-card__title-row">
+      <div class="mesa-card__title-block">
+        <span class="mesa-card__eyebrow">Mesa</span>
+        <span class="mesa-card__name">{{ numeroMesa }}</span>
+      </div>
+      <span class="mesa-card__state"
+            [class.state--ok]="estadoVisual === 'Disponible'"
+            [class.state--busy]="estadoVisual === 'Ocupada'">
+        {{ estadoVisual }}
+      </span>
+    </div>
+
+    <div class="mesa-card__time">
+      <span>Tiempo:</span>
+      <span class="mesa-card__time-value">{{ estadoVisual === 'Ocupada' ? tiempoOcupada : '--:--' }}</span>
+    </div>
+  </div>
+</article>

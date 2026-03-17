@@ -18,14 +18,12 @@
       tituloInput="Tipo"
       [options]="tipoOptions"
       [(selectedOption)]="mesaEditada.tipo"
-      (selectionChange)="onTipoTouched()"
     ></app-ui-combobox>
 
     <app-ui-combobox
       tituloInput="Estado"
       [options]="estadoOptions"
       [(selectedOption)]="mesaEditada.estado"
-      (selectionChange)="onEstadoTouched()"
     ></app-ui-combobox>
 
     <div footer class="form-footer">
@@ -37,15 +35,15 @@
       ></ui-button>
     </div>
 
-    <app-ui-helper-text *ngIf="numeroModel.invalid && numeroModel.touched">
+    <app-ui-helper-text *ngIf="numeroModel.invalid && formSubmitted">
       <ng-container *ngIf="numeroModel.errors?.['required']">El número es obligatorio.</ng-container>
     </app-ui-helper-text>
 
-    <app-ui-helper-text *ngIf="!mesaEditada.tipo && tipoTouched">
+    <app-ui-helper-text *ngIf="!mesaEditada.tipo && formSubmitted">
       <ng-container>El tipo de mesa es obligatorio.</ng-container>
     </app-ui-helper-text>
 
-    <app-ui-helper-text *ngIf="!mesaEditada.estado && estadoTouched">
+    <app-ui-helper-text *ngIf="!mesaEditada.estado && formSubmitted">
       <ng-container>El estado de la mesa es obligatorio.</ng-container>
     </app-ui-helper-text>
   </app-ui-form>

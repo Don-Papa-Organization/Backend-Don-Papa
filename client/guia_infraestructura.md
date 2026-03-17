@@ -983,6 +983,73 @@ domain/inventory/
 
 ---
 
+## 13. Actualización de Contrato: Pagos Mixtos (Orders/Admin)
+
+Se extiende el contrato de registro de pago para soportar compatibilidad legacy y modo mixto sin crear un endpoint nuevo.
+
+### 13.1 Request `registerPayment`
+
+Endpoint:
+
+`POST /api/payments/register/:idPedido`
+
+Formas soportadas:
+
+1) Legacy (compatible):
+
+```json
+{
+  "idMetodoPago": 1,
+  "direccionEntrega": "Av. Ejemplo 123"
+}
+```
+
+2) Mixto:
+
+```json
+{
+  "metodos": [
+    { "idMetodoPago": 1, "monto": 20.00 },
+    { "idMetodoPago": 2, "monto": 30.00 }
+  ],
+  "direccionEntrega": "Av. Ejemplo 123"
+}
+```
+
+Reglas:
+- Cada línea de `metodos[]` requiere `idMetodoPago` entero y `monto > 0`.
+- La suma de `metodos[].monto` debe coincidir exactamente con el total del pedido.
+- Si no coincide, backend responde `400`.
+
+### 13.2 Response de pago
+
+El bloque `pago` ahora puede incluir desglose en `detalles`:
+
+```json
+{
+  "pago": {
+    "idPago": 10,
+    "idMetodoPago": 1,
+    "monto": 50,
+    "detalles": [
+      { "idMetodoPago": 1, "nombre": "efectivo", "monto": 20 },
+      { "idMetodoPago": 2, "nombre": "tarjeta", "monto": 30 }
+    ]
+  }
+}
+```
+
+### 13.3 Modelos de dominio (client)
+
+- `RegisterPaymentRequestDto`:
+  - `idMetodoPago?: number`
+  - `metodos?: Array<{ idMetodoPago: number; monto: number }>`
+  - `direccionEntrega?: string`
+- `Pago` añade `detalles?: PagoDetalle[]`.
+- `Pedido`/pendientes pueden incluir `tipoAtencion?: 'local' | 'llevar'` cuando `canalVenta='fisico'`.
+
+---
+
 **Última actualización**: 21 de enero de 2025  
 **Versión**: 1.2 (Agregado: Patrón de formularios corregido v2.0 Events-Promotions)  
 **Responsable**: Arquitectura de Frontend

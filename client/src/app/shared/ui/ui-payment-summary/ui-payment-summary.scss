@@ -1,0 +1,65 @@
+@use '../../../styles/variables' as *;
+
+.payment-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: $color-bg-primary;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: black; 
+}
+
+.payment-summary__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.payment-summary__item--right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.payment-summary__label {
+  font-size: 0.9rem;
+  color: $color-white;
+}
+
+.payment-summary__value {
+  font-size: clamp(1.6rem, 3.5vw, 2.75rem);
+  line-height: 1;
+  font-weight: 100;
+  white-space: nowrap;
+}
+
+.payment-summary__value--total {
+  color: $color-success;
+}
+
+.payment-summary__value--difference-negative {
+  color: $color-danger;
+}
+
+.payment-summary__value--difference-positive {
+  color: $color-info;
+}
+
+@media (max-width: 900px) {
+  .payment-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-summary__item--right {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .payment-summary__value {
+    font-size: clamp(1.5rem, 5vw, 2.1rem);
+  }
+}

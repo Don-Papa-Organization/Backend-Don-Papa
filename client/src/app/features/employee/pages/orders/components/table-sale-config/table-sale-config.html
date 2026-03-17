@@ -1,0 +1,10 @@
+<div class="config-section">
+  <h4 class="config-section__title">Configuración rápida</h4>
+
+  <app-ui-combobox
+    tituloInput="Tipo"
+    [options]="tipoOptions"
+    [selectedOption]="tipoAtencion"
+    (selectedOptionChange)="onTipoAtencionChange($event)">
+  </app-ui-combobox>
+</div>

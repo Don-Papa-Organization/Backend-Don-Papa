@@ -16,12 +16,17 @@
   })
   export class UiInput implements ControlValueAccessor {
     @Input() tituloInput: string = '';
+    @Input() showLabel: boolean = true;
     @Input() placeholder: string = '';
     @Input() tipo: 'text' | 'password' | 'email' | 'number' | 'checkbox' | 'date' = 'text';
     @Input() valorInput: string = '';
     @Input() min?: number;
+    @Input() density: 'default' | 'compact' = 'default';
+    @Input() stretch: boolean = false;
+    @Input() theme: 'default' | 'pos' = 'default';
 
     @Output() valorInputChange = new EventEmitter<string>();
+    @Output() enterPress = new EventEmitter<void>();
 
     value = '';
     isDisabled = false;
@@ -53,5 +58,17 @@
       this.valorInputChange.emit(value);
       this.onChange(value);
       this.onTouched();
+    }
+
+    onEnterPressed(): void {
+      this.enterPress.emit();
+    }
+
+    get containerClasses(): string[] {
+      return [
+        `input-container--${this.density}`,
+        `input-container--theme-${this.theme}`,
+        this.stretch ? 'input-container--stretch' : ''
+      ].filter(Boolean);
     }
   }

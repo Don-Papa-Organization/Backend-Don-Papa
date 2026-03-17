@@ -32,8 +32,7 @@
 	<div *ngIf="tabActiva === 'pedidos'">
 		<!-- TABLA PRINCIPAL DE PEDIDOS -->
 		<div class="tabla-contenedor" *ngIf="!cargandoPedidos">
-			<app-ui-tabla [theadData]="columnasTabla" [tbodyData]="pedidos" (editarRegistro)="onEditar($event)"
-				(eliminarRegistro)="onEliminar($event)"></app-ui-tabla>
+			<app-ui-tabla [theadData]="columnasTabla" [tbodyData]="pedidos" [acciones]="accionesPedidos"></app-ui-tabla>
 		</div>
 
 		<!-- INDICADOR DE CARGA -->
@@ -53,7 +52,7 @@
 		<app-ui-modal *ngIf="mostrarModalEliminar" [mostrar]="mostrarModalEliminar" titulo="¿Desea eliminar pedido?"
 			(cerrar)="cerrarModalEliminar()">
 			<div class="contenido-eliminacion">
-				<p>¿Estás seguro de que deseas eliminar el pedido <strong>#{{ pedidoSeleccionado?.idPedido }}</strong>?
+				<p>¿Estás seguro de que deseas eliminar el pedido <span class="entity-highlight">#{{ pedidoSeleccionado?.idPedido }}</span>?
 				</p>
 				<p class="advertencia">Esta acción desactivará el pedido en el sistema.</p>
 
@@ -67,7 +66,7 @@
 		<!-- COMPONENTE GESTIONAR PRODUCTOS EN PEDIDO -->
 		<app-gestionar-productos-form [mostrar]="mostrarModalProductos" [pedidoSeleccionado]="pedidoSeleccionado"
 			[productosOptions]="productosOptions" (cerrar)="cerrarModalProductos()"
-			(pedidoActualizado)="onProductosActualizados()"></app-gestionar-productos-form>
+			(pedidoActualizado)="onProductosActualizados($event)"></app-gestionar-productos-form>
 	</div>
 
 	<!-- TAB PAGOS -->

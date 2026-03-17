@@ -6,6 +6,7 @@ import { CreateMesaRequestDto } from '../../../../../domain/tables&Reserves/dtos
 import { UpdateMesaRequestDto } from '../../../../../domain/tables&Reserves/dtos/request/update-mesa.request.dto';
 import { ListMesasDataDto } from '../../../../../domain/tables&Reserves/dtos/response/list-mesas.response.dto';
 import { ListReservationsByStatusDataDto, ReservationStatusListItemDto } from '../../../../../domain/tables&Reserves/dtos/response/list-reservations-by-status.response.dto';
+import { ListMesaTiposDataDto } from '../../../../../domain/tables&Reserves/dtos/response/list-mesa-tipos.response.dto';
 import { ApiResponse } from '../../../../../types/api-response.type';
 import { Mesa, MesaEstado, MesaTipo } from '../../../../../domain/tables&Reserves/models/mesa.model';
 import { Reserva } from '../../../../../domain/tables&Reserves/models/reserva.model';
@@ -38,6 +39,10 @@ export class TablesReservesFacade {
     return this.tablesReservesApi.listTables().pipe(
       map(response => this.mapMesasToViewModels(response.data))
     );
+  }
+
+  getTableTypes(): Observable<ApiResponse<ListMesaTiposDataDto>> {
+    return this.tablesReservesApi.listTableTypes();
   }
 
   getReservationsByStatus(estado?: string): Observable<ReservationViewModel[]> {

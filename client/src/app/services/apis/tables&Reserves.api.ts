@@ -17,6 +17,7 @@ import { ReservationStatusDataDto } from "../../domain/tables&Reserves/dtos/resp
 import { ListReservationsByStatusDataDto } from "../../domain/tables&Reserves/dtos/response/list-reservations-by-status.response.dto";
 import { ListMesasDataDto } from "../../domain/tables&Reserves/dtos/response/list-mesas.response.dto";
 import { ListMesasByEstadoDataDto } from "../../domain/tables&Reserves/dtos/response/list-mesas-by-estado.response.dto";
+import { ListMesaTiposDataDto } from "../../domain/tables&Reserves/dtos/response/list-mesa-tipos.response.dto";
 import { API_ENDPOINTS, buildApiUrl } from "../../config/api.config";
 
 @Injectable({ providedIn: "root" })
@@ -74,6 +75,10 @@ export class TablesReservesApi {
 
 	listTables(): Observable<ApiResponse<ListMesasDataDto>> {
 		return this.http.get<ApiResponse<ListMesasDataDto>>(this.tablesUrl);
+	}
+
+	listTableTypes(): Observable<ApiResponse<ListMesaTiposDataDto>> {
+		return this.http.get<ApiResponse<ListMesaTiposDataDto>>(buildApiUrl(API_ENDPOINTS.tables.types()));
 	}
 
 	getTable(idMesa: number): Observable<ApiResponse<Mesa>> {

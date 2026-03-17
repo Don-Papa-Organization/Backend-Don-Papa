@@ -25,6 +25,7 @@ export class AgregarPromotionForm {
 	fechaInicio = "";
 	fechaFin = "";
 	tipoPromocionSeleccionado: TipoPromocion | null = null;
+	formSubmitted = false;
 
 	// Opciones de tipo de promoción
 	tiposPromocionOptions: TipoPromocionOption[] = [
@@ -40,6 +41,7 @@ export class AgregarPromotionForm {
 	}
 
 	onSubmit(): void {
+		this.formSubmitted = true;
 		if (!this.nombre || !this.descripcion || !this.fechaInicio || !this.fechaFin || !this.tipoPromocionSeleccionado) return;
 
 		const dto: CreatePromotionRequestDto = {
@@ -60,5 +62,6 @@ export class AgregarPromotionForm {
 		this.fechaInicio = "";
 		this.fechaFin = "";
 		this.tipoPromocionSeleccionado = null;
+		this.formSubmitted = false;
 	}
 }

@@ -85,27 +85,27 @@
     </div>
 
     <div class="error-container">
-      <app-ui-helper-text *ngIf="nombreNuevoModel.invalid && nombreNuevoModel.touched">
+      <app-ui-helper-text *ngIf="nombreNuevoModel.invalid && formSubmitted">
         <ng-container *ngIf="nombreNuevoModel.errors?.['required']">El nombre es obligatorio.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="documentoNuevoModel.invalid && documentoNuevoModel.touched">
+      <app-ui-helper-text *ngIf="documentoNuevoModel.invalid && formSubmitted">
         <ng-container *ngIf="documentoNuevoModel.errors?.['required']">El documento es obligatorio.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="correoNuevoModel.invalid && correoNuevoModel.touched">
+      <app-ui-helper-text *ngIf="correoNuevoModel.invalid && formSubmitted">
         <ng-container *ngIf="correoNuevoModel.errors?.['required']">El correo es obligatorio.</ng-container>
         <ng-container *ngIf="correoNuevoModel.errors?.['email']">El correo debe ser válido.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="telefonoNuevoModel.invalid && telefonoNuevoModel.touched">
+      <app-ui-helper-text *ngIf="telefonoNuevoModel.invalid && formSubmitted">
         <ng-container *ngIf="telefonoNuevoModel.errors?.['required']">El teléfono es obligatorio.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="cargoNuevoModel.invalid && cargoNuevoModel.touched">
+      <app-ui-helper-text *ngIf="cargoNuevoModel.invalid && formSubmitted">
         <ng-container *ngIf="cargoNuevoModel.errors?.['required']">El cargo es obligatorio.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="contrasenaNuevaModel.invalid && contrasenaNuevaModel.touched">
+      <app-ui-helper-text *ngIf="contrasenaNuevaModel.invalid && formSubmitted">
         <ng-container *ngIf="contrasenaNuevaModel.errors?.['required']">La contraseña es obligatoria.</ng-container>
         <ng-container *ngIf="contrasenaNuevaModel.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</ng-container>
       </app-ui-helper-text>
-      <app-ui-helper-text *ngIf="confirmarContrasenaNuevaModel.invalid && confirmarContrasenaNuevaModel.touched">
+      <app-ui-helper-text *ngIf="confirmarContrasenaNuevaModel.invalid && formSubmitted">
         <ng-container *ngIf="confirmarContrasenaNuevaModel.errors?.['required']">Debe confirmar la contraseña.</ng-container>
       </app-ui-helper-text>
       <app-ui-helper-text *ngIf="empleadoNuevo.contrasena && empleadoNuevo.contrasena !== empleadoNuevo.confirmarContrasena">

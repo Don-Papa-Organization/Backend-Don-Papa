@@ -1,0 +1,50 @@
+@use '../../../../../../styles/variables' as *;
+
+.btn-eliminar-linea {
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #EF4444;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: #EF4444;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.pedido-section {
+  height: clamp(320px, 46vh, 520px);
+  min-height: 320px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-gold, 0.3);
+  }
+}
+
+.tabla-contenedor {
+  width: 100%;
+  min-height: 100%;
+}
+
+.cantidad-vacia {
+  color: rgba($color-white, 0.25);
+  font-size: 0.85rem;
+}

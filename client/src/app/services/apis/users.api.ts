@@ -11,6 +11,8 @@ import { AuthResendVerificationRequestDto } from "../../domain/users/dtos/reques
 import { CreateClientForUserRequestDto } from "../../domain/users/dtos/request/create-client-for-user.request.dto";
 import { CreateClientRequestDto } from "../../domain/users/dtos/request/create-client.request.dto";
 import { SearchClientsRequestDto } from "../../domain/users/dtos/request/search-clients.request.dto";
+import { ListClientsRequestDto } from "../../domain/users/dtos/request/list-clients.request.dto";
+import { ListClientsEnrichedRequestDto } from "../../domain/users/dtos/request/list-clients-enriched.request.dto";
 import { ListEmployeesRequestDto } from "../../domain/users/dtos/request/list-employees.request.dto";
 import { CreateEmployeeRequestDto } from "../../domain/users/dtos/request/create-employee.request.dto";
 import { ListUsersRequestDto } from "../../domain/users/dtos/request/list-users.request.dto";
@@ -110,8 +112,10 @@ export class UsersApi {
 		return this.http.get<ApiResponse<AuthCheckEmailResponseDto>>(buildApiUrl(API_ENDPOINTS.users.authCheckEmail(email)));
 	}
 
-	listClients(): Observable<ApiResponse<Cliente[]>> {
-		return this.http.get<ApiResponse<Cliente[]>>(this.clientsUrl);
+	listClients(dto?: ListClientsRequestDto): Observable<ApiResponse<Cliente[]>> {
+		return this.http.get<ApiResponse<Cliente[]>>(this.clientsUrl, {
+			params: dto as any
+		});
 	}
 
 	searchClients(dto: SearchClientsRequestDto): Observable<ApiResponse<Cliente[]>> {
@@ -120,8 +124,10 @@ export class UsersApi {
 		});
 	}
 
-	listClientsEnriched(): Observable<ApiResponse<ClienteEnrichedDto[]>> {
-		return this.http.get<ApiResponse<ClienteEnrichedDto[]>>(this.clientsEnrichedUrl);
+	listClientsEnriched(dto?: ListClientsEnrichedRequestDto): Observable<ApiResponse<ClienteEnrichedDto[]>> {
+		return this.http.get<ApiResponse<ClienteEnrichedDto[]>>(this.clientsEnrichedUrl, {
+			params: dto as any
+		});
 	}
 
 	getClientEnriched(id: number): Observable<ApiResponse<ClienteEnrichedDto>> {

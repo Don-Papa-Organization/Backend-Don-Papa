@@ -37,7 +37,7 @@ export class PaymentsSectionComponent {
 	metodoPagoSeleccionadoId: string | number | null = null;
 
 	// Columnas de tabla
-	columnasPagosPendientes = ['ID', 'Usuario', 'Total', 'Estado', 'Canal Venta', 'Fecha', 'Dirección', 'Acciones'];
+	columnasPagosPendientes = ['ID', 'Usuario', 'Total', 'Estado', 'Canal Venta', 'Atención', 'Fecha', 'Dirección', 'Acciones'];
 	columnasTodosPagos = ['ID Pago', 'ID Pedido', 'Monto', 'Fecha', 'Método', 'Acciones'];
 	columnasMetodosPago = ['ID', 'Nombre', 'Acciones'];
 

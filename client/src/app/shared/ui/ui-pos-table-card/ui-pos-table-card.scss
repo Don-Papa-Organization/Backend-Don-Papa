@@ -1,0 +1,132 @@
+@use '../../../styles/variables' as *;
+
+.mesa-card {
+  border: 1px solid rgba($color-gold, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  background: $color-bg-primary;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+
+  &:hover {
+    border-color: $color-gold;
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-gold;
+    outline-offset: 2px;
+  }
+
+  &--ocupada {
+    border-color: rgba($color-danger, .45);
+  }
+
+  &--disponible {
+    border-color: rgba($color-success, .45);
+  }
+
+  &__image {
+    height: 58px;
+    display: grid;
+    place-items: center;
+
+    img {
+      width: 24px;
+      height: 24px;
+      opacity: .92;
+    }
+
+    &.mesa-img--salon { background: linear-gradient(135deg, #2B1D13, #1A120B); }
+    &.mesa-img--barra { background: linear-gradient(135deg, #241a10, #1A120B); }
+    &.mesa-img--vip   { background: linear-gradient(135deg, #231519, #1A120B); }
+    &.mesa-img--varios { background: linear-gradient(135deg, #374151, #1f2937); }
+    &.mesa-img--otro  { background: linear-gradient(135deg, #2B1D13, #1A120B); }
+  }
+
+  &__content {
+    padding: .65rem .75rem;
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .45rem;
+  }
+
+  &__title-block {
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+  }
+
+  &__eyebrow {
+    color: #999999;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  &__name {
+    color: $color-white;
+    font-weight: 100;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  &__state {
+    font-size: .67rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: #FBBF24;
+    background: rgba(251, 191, 36, .12);
+
+    &.state--ok {
+      color: $color-success;
+      background: rgba($color-success, .12);
+    }
+
+    &.state--busy {
+      color: $color-danger;
+      background: rgba($color-danger, .12);
+    }
+  }
+
+  &__time {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #999999;
+    font-size: .76rem;
+
+    .mesa-card__time-value {
+      color: $color-white;
+      font-size: .78rem;
+    }
+  }
+
+  &--density-compact {
+    .mesa-card__image {
+      height: 50px;
+    }
+
+    .mesa-card__content {
+      padding: .55rem .65rem;
+      gap: .32rem;
+    }
+
+    .mesa-card__name {
+      font-size: .94rem;
+    }
+
+    .mesa-card__time {
+      font-size: .72rem;
+    }
+  }
+}

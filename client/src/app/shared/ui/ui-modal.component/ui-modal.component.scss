@@ -1,3 +1,5 @@
+@use '../../../styles/variables' as *;
+
 .modal-backdrop {
   position: fixed;
   top: 70px;
@@ -15,18 +17,18 @@
 }
 
 .modal-container {
-  max-width: 80%;
-  width: auto;
-  max-height: 85vh;
   height: fit-content;
-  background: #2B1D13;
-  border: 2px solid #D4AF37;
+  background: $color-bg-secondary;
+  border: 2px solid $color-gold;
   border-radius: 10px;
-  padding: 20px;
   display: flex;
   flex-direction: column;
-  color: #FFFFFF;
+  color: $color-white;
   overflow-y: auto;
+
+  &--primary-surface {
+    background: $color-bg-primary;
+  }
 }
 
 .modal-header {
@@ -49,8 +51,13 @@
   background: transparent;
   border: none;
   font-size: 22px;
-  color: #D4AF37;
+  color: $color-gold;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
   &:hover{
     filter: opacity(0.75);
   }

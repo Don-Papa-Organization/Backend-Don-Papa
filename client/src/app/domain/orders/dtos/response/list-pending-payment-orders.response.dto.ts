@@ -6,6 +6,7 @@ export interface PendingPaymentOrderDto {
   total: number;
   estado: string;
   canalVenta: string;
+  tipoAtencion?: 'local' | 'llevar';
   fechaPedido: string;
   direccionEntrega?: string;
 }

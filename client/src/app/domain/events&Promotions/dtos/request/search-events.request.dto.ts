@@ -1,3 +1,4 @@
 export interface SearchEventsRequestDto {
-  nombre: string;
+  nombre?: string;
+  busqueda?: string;
 }

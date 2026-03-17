@@ -23,7 +23,7 @@
 			></ui-button>
 		</div>
 
-		<app-ui-helper-text *ngIf="nombreModel.invalid && (nombreModel.touched || formSubmitted)">
+		<app-ui-helper-text *ngIf="nombreModel.invalid && formSubmitted">
 			<ng-container *ngIf="nombreModel.errors?.['required']">El nombre es obligatorio.</ng-container>
 		</app-ui-helper-text>
 	</app-ui-form>

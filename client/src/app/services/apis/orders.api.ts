@@ -12,6 +12,7 @@ import { AddProductToOrderRequestDto } from "../../domain/orders/dtos/request/ad
 import { ListOrderHistoryRequestDto } from "../../domain/orders/dtos/request/list-order-history.request.dto";
 import { ListOrdersInProgressRequestDto } from "../../domain/orders/dtos/request/list-orders-in-progress.request.dto";
 import { ListAllOrdersRequestDto } from "../../domain/orders/dtos/request/list-all-orders.request.dto";
+import { UpdateOrderProductQuantityRequestDto } from "../../domain/orders/dtos/request/update-order-product-quantity.request.dto";
 import { UpdateOrderStatusRequestDto } from "../../domain/orders/dtos/request/update-order-status.request.dto";
 import { RegisterPaymentRequestDto } from "../../domain/orders/dtos/request/register-payment.request.dto";
 import { ListPendingPaymentOrdersRequestDto } from "../../domain/orders/dtos/request/list-pending-payment-orders.request.dto";
@@ -30,7 +31,9 @@ import { CreateCustomerOrderDataDto } from "../../domain/orders/dtos/response/cr
 import { AddProductToOrderDataDto } from "../../domain/orders/dtos/response/add-product-to-order.response.dto";
 import { OrderHistoryItemDto } from "../../domain/orders/dtos/response/list-order-history.response.dto";
 import { CustomerOrderDetailDataDto } from "../../domain/orders/dtos/response/get-customer-order-detail.response.dto";
+import { GetOpenOrderByMesaDataDto } from "../../domain/orders/dtos/response/get-open-order-by-mesa.response.dto";
 import { UpdateOrderStatusDataDto } from "../../domain/orders/dtos/response/update-order-status.response.dto";
+import { UpdateOrderProductQuantityDataDto } from "../../domain/orders/dtos/response/update-order-product-quantity.response.dto";
 import { PendingPaymentOrderDto } from "../../domain/orders/dtos/response/list-pending-payment-orders.response.dto";
 import { RegisterPaymentDataDto } from "../../domain/orders/dtos/response/register-payment.response.dto";
 import { API_ENDPOINTS, buildApiUrl } from "../../config/api.config";
@@ -88,6 +91,13 @@ export class OrdersApi {
 		);
 	}
 
+	updateOrderProductQuantity(idPedido: number, idProductoPedido: number, dto: UpdateOrderProductQuantityRequestDto): Observable<ApiResponse<UpdateOrderProductQuantityDataDto>> {
+		return this.http.patch<ApiResponse<UpdateOrderProductQuantityDataDto>>(
+			buildApiUrl(API_ENDPOINTS.orders.orderProductDetail(idPedido, idProductoPedido)),
+			dto
+		);
+	}
+
 	deleteOrder(idPedido: number): Observable<ApiResponse<null>> {
 		return this.http.delete<ApiResponse<null>>(buildApiUrl(API_ENDPOINTS.orders.orderDetail(idPedido)));
 	}
@@ -95,6 +105,29 @@ export class OrdersApi {
 	getOrderById(idPedido: number): Observable<ApiResponse<{ pedido: Pedido; productos: ProductoPedidoItem[] }>> {
 		return this.http.get<ApiResponse<{ pedido: Pedido; productos: ProductoPedidoItem[] }>>(
 			buildApiUrl(API_ENDPOINTS.orders.orderDetail(idPedido))
+		);
+	}
+
+	getOpenOrderByMesa(idMesa: number): Observable<ApiResponse<GetOpenOrderByMesaDataDto>> {
+		return this.http.get<ApiResponse<GetOpenOrderByMesaDataDto>>(
+			buildApiUrl(API_ENDPOINTS.orders.orderOpenByMesa(idMesa))
+		);
+	}
+
+	getProductsPromotionPricing(productIds: number[]): Observable<ApiResponse<{ items: Array<{
+		idProducto: number;
+		precioOriginal: number;
+		precioPromocional: number | null;
+		tienePromocion: boolean;
+	}> }>> {
+		return this.http.post<ApiResponse<{ items: Array<{
+			idProducto: number;
+			precioOriginal: number;
+			precioPromocional: number | null;
+			tienePromocion: boolean;
+		}> }>>(
+			buildApiUrl(API_ENDPOINTS.orders.productsPromotionPricing()),
+			{ productIds }
 		);
 	}
 

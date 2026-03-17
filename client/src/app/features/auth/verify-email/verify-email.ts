@@ -41,6 +41,9 @@ export class VerifyEmail implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Limpiar mensajes previos al inicializar el componente
+    this.store.dispatch(AuthActions.clearAuthMessages());
+    
     this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.token = params.get("token") || "";
 

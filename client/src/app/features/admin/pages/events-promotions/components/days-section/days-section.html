@@ -24,7 +24,7 @@
     (cerrar)="mostrarModalPromocionesDelDia = false">
     <div class="modal-promociones-dia">
         <p *ngIf="diaEventoSeleccionadoParaPromociones">
-            <strong>Día:</strong> {{ diaEventoSeleccionadoParaPromociones.Fecha }}
+            <span class="text-body">Día:</span> {{ diaEventoSeleccionadoParaPromociones.Fecha }}
         </p>
 
         @if (promocionesDelDia.length > 0) {

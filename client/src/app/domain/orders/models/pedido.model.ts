@@ -3,6 +3,11 @@ export enum CanalVenta {
   FISICO = 'fisico'
 }
 
+export enum TipoAtencion {
+  LOCAL = 'local',
+  LLEVAR = 'llevar'
+}
+
 export enum EstadoPedido {
   SIN_CONFIRMAR = 'sin_confirmar',
   PENDIENTE = 'pendiente',
@@ -30,6 +35,7 @@ export interface Pedido {
   total: number;
   estado: EstadoPedido;
   canalVenta: CanalVenta;
+  tipoAtencion?: TipoAtencion;
   fechaPedido: string;
   direccionEntrega?: string;
   idMesa?: number;

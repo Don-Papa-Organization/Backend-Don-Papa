@@ -13,19 +13,19 @@
 
 		<!-- Validaciones -->
 		<div class="form-errors">
-			@if (fechaField.invalid && fechaField.touched) {
+			@if (fechaField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>La fecha es obligatoria</ng-container>
 			</app-ui-helper-text>
 			}
 
-			@if (horaInicioField.invalid && horaInicioField.touched) {
+			@if (horaInicioField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>La hora de inicio es obligatoria</ng-container>
 			</app-ui-helper-text>
 			}
 
-			@if (horaFinField.invalid && horaFinField.touched) {
+			@if (horaFinField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>La hora de fin es obligatoria</ng-container>
 			</app-ui-helper-text>

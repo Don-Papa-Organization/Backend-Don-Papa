@@ -145,7 +145,7 @@ Reportes de ventas y bitácora de incidencias.
 
 ## 🪑 `tables&Reserves.api.ts`
 
-Gestión de mesas y reservaciones.	
+Gestión de mesas y reservaciones.
 
 ### 🛡️ Administrador
 

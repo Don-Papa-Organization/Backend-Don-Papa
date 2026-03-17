@@ -3,16 +3,8 @@ class="ui-btn"
 (click)="accion.emit()" 
 [attr.type]="tipo"
 [disabled]="disabled"
-[ngStyle]="{
-        'width': customWidth,
-        'border-radius': borderRadius,
-        'background-color': currentBackgroundColor,
-        'border-color': borderColor,
-        '--hover-bg-color': backgroundColor
-    }"
-[ngClass]="{
-        'no-background': noBackgroundColor
-}"
+[ngStyle]="buttonStyles"
+[ngClass]="buttonClasses"
 >
   {{ texto }}
 </button>

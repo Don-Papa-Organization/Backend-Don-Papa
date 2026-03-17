@@ -1,0 +1,62 @@
+<app-ui-modal [mostrar]="mostrar" titulo="Pago mixto" (cerrar)="onCerrar()">
+  <div class="pos-pago-modal">
+    <app-ui-payment-summary [totalPagar]="totalPedido" [diferencia]="-restante"></app-ui-payment-summary>
+
+    <div class="lineas-wrapper">
+      <div *ngFor="let linea of lineasPago; let i = index" class="linea-mixta">
+        <div class="seccion-metodo-monto">
+          <app-ui-combobox
+            tituloInput="Método"
+            [options]="metodosPagoPermitidos"
+            [(selectedOption)]="linea.idMetodoPago"
+            (selectedOptionChange)="onLineaChange()">
+          </app-ui-combobox>
+
+          <ui-input
+            tituloInput="Monto"
+            tipo="number"
+            placeholder="0.00"
+            [(ngModel)]="linea.monto"
+            (ngModelChange)="onLineaChange()"
+            [name]="'monto_' + i">
+          </ui-input>
+        </div>
+
+        <ui-button
+          texto="Quitar"
+          [noBackgroundColor]="true"
+          backgroundColor="#EF4444"
+          [disabled]="lineasPago.length === 1"
+          (accion)="onEliminarLinea(i)">
+        </ui-button>
+      </div>
+    </div>
+
+    <div class="acciones-mixto">
+      <ui-button
+        texto="Agregar método"
+        [noBackgroundColor]="true"
+        backgroundColor="#D4AF37"
+        (accion)="onAgregarLinea()">
+      </ui-button>
+    </div>
+
+    <app-ui-helper-text *ngIf="mensajeError">
+      <ng-container>{{ mensajeError }}</ng-container>
+    </app-ui-helper-text>
+
+    <div class="form-footer">
+      <ui-button
+        texto="Cancelar"
+        [noBackgroundColor]="true"
+        backgroundColor="#999999"
+        (accion)="onCerrar()">
+      </ui-button>
+      <ui-button
+        texto="Aceptar"
+        [disabled]="!canAceptar"
+        (accion)="onGuardar()">
+      </ui-button>
+    </div>
+  </div>
+</app-ui-modal>

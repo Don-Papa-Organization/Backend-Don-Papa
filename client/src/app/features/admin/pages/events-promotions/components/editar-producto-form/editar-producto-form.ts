@@ -17,6 +17,7 @@ export class EditarProductoForm implements OnChanges {
 	cantidadMinima: number = 1;
 	precioPromocional: number | null = null;
 	porcentajeDescuento: number | null = null;
+	formSubmitted = false;
 
 	ngOnChanges(): void {
 		if (this.productoPromocion) {
@@ -27,6 +28,7 @@ export class EditarProductoForm implements OnChanges {
 	}
 
 	onSubmit(): void {
+		this.formSubmitted = true;
 		const dto: UpdateProductPromoRequestDto = {
 			cantidadMinima: this.cantidadMinima
 		};
@@ -42,6 +44,7 @@ export class EditarProductoForm implements OnChanges {
 	}
 
 	onCerrar(): void {
+		this.formSubmitted = false;
 		this.cerrar.emit();
 	}
 }

@@ -1,56 +1,38 @@
-.seccion-productos {
-	margin-bottom: 2rem;
-
-	h3 {
+.modal-productos {
+	p {
 		color: #ffffff;
-		font-size: 1.2rem;
 		margin-bottom: 1rem;
-		margin-top: 0;
 	}
 
-	.tabla-contenedor {
-		max-height: 300px;
-		overflow-y: auto;
-		border: 1px solid #D4AF37;
-		border-radius: 4px;
-	}
-
-	.sin-productos {
-		color: #999;
-		font-style: italic;
-		padding: 1rem;
-		text-align: center;
-	}
-}
-
-.separador {
-	border: 0;
-	height: 1px;
-	background: #D4AF37;
-	margin: 2rem 0;
-}
-
-.seccion-agregar {
-	h3 {
-		color: #ffffff;
-		font-size: 1.2rem;
-		margin-bottom: 1rem;
-		margin-top: 0;
-	}
-
-	.boton-agregar {
+	.table-content {
 		margin-top: 1rem;
-		display: flex;
-		justify-content: flex-end;
+	}
+}
+
+.seccion-productos {
+	padding: 0 10px;
+
+	app-ui-combobox {
+		margin-bottom: 1.25rem;
+	}
+
+	ui-input {
+		margin-bottom: 1rem;
 	}
 }
 
 .form-footer {
 	display: flex;
 	justify-content: flex-end;
-	gap: 0.75rem;
-	margin-bottom: 1.5rem;
+	gap: 1rem;
 	margin-top: 2rem;
+}
+
+.warning-text {
+	color: #ef4444;
+	font-weight: 100;
+	font-style: italic;
+	margin: 1rem 0;
 }
 
 .contenido-eliminacion {
@@ -69,7 +51,7 @@
 		}
 	}
 
-	strong {
+	.entity-highlight {
 		color: #D4AF37;
 	}
 }

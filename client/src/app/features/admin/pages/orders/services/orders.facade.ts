@@ -9,6 +9,7 @@ import { CreatePaymentMethodRequestDto } from '../../../../../domain/orders/dtos
 import { UpdatePaymentMethodRequestDto } from '../../../../../domain/orders/dtos/request/update-payment-method.request.dto';
 import { RegisterPaymentRequestDto } from '../../../../../domain/orders/dtos/request/register-payment.request.dto';
 import { ListAllOrdersRequestDto } from '../../../../../domain/orders/dtos/request/list-all-orders.request.dto';
+import { UpdateOrderProductQuantityRequestDto } from '../../../../../domain/orders/dtos/request/update-order-product-quantity.request.dto';
 import { ListAllPaymentsRequestDto } from '../../../../../domain/orders/dtos/request/list-all-payments.request.dto';
 import { PaymentHistoryRequestDto } from '../../../../../domain/orders/dtos/request/payment-history.request.dto';
 import { ApiResponse } from '../../../../../types/api-response.type';
@@ -37,33 +38,22 @@ export class OrdersFacade {
 	 * Obtiene todos los pedidos con filtros opcionales
 	 */
 	listAllOrders(filtros?: AdminFiltros): Observable<ApiResponse<Pedido[]> & { pagination: any }> {
-		return this.ordersApi.listAllOrders().pipe(
-			map(response => {
-				let pedidos = response.data || [];
-				if (filtros) {
-					if (filtros.busqueda) {
-						const term = filtros.busqueda.toLowerCase();
-						pedidos = pedidos.filter(p =>
-							p.idPedido.toString().includes(term) ||
-							p.idUsuario.toString().includes(term) ||
-							p.direccionEntrega?.toLowerCase().includes(term)
-						);
-					}
-					if (filtros.estado) {
-						pedidos = pedidos.filter(p => p.estado === filtros.estado);
-					}
-					if (filtros.fechaInicio) {
-						const fInicio = new Date(filtros.fechaInicio);
-						pedidos = pedidos.filter(p => new Date(p.fechaPedido) >= fInicio);
-					}
-					if (filtros.fechaFin) {
-						const fFin = new Date(filtros.fechaFin);
-						pedidos = pedidos.filter(p => new Date(p.fechaPedido) <= fFin);
-					}
-				}
-				return { ...response, data: pedidos };
-			})
-		);
+		const dto: ListAllOrdersRequestDto | undefined = filtros
+			? {
+				page: 1,
+				limit: 200,
+				busqueda: filtros.busqueda || undefined,
+				estado: filtros.estado || undefined,
+				fechaInicio: filtros.fechaInicio || undefined,
+				fechaFin: filtros.fechaFin || undefined
+			}
+			: undefined;
+
+		return this.ordersApi.listAllOrders(dto);
+	}
+
+	listAllOrdersFiltered(filtros?: AdminFiltros): Observable<ApiResponse<Pedido[]> & { pagination: any }> {
+		return this.listAllOrders(filtros);
 	}
 
 	/**
@@ -100,6 +90,18 @@ export class OrdersFacade {
 	 */
 	removeProductFromOrder(idPedido: number, idProductoPedido: number): Observable<ApiResponse<null>> {
 		return this.ordersApi.removeProductFromOrder(idPedido, idProductoPedido);
+	}
+
+	updateOrderProductQuantity(
+		idPedido: number,
+		idProductoPedido: number,
+		cantidadOrDto: number | UpdateOrderProductQuantityRequestDto
+	): Observable<ApiResponse<any>> {
+		const dto: UpdateOrderProductQuantityRequestDto = typeof cantidadOrDto === 'number'
+			? { cantidad: cantidadOrDto }
+			: cantidadOrDto;
+
+		return this.ordersApi.updateOrderProductQuantity(idPedido, idProductoPedido, dto);
 	}
 
 	/**
@@ -176,6 +178,19 @@ export class OrdersFacade {
 	 * Mapea un pedido a ViewModel para presentación en tabla
 	 */
 	mapOrderToViewModel(pedido: Pedido): any {
+		const pedidoExt = pedido as Pedido & {
+			cantidadProductos?: number;
+			totalProductos?: number;
+			productosCount?: number;
+		};
+
+		const cantidadProductos =
+			pedido.productos?.length ??
+			pedidoExt.cantidadProductos ??
+			pedidoExt.totalProductos ??
+			pedidoExt.productosCount ??
+			0;
+
 		return {
 			"ID": pedido.idPedido,
 			"Usuario": `Usuario #${pedido.idUsuario}`,
@@ -183,7 +198,7 @@ export class OrdersFacade {
 			"Estado": pedido.estado,
 			"Canal Venta": pedido.canalVenta,
 			"Fecha": this.formatDate(pedido.fechaPedido),
-			"Productos": pedido.productos?.length ?? 0,
+			"Productos": cantidadProductos,
 			"Dirección": pedido.direccionEntrega || 'N/A',
 			// Originales para lógica
 			idPedido: pedido.idPedido,
@@ -198,17 +213,22 @@ export class OrdersFacade {
 	 * Mapea un pago a ViewModel para presentación en tabla
 	 */
 	mapPaymentToViewModel(pago: Pago): any {
+		const metodoTexto = pago.detalles?.length
+			? pago.detalles.map(d => `${d.nombre || `Método #${d.idMetodoPago}`}: $${Number(d.monto).toFixed(2)}`).join(' | ')
+			: (pago.metodoPago?.nombre || 'N/A');
+
 		return {
 			"ID Pago": pago.idPago,
 			"ID Pedido": pago.idPedido,
 			"Monto": `$${pago.monto}`,
 			"Fecha": this.formatDate(pago.fechaPago),
-			"Método": pago.metodoPago?.nombre || 'N/A',
+			"Método": metodoTexto,
 			// Originales para lógica
 			idPago: pago.idPago,
 			idPedido: pago.idPedido,
 			monto: pago.monto,
-			fechaPago: pago.fechaPago
+			fechaPago: pago.fechaPago,
+			detalles: pago.detalles || []
 		};
 	}
 
@@ -228,17 +248,21 @@ export class OrdersFacade {
 	 * Mapea una orden pendiente de pago a ViewModel
 	 */
 	mapPendingPaymentOrderToViewModel(pedido: PendingPaymentOrderDto): any {
+		const atencion = pedido.canalVenta === 'fisico' ? (pedido.tipoAtencion || 'N/A') : 'N/A';
+
 		return {
 			"ID": pedido.idPedido,
 			"Usuario": `Usuario #${pedido.idUsuario}`,
 			"Total": `$${pedido.total}`,
 			"Estado": pedido.estado,
 			"Canal Venta": pedido.canalVenta,
+			"Atención": atencion,
 			"Fecha": this.formatDate(pedido.fechaPedido),
 			"Dirección": pedido.direccionEntrega || 'N/A',
 			// Originales
 			idPedido: pedido.idPedido,
-			total: pedido.total
+			total: pedido.total,
+			tipoAtencion: pedido.tipoAtencion
 		};
 	}
 
@@ -284,6 +308,7 @@ export interface PaymentViewModel {
 	monto: number;
 	fechaPago: string;
 	metodoPago: string;
+	detalles?: Array<{ idMetodoPago: number; nombre?: string; monto: number }>;
 }
 
 /**
@@ -305,6 +330,7 @@ export interface PendingPaymentOrderViewModel {
 	total: number;
 	estado: string;
 	canalVenta: string;
+	tipoAtencion?: 'local' | 'llevar';
 	fechaPedido: string;
 	direccionEntrega: string;
 }

@@ -5,8 +5,8 @@
     <p class="loading" *ngIf="(loading$ | async)">Verificando tu correo...</p>
 
     <app-ui-helper-text type="success" *ngIf="successMessage">{{ successMessage }}</app-ui-helper-text>
-    <app-ui-helper-text *ngIf="localError">{{ localError }}</app-ui-helper-text>
-    <app-ui-helper-text *ngIf="(error$ | async) as error">{{ error }}</app-ui-helper-text>
+    <app-ui-helper-text *ngIf="localError" type="error">{{ localError }}</app-ui-helper-text>
+    <app-ui-helper-text *ngIf="(error$ | async) as error" type="error">{{ error }}</app-ui-helper-text>
 
     <ui-button texto="Volver a iniciar sesión" tipo="button" (accion)="goToLogin()"></ui-button>
   </div>

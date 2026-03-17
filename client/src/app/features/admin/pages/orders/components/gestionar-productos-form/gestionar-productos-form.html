@@ -1,29 +1,31 @@
-<app-ui-modal
-	[mostrar]="mostrar"
-	titulo="Gestionar Productos del Pedido"
-	(cerrar)="onCerrar()"
->
-	<app-ui-form maxHeight="50vh" maxWidth="1000px">
-		<!-- Sección: Productos Actuales -->
-		<div class="seccion-productos">
-			<h3>Productos en el Pedido</h3>
-			<div class="tabla-contenedor" *ngIf="productos.length > 0">
-				<app-ui-tabla
-					[theadData]="columnasTabla"
-					[tbodyData]="productos"
-					(eliminarRegistro)="onEliminarProducto($event)"
-				></app-ui-tabla>
-			</div>
-			<p class="sin-productos" *ngIf="productos.length === 0">No hay productos en este pedido</p>
+<app-ui-modal [mostrar]="mostrar" titulo="Gestionar Productos del Pedido" (cerrar)="onCerrar()">
+	<div class="modal-productos">
+		<p *ngIf="pedidoSeleccionado">
+			Pedido: #{{ pedidoSeleccionado.idPedido }}
+		</p>
+
+		<div class="table-content" *ngIf="productos.length > 0">
+			<app-ui-tabla
+				[theadData]="columnasTabla"
+				[tbodyData]="productos"
+				[acciones]="accionesProductosPedido"
+			></app-ui-tabla>
 		</div>
 
-		<!-- Separador -->
-		<hr class="separador" />
+		<p class="warning-text" *ngIf="productos.length === 0">
+			No hay productos asociados a este pedido.
+		</p>
 
-		<!-- Sección: Agregar Nuevo Producto -->
-		<div class="seccion-agregar">
-			<h3>Agregar Producto</h3>
+		<div footer class="form-footer">
+			<ui-button texto="Agregar Producto" (accion)="abrirModalAgregarProducto()"></ui-button>
+		</div>
+	</div>
+</app-ui-modal>
 
+<!-- MODAL ANIDADO: AGREGAR PRODUCTO -->
+<app-ui-modal [mostrar]="mostrarModalAgregarProducto" titulo="Agregar Producto al Pedido" (cerrar)="cerrarModalAgregarProducto()">
+	<app-ui-form maxHeight="45vh" maxWidth="700px" >
+		<div class="seccion-productos">
 			<app-ui-combobox
 				tituloInput="Producto"
 				[options]="productosOptions"
@@ -39,47 +41,37 @@
 				required
 			></ui-input>
 
-			<div class="boton-agregar">
-				<ui-button
-					texto="Agregar Producto"
-					[noBackgroundColor]="true"
-					backgroundColor="#D4AF37"
-					(accion)="onAgregarProducto()"
-					[disabled]="cargando"
-				></ui-button>
-			</div>
+			<app-ui-helper-text *ngIf="mensajeValidacionProducto">
+				<ng-container>{{ mensajeValidacionProducto }}</ng-container>
+			</app-ui-helper-text>
 		</div>
 
-		<!-- Footer -->
 		<div footer class="form-footer">
-
+			<ui-button
+				texto="Agregar Producto"
+				[noBackgroundColor]="true"
+				backgroundColor="#D4AF37"
+				(accion)="onAgregarProducto()"
+				[disabled]="cargando"
+			></ui-button>
 		</div>
 	</app-ui-form>
 </app-ui-modal>
 
 <!-- MODAL DE ELIMINACIÓN -->
-<app-ui-modal
-	*ngIf="mostrarModalEliminar"
-	[mostrar]="mostrarModalEliminar"
-	titulo="¿Desea eliminar producto?"
-	(cerrar)="cerrarModalEliminar()"
->
+<app-ui-modal *ngIf="mostrarModalEliminar" [mostrar]="mostrarModalEliminar" titulo="¿Desea eliminar producto?"
+	(cerrar)="cerrarModalEliminar()">
 	<div class="contenido-eliminacion">
 		<p>
 			¿Estás seguro de que deseas eliminar el producto
-			<strong>#{{ productoAEliminar?.idProducto }}</strong>
+			<span class="entity-highlight">#{{ productoAEliminar?.idProducto }}</span>
 			del pedido?
 		</p>
 		<p class="advertencia">Esta acción es irreversible.</p>
 
 		<div class="acciones-eliminacion">
-			<ui-button
-				texto="Eliminar Producto"
-				[noBackgroundColor]="true"
-				backgroundColor="#EF4444"
-				(accion)="confirmarEliminacionProducto()"
-				[disabled]="cargando"
-			></ui-button>
+			<ui-button texto="Eliminar Producto" [noBackgroundColor]="true" backgroundColor="#EF4444"
+				(accion)="confirmarEliminacionProducto()" [disabled]="cargando"></ui-button>
 		</div>
 	</div>
 </app-ui-modal>

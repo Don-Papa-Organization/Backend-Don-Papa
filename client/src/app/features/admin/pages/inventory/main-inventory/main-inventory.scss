@@ -65,3 +65,25 @@ app-ui-modal {
     color: #999;
   }
 }
+
+.paginacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid #D4AF37;
+}
+
+.paginacion-info {
+  display: flex;
+  gap: 1rem;
+  color: #999999;
+  font-size: 0.95rem;
+}
+
+.paginacion-controles {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+}

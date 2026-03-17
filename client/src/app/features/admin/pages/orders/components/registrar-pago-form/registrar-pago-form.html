@@ -1,34 +1,55 @@
-<app-ui-modal
-	[mostrar]="mostrar"
-	titulo="Registrar Pago"
-	(cerrar)="onCerrar()"
->
-	<app-ui-form maxHeight="50vh" maxWidth="700px">
-		<app-ui-combobox
-			tituloInput="Método de Pago"
-			[options]="metodosPagoOptions"
-			[(selectedOption)]="idMetodoPago"
-		></app-ui-combobox>
-
-		<ui-input
-			tituloInput="Dirección de Entrega (Opcional)"
-			tipo="text"
-			placeholder="Av. Siempre Viva 742"
-			[(ngModel)]="direccionEntrega"
-			name="direccionEntrega"
-		></ui-input>
-
-		<div footer class="form-footer">
-			<ui-button
-				texto="Registrar Pago"
-				[noBackgroundColor]="true"
-				backgroundColor="#D4AF37"
-				(accion)="onGuardar()"
-			></ui-button>
+<app-ui-modal [mostrar]="mostrar" [titulo]="tituloModalPago" (cerrar)="onCerrar()">
+	
+	<app-ui-form maxHeight="fit-content" maxWidth="max-content">
+		<div class="header-resumen">
+			<app-ui-payment-summary [totalPagar]="totalPedido" [diferencia]="diferenciaResumen"></app-ui-payment-summary>
 		</div>
 
-		<app-ui-helper-text *ngIf="formSubmitted && !idMetodoPago">
+
+		<ng-container *ngIf="!modoMixto; else pagoMixtoTpl">
+			<app-ui-combobox tituloInput="Método de Pago" [options]="metodosPagoOptions"
+				[(selectedOption)]="idMetodoPago"></app-ui-combobox>
+
+			<ui-input *ngIf="usaEfectivoEnNormal" tituloInput="Monto recibido en efectivo" tipo="number"
+				placeholder="0.00" [(ngModel)]="montoRecibidoEfectivo" name="montoRecibidoEfectivoNormal"></ui-input>
+		</ng-container>
+
+		<ng-template #pagoMixtoTpl>
+			<div *ngFor="let linea of lineasPago; let i = index" class="linea-mixta">
+				<div class="seccion-metodo-monto">
+					<app-ui-combobox tituloInput="Método" [options]="metodosPagoOptions"
+					[(selectedOption)]="linea.idMetodoPago"></app-ui-combobox>
+
+					<ui-input tituloInput="Monto" tipo="number" placeholder="0.00" [(ngModel)]="linea.monto"
+						[name]="'monto_' + i"></ui-input>
+				</div>
+
+				<ui-button texto="Quitar" [noBackgroundColor]="true" backgroundColor="#EF4444" class="btn-quitar"
+					(accion)="onEliminarLinea(i)"></ui-button>
+			</div>
+
+			<div class="acciones-mixto">
+				<ui-button texto="Agregar línea" [noBackgroundColor]="true" backgroundColor="#D4AF37"
+					(accion)="onAgregarLinea()"></ui-button>
+			</div>
+		</ng-template>
+
+		<ui-input tituloInput="Dirección de Entrega (Opcional)" tipo="text" placeholder="Av. Siempre Viva 742"
+			[(ngModel)]="direccionEntrega" name="direccionEntrega"></ui-input>
+
+		<div footer class="form-footer">
+			<ui-button [texto]="modoMixto ? 'Usar modo simple' : 'Usar pago mixto'" backgroundColor="#D4AF37"
+				(accion)="onToggleModoMixto()"></ui-button>
+			<ui-button texto="Registrar Pago" [noBackgroundColor]="true" backgroundColor="#D4AF37"
+				(accion)="onGuardar()"></ui-button>
+		</div>
+
+		<app-ui-helper-text *ngIf="formSubmitted && !modoMixto && !idMetodoPago">
 			<ng-container>Debe seleccionar un método de pago.</ng-container>
+		</app-ui-helper-text>
+
+		<app-ui-helper-text *ngIf="mensajeError">
+			<ng-container>{{ mensajeError }}</ng-container>
 		</app-ui-helper-text>
 	</app-ui-form>
 </app-ui-modal>

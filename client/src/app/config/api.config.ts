@@ -22,6 +22,7 @@ export const API_ROUTES = {
   productPromotions: "/productos-promocion",
   promotionEventDays: "/promocion-evento-dia",
   reports: "/reports",
+  agent: "/agent",
   analytics: "/analytics",
   export: "/export"
 };
@@ -32,6 +33,9 @@ export const API_ENDPOINTS = {
     catalogDetail: (id: number) => `${API_ROUTES.inventory}/catalogo/${id}`,
     catalogImage: (id: number) => `${API_ROUTES.inventory}/catalogo/${id}/imagen`,
     products: () => `${API_ROUTES.inventory}/products`,
+    productsSearch: () => `${API_ROUTES.inventory}/products/search`,
+    productsEnriched: () => `${API_ROUTES.inventory}/products/enriched`,
+    productsByCategory: (idCategoria: number) => `${API_ROUTES.inventory}/products/categoria/${idCategoria}`,
     productDetail: (id: number) => `${API_ROUTES.inventory}/products/${id}`,
     productStock: (id: number) => `${API_ROUTES.inventory}/products/${id}/stock`,
     productImage: (id: number) => `${API_ROUTES.inventory}/products/${id}/imagen`,
@@ -74,6 +78,8 @@ export const API_ENDPOINTS = {
     orderProduct: (idPedido: number) => `${API_ROUTES.orders}/${idPedido}/product`,
     orderProductDetail: (idPedido: number, idProductoPedido: number) => `${API_ROUTES.orders}/${idPedido}/product/${idProductoPedido}`,
     orderDetail: (idPedido: number) => `${API_ROUTES.orders}/${idPedido}`,
+    orderOpenByMesa: (idMesa: number) => `${API_ROUTES.orders}/mesa/${idMesa}/open`,
+    productsPromotionPricing: () => `${API_ROUTES.orders}/products/promotion-pricing`,
     orderHistory: () => `${API_ROUTES.orders}/history`,
     orderCustomerDetail: (idPedido: number) => `${API_ROUTES.orders}/${idPedido}/detail`,
     ordersInProgress: () => `${API_ROUTES.orders}/in-progress`,
@@ -104,6 +110,7 @@ export const API_ENDPOINTS = {
   },
   tables: {
     base: () => `${API_ROUTES.tables}`,
+    types: () => `${API_ROUTES.tables}/tipos`,
     detail: (idMesa: number) => `${API_ROUTES.tables}/${idMesa}`,
     byStatus: (estado: string) => `${API_ROUTES.tables}/estado/${estado}`,
     statusUpdate: (idMesa: number) => `${API_ROUTES.tables}/${idMesa}/estado`
@@ -146,6 +153,10 @@ export const API_ENDPOINTS = {
     bitacoraComments: () => `${API_ROUTES.reports}/bitacora/comments`,
     bitacoraByEmployee: (idEmpleado: number) => `${API_ROUTES.reports}/bitacora/employee/${idEmpleado}`,
     bitacoraSearch: () => `${API_ROUTES.reports}/bitacora`
+  },
+  agent: {
+    query: () => `${API_ROUTES.agent}/query`,
+    health: () => `${API_ROUTES.agent}/health`
   },
   analytics: {
     salesSummary: () => `${API_ROUTES.reports}${API_ROUTES.analytics}/sales/summary`,

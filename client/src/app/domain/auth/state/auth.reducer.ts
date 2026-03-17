@@ -108,5 +108,11 @@ export const authReducer = createReducer(
       loading: false,
       error
     })
-  )
+  ),
+
+  on(AuthActions.clearAuthMessages, (state) => ({
+    ...state,
+    error: undefined,
+    message: undefined
+  }))
 );

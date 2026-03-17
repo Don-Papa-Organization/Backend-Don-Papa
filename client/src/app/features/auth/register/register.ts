@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, Subject, take } from 'rxjs';
 import * as AuthActions from '../../../domain/auth/state/auth.actions';
@@ -11,7 +11,7 @@ import { NgForm } from '@angular/forms';
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
-export class Register {
+export class Register implements OnInit, OnDestroy {
   email = '';
   password = '';
   passwordConfirmation = '';
@@ -27,6 +27,11 @@ export class Register {
   constructor(private store: Store) {
     this.loading$ = this.store.select(selectAuthLoading);
     this.error$ = this.store.select(selectAuthError);
+  }
+
+  ngOnInit(): void {
+    // Limpiar mensajes previos al inicializar el componente
+    this.store.dispatch(AuthActions.clearAuthMessages());
   }
 
   ngOnDestroy(): void {

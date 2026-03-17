@@ -27,6 +27,7 @@ export class EditarPromotionForm implements OnChanges {
 	fechaFin = "";
 	activo = true;
 	tipoPromocionSeleccionado: TipoPromocion | null = null;
+	formSubmitted = false;
 
 	// Opciones de tipo de promoción
 	tiposPromocionOptions: TipoPromocionOption[] = [
@@ -63,10 +64,12 @@ export class EditarPromotionForm implements OnChanges {
 	}
 
 	onCerrar(): void {
+		this.formSubmitted = false;
 		this.cerrar.emit();
 	}
 
 	onSubmit(): void {
+		this.formSubmitted = true;
 		if (!this.promocionSeleccionada || !this.tipoPromocionSeleccionado) return;
 
 		const dto: UpdatePromotionRequestDto = {

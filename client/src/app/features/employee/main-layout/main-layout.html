@@ -1,0 +1,88 @@
+<div class="layout"
+  [class.pos-mode]="isPosMode"
+  [class.table-sale-mode]="isTableSaleRoute">
+
+  <ng-container *ngIf="!isPosMode">
+    <app-header>
+      <nav class="header-nav" aria-label="Navegación principal empleado">
+        @for (item of menuItems; track item.texto) {
+          <a
+            class="header-nav__item"
+            [routerLink]="item.link"
+            [class.active]="isMenuItemActive(item.link)">
+            <img [src]="item.urlIcono" alt="" />
+            <span>{{ item.texto }}</span>
+          </a>
+        }
+      </nav>
+
+      <app-ui-icon-button texto="Salir" urlIcono="icons/iconoSalir.svg" (action)="onLogout()">
+      </app-ui-icon-button>
+    </app-header>
+  </ng-container>
+
+  <ng-container *ngIf="isPosMode">
+    <app-header>
+      <ng-container *ngIf="!isTableSaleRoute; else tableSaleHeader">
+        <nav class="header-nav header-nav--pos" aria-label="Navegación POS">
+          @for (item of menuItems; track item.texto) {
+            <a
+              class="header-nav__item"
+              [routerLink]="item.link"
+              [class.active]="isMenuItemActive(item.link)">
+              <img [src]="item.urlIcono" alt="" />
+              <span>{{ item.texto }}</span>
+            </a>
+          }
+        </nav>
+
+        <div class="pos-topbar__right">
+          <app-ui-only-icon-button
+            texto="Salir"
+            urlIcono="icons/iconoSalir.svg"
+            (action)="onLogout()">
+          </app-ui-only-icon-button>
+        </div>
+      </ng-container>
+
+      <ng-template #tableSaleHeader>
+        <ui-button class="ui-button-header"   (accion)="volverAMesas()" texto="← Volver al Salón" size="compact"  customWidth="150px" [noBackgroundColor]="true">
+
+        </ui-button>
+
+        <div class="table-sale-topbar">
+
+          <h1 class="table-sale-topbar__title">{{ tableSaleTitle || 'Mesa' }}</h1>
+
+          <div class="table-sale-topbar__right">
+            <app-ui-icon-button
+              texto="Recargar"
+              urlIcono="icons/reload.svg"
+              (action)="onReloadTableSale()">
+            </app-ui-icon-button>
+
+            <app-ui-checkbox
+              name="topbarParaLlevar"
+              label="Para llevar"
+              [checked]="paraLlevar"
+              (checkedChange)="onParaLlevarChange($event)">
+            </app-ui-checkbox>
+
+            <app-ui-checkbox
+              name="topbarAutoPrint"
+              label="Autoimpresión"
+              [checked]="autoPrint"
+              (checkedChange)="onAutoPrintChange($event)">
+            </app-ui-checkbox>
+          </div>
+        </div>
+      </ng-template>
+    </app-header>
+  </ng-container>
+
+  <div class="main-content">
+    <div class="main-content-body">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

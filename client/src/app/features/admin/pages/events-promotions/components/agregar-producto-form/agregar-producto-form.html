@@ -18,13 +18,13 @@
 
 		<!-- Validaciones -->
 		<div class="form-errors">
-			@if (!productoSeleccionadoId && cantidadField.touched) {
+			@if (!productoSeleccionadoId && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>Debe seleccionar un producto</ng-container>
 			</app-ui-helper-text>
 			}
 
-			@if (cantidadField.invalid && cantidadField.touched) {
+			@if (cantidadField.invalid && formSubmitted) {
 			<app-ui-helper-text>
 				<ng-container>La cantidad mínima es obligatoria</ng-container>
 			</app-ui-helper-text>

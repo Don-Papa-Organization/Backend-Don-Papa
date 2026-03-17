@@ -114,7 +114,7 @@ export class StatisticsFacade {
         })
       ),
       deadStock: this.statisticsApi.getDeadStock(filters).pipe(
-        tap(response => this.setDeadStock(response.data || null)),
+        tap(response => this.setDeadStock(this.normalizeDeadStockData(response.data))),
         catchError(error => {
           this.setError('deadStock', this.getErrorMessage(error));
           return of(null);
@@ -135,7 +135,7 @@ export class StatisticsFacade {
         })
       ),
       frequentUsers: this.statisticsApi.getFrequentUsers(filters).pipe(
-        tap(response => this.setFrequentUsers(response.data || null)),
+        tap(response => this.setFrequentUsers(this.normalizeFrequentUsersData(response.data))),
         catchError(error => {
           this.setError('frequentUsers', this.getErrorMessage(error));
           return of(null);
@@ -198,7 +198,7 @@ export class StatisticsFacade {
         break;
       case 'deadStock':
         request$ = this.statisticsApi.getDeadStock(filters).pipe(
-          tap(response => this.setDeadStock(response.data || null))
+          tap(response => this.setDeadStock(this.normalizeDeadStockData(response.data)))
         );
         break;
       case 'categoryStock':
@@ -213,7 +213,7 @@ export class StatisticsFacade {
         break;
       case 'frequentUsers':
         request$ = this.statisticsApi.getFrequentUsers(filters).pipe(
-          tap(response => this.setFrequentUsers(response.data || null))
+          tap(response => this.setFrequentUsers(this.normalizeFrequentUsersData(response.data)))
         );
         break;
       case 'occupancy':
@@ -449,10 +449,47 @@ export class StatisticsFacade {
     };
   }
 
+  private normalizeDeadStockData(rawData: any): DeadStockDto[] | null {
+    if (!rawData) return null;
+
+    if (Array.isArray(rawData)) {
+      return rawData;
+    }
+
+    if (Array.isArray(rawData?.productosSinVentas)) {
+      return rawData.productosSinVentas.map((item: any) => ({
+        idProducto: Number(item?.idProducto ?? 0),
+        nombreProducto: item?.nombreProducto,
+        diasSinVentas: Number(item?.diasSinVentas ?? 0)
+      }));
+    }
+
+    return [];
+  }
+
+  private normalizeFrequentUsersData(rawData: any): FrequentUserDto[] | null {
+    if (!rawData) return null;
+
+    if (!Array.isArray(rawData)) {
+      return [];
+    }
+
+    return rawData.map((item: any) => ({
+      idUsuario: Number(item?.idUsuario ?? 0),
+      cantidadCompras: Number(item?.cantidadCompras ?? item?.clientesFrecuentesActivos ?? 0),
+      montoTotal: Number(item?.montoTotal ?? item?.nuevosRegistros ?? 0),
+      fecha: item?.fecha
+    }));
+  }
+
   /**
    * Helper: obtiene mensaje de error legible
    */
-  private getErrorMessage(error: any): string {
+  private getErrorMessage(error: any): string | null {
+    if (error?.status === 404 || error?.status === 204) {
+      return null;
+    }
+
     if (error?.error?.message) return error.error.message;
     if (error?.message) return error.message;
     if (error?.statusText) return error.statusText;

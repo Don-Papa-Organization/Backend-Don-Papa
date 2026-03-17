@@ -128,7 +128,7 @@
 		padding: 0.75rem 0;
 		border-bottom: 1px solid rgba(212, 175, 55, 0.1);
 
-		strong {
+		.detalle-label {
 			color: #D4AF37;
 			min-width: 120px;
 		}
@@ -190,7 +190,7 @@
 			align-items: flex-start;
 			gap: 0.5rem;
 
-			strong {
+			.detalle-label {
 				min-width: unset;
 			}
 		}

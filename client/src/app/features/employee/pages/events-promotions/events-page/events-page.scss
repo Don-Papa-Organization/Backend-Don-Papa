@@ -1,0 +1,281 @@
+@use '../../../../../styles/variables' as *;
+
+.events-page {
+  padding: 1.5rem;
+  max-width: 1180px;
+  margin: 0 auto;
+
+  &__search {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+.search-input {
+  flex: 1;
+}
+
+.btn-buscar,
+.btn-limpiar {
+  ::ng-deep .ui-btn {
+    min-width: 110px;
+  }
+}
+
+.btn-limpiar {
+  ::ng-deep .ui-btn {
+    min-width: 96px;
+  }
+}
+
+// ── Section ──────────────────────────────────────────────────
+
+.section {
+  margin-bottom: 2.5rem;
+
+  &__title {
+    font-size: 1rem;
+    color: $color-gold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba($color-gold, 0.15);
+  }
+}
+
+.loading {
+  color: rgba($color-white, 0.45);
+  font-size: 0.85rem;
+}
+
+.error {
+  color: $color-danger;
+  font-size: 0.85rem;
+}
+
+.empty {
+  color: rgba($color-white, 0.35);
+  font-size: 0.85rem;
+}
+
+// ── Cards grid ────────────────────────────────────────────────
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+// ── Event Card ───────────────────────────────────────────────
+
+.event-card {
+  background: $color-bg-primary;
+  border: 1px solid rgba($color-gold, 0.25);
+  border-radius: 12px;
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  min-height: 200px;
+
+  &:hover {
+    border-color: rgba($color-gold, 0.6);
+    transform: translateY(-2px);
+  }
+
+  &--resultado {
+    border-color: rgba($color-gold, 0.35);
+  }
+
+  &--sin-evento {
+    opacity: 0.55;
+    cursor: default;
+
+    &:hover {
+      transform: none;
+      border-color: rgba($color-gold, 0.25);
+    }
+  }
+
+  &__fecha {
+    font-size: 0.82rem;
+    color: rgba($color-gold, 0.7);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.03em;
+    text-transform: capitalize;
+  }
+
+  &__hora {
+    display: inline-flex;
+    font-size: 0.78rem;
+    color: rgba($color-white, 0.48);
+    background: rgba($color-white, 0.06);
+    border: 1px solid rgba($color-white, 0.12);
+    border-radius: 999px;
+    padding: 0.18rem 0.6rem;
+    margin-bottom: 0.65rem;
+  }
+
+  &__nombre {
+    margin: 0 0 0.45rem;
+    font-size: 1.05rem;
+    color: $color-white;
+  }
+
+  &__desc {
+    margin: 0 0 0.5rem;
+    font-size: 0.88rem;
+    color: rgba($color-white, 0.55);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  &__promos {
+    margin-top: 0.75rem;
+  }
+}
+
+.promo-tag {
+  font-size: 0.8rem;
+  background: rgba($color-info, 0.15);
+  color: rgba($color-info, 0.85);
+  border: 1px solid rgba($color-info, 0.3);
+  border-radius: 12px;
+  padding: 0.2rem 0.6rem;
+}
+
+// ── Promo Card ────────────────────────────────────────────────
+
+.promo-card {
+  background: $color-bg-primary;
+  border: 1px solid rgba($color-info, 0.2);
+  border-radius: 12px;
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  min-height: 200px;
+
+  &:hover {
+    border-color: rgba($color-info, 0.5);
+    transform: translateY(-2px);
+  }
+
+  &__nombre {
+    margin: 0 0 0.45rem;
+    font-size: 1.05rem;
+    color: $color-white;
+  }
+
+  &__desc {
+    margin: 0 0 0.5rem;
+    font-size: 0.88rem;
+    color: rgba($color-white, 0.55);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  &__vigencia {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.08rem;
+  }
+
+  &__vigencia-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba($color-white, 0.42);
+  }
+
+  &__tipo {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba($color-info, 0.85);
+    background: rgba($color-info, 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+  }
+
+  &__fechas {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba($color-white, 0.35);
+    text-align: right;
+  }
+}
+
+// ── Modal ─────────────────────────────────────────────────────
+
+.modal-content {
+  min-width: 0;
+}
+
+.modal-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.45rem;
+  color: $color-gold;
+}
+
+.modal-desc {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  color: rgba($color-white, 0.7);
+  line-height: 1.5;
+}
+
+.modal-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.96rem;
+}
+
+.modal-label {
+  color: rgba($color-white, 0.45);
+  min-width: 110px;
+}
+
+.modal-value {
+  color: $color-white;
+
+  &--active {
+    color: $color-success;
+  }
+}
+
+.modal-section {
+  margin-top: 1rem;
+}
+
+.modal-subtitle {
+  font-size: 1rem;
+  color: rgba($color-gold, 0.8);
+  margin: 0 0 0.75rem;
+}
+
+.horario-item {
+  font-size: 0.92rem;
+  color: rgba($color-white, 0.6);
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba($color-white, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

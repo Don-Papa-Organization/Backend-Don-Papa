@@ -42,7 +42,9 @@
 
 	<div class="table-content" *ngIf="!cargandoPromociones">
 		<app-ui-tabla [theadData]="columnasPromociones" [tbodyData]="promociones"
-			[acciones]="accionesPromociones"></app-ui-tabla>
+			[columnasConfig]="columnasPromocionesConfig"
+			[acciones]="accionesPromociones"
+			(toggleChange)="onEstadoPromocionToggle($event)"></app-ui-tabla>
 	</div>
 	}
 

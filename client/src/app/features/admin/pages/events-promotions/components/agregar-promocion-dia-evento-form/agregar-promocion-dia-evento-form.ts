@@ -16,6 +16,7 @@ export class AgregarPromocionDiaEventoForm implements OnChanges {
 	@Output() promocionAgregada = new EventEmitter<CreatePromotionEventDayRequestDto>();
 
 	promocionSeleccionadaId: any = null;
+	formSubmitted = false;
 
 	ngOnChanges(): void {
 		console.log('AgregarPromocionDiaEventoForm recibió:', { 
@@ -27,6 +28,7 @@ export class AgregarPromocionDiaEventoForm implements OnChanges {
 	}
 
 	onSubmit(): void {
+		this.formSubmitted = true;
 		console.log('onSubmit - Estado actual:', { 
 			promocionSeleccionadaId: this.promocionSeleccionadaId, 
 			diaEventoId: this.diaEventoId,
@@ -61,6 +63,7 @@ export class AgregarPromocionDiaEventoForm implements OnChanges {
 
 	limpiarFormulario(): void {
 		this.promocionSeleccionadaId = null;
+		this.formSubmitted = false;
 	}
 
 	onCerrar(): void {

@@ -9,6 +9,7 @@ export interface RegisterPaymentDataDto {
       total: number;
       estado: string;
       canalVenta: string;
+      tipoAtencion?: 'local' | 'llevar';
       fechaPedido: string;
       idMesa?: number;
     };
@@ -19,6 +20,13 @@ export interface RegisterPaymentDataDto {
       fechaPago: string;
       idPedido: number;
       idMetodoPago: number;
+      montoRecibidoEfectivo?: number;
+      vuelto?: number;
+      detalles?: Array<{
+        idMetodoPago: number;
+        nombre?: string;
+        monto: number;
+      }>;
     };
     rutaPDF: string;
   };

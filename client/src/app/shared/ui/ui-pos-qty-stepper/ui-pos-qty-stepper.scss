@@ -1,0 +1,74 @@
+@use '../../../styles/variables' as *;
+
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  border: 1px solid #2e2e2e;
+  border-radius: 6px;
+  padding: 2px;
+  background: #141414;
+
+  &__btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 4px;
+    background: #1f1f1f;
+    color: #ddd;
+    cursor: pointer;
+    font-weight: 100;
+
+    &:focus-visible {
+      outline: 2px solid $color-gold;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+  }
+
+  &__btn--minus:hover:not(:disabled) {
+    color: $color-danger;
+    background: rgba($color-danger, .1);
+  }
+
+  &__btn--plus:hover:not(:disabled) {
+    color: $color-success;
+    background: rgba($color-success, .1);
+  }
+
+  &__value {
+    min-width: 18px;
+    text-align: center;
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 100;
+  }
+
+  &--compact {
+    gap: .18rem;
+    padding: 1px;
+
+    .qty-stepper__btn {
+      width: 22px;
+      height: 22px;
+      font-size: .78rem;
+    }
+
+    .qty-stepper__value {
+      min-width: 16px;
+      font-size: .76rem;
+    }
+  }
+
+  &--primary {
+    border-color: rgba($color-gold, .28);
+
+    .qty-stepper__value {
+      color: $color-gold;
+    }
+  }
+}

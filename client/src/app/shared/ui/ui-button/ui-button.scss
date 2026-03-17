@@ -1,10 +1,12 @@
+@use '../../../styles/variables' as *;
+
 /*Diseño del input  botones en tres tamaños*/
 .ui-btn {
-  background-color: #D4AF37;
-  color: #0a0802;
+  background-color: var(--ui-btn-tone, #{$color-gold});
+  color: var(--ui-btn-text-color, #{$color-black});
   padding: 10px;
-  border-radius: 5px;
-  border: none;
+  border-radius: $radius-md;
+  border: 1px solid transparent;
   cursor: pointer;
 
   /* Texto centrado */
@@ -16,6 +18,7 @@
   max-width: 450px;
   max-height: 50px;
   height: 40px;
+  box-sizing: border-box;
 
   font-family: inherit;
   font-size: 18px;
@@ -29,15 +32,27 @@
 
   // Cuando se usa noBackgroundColor
   &.no-background {
-    color: white;
+    color: var(--ui-btn-text-color, #{$color-white});
     background-color: transparent !important;
-    border: solid 1px var(--hover-bg-color, #D4AF37);
+    border: solid 1px var(--ui-btn-tone, #{$color-gold});
     
     &:hover {
-      color: #0a0802;
-      background-color: var(--hover-bg-color, #D4AF37) !important;
+      color: var(--ui-btn-hover-text-color, #{$color-black});
+      background-color: var(--ui-btn-tone, #{$color-gold}) !important;
       filter: opacity(1);
     }
+  }
+
+  &.ui-btn--compact {
+    height: 34px;
+    max-height: 34px;
+    padding: 0.45rem 0.75rem;
+    font-size: 14px;
+  }
+
+  &.ui-btn--full-width {
+    width: 100% !important;
+    max-width: none;
   }
 
   // Estado deshabilitado

@@ -11,8 +11,12 @@ import { UpdateProductRequestDto } from "../../domain/inventory/dtos/request/upd
 import { UpdateProductStockRequestDto } from "../../domain/inventory/dtos/request/update-product-stock.request.dto";
 import { CreateCategoryRequestDto } from "../../domain/inventory/dtos/request/create-category.request.dto";
 import { UpdateCategoryRequestDto } from "../../domain/inventory/dtos/request/update-category.request.dto";
+import { SearchProductsByNameRequestDto } from "../../domain/inventory/dtos/request/search-products-by-name.request.dto";
+import { ListProductsByCategoryRequestDto } from "../../domain/inventory/dtos/request/list-products-by-category.request.dto";
+import { ListProductsEnrichedRequestDto } from "../../domain/inventory/dtos/request/list-products-enriched.request.dto";
 import { CatalogoProductosDataDto } from "../../domain/inventory/dtos/response/list-catalog.response.dto";
 import { ListProductsDataDto } from "../../domain/inventory/dtos/response/list-products.response.dto";
+import { ListProductsEnrichedDataDto } from "../../domain/inventory/dtos/response/list-products-enriched.response.dto";
 import { AssociateProductCategoryResponseDto } from "../../domain/inventory/dtos/response/associate-product-category.response.dto";
 import { API_ENDPOINTS, buildApiUrl } from "../../config/api.config";
 import { ImageUrl } from "../../types/image-url.type";
@@ -37,6 +41,24 @@ export class InventoryApi {
 
 	listProducts(dto?: ListProductsRequestDto): Observable<ApiResponse<ListProductsDataDto>> {
 		return this.http.get<ApiResponse<ListProductsDataDto>>(this.productsUrl, {
+			params: dto as any
+		});
+	}
+
+	searchProductsByName(dto: SearchProductsByNameRequestDto): Observable<ApiResponse<ListProductsDataDto>> {
+		return this.http.get<ApiResponse<ListProductsDataDto>>(buildApiUrl(API_ENDPOINTS.inventory.productsSearch()), {
+			params: dto as any
+		});
+	}
+
+	listProductsByCategory(idCategoria: number, dto?: ListProductsByCategoryRequestDto): Observable<ApiResponse<ListProductsDataDto>> {
+		return this.http.get<ApiResponse<ListProductsDataDto>>(buildApiUrl(API_ENDPOINTS.inventory.productsByCategory(idCategoria)), {
+			params: dto as any
+		});
+	}
+
+	listProductsEnriched(dto?: ListProductsEnrichedRequestDto): Observable<ApiResponse<ListProductsEnrichedDataDto>> {
+		return this.http.get<ApiResponse<ListProductsEnrichedDataDto>>(buildApiUrl(API_ENDPOINTS.inventory.productsEnriched()), {
 			params: dto as any
 		});
 	}

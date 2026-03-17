@@ -28,6 +28,7 @@
 	justify-content: center;
 
 	scrollbar-color: grey #1A120B;
+	overflow-x: auto;
 	
 }
 
@@ -45,7 +46,137 @@
 	
 }
 
+.tabla-item--left {
+	text-align: left;
+}
+
+.tabla-item--center {
+	text-align: center;
+}
+
+.tabla-item--right {
+	text-align: right;
+}
+
+.tabla-item--sticky {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
 .acciones-container{
 	display: inline-flex;
 	gap: 5px;
+}
+
+.tabla-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.2rem 0.45rem;
+	border-radius: 999px;
+	font-size: 0.75rem;
+	line-height: 1;
+	background: rgba(212, 175, 55, 0.18);
+	color: #D4AF37;
+	border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.tabla-stepper {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.tabla-stepper__button {
+	width: 24px;
+	height: 24px;
+	border: 1px solid rgba(212, 175, 55, 0.4);
+	border-radius: 4px;
+	background: #1A120B;
+	color: #ffffff;
+	cursor: pointer;
+
+	&:hover{
+		opacity: 0.75;
+	}
+}
+
+.tabla-stepper__button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.tabla-stepper__value {
+	min-width: 1.6rem;
+	text-align: center;
+	font-size: 13px;
+}
+
+.tabla-toggle {
+	padding: 0.2rem 0.55rem;
+	border-radius: 999px;
+	border: 1px solid rgba(239, 68, 68, 0.45);
+	background: rgba(239, 68, 68, 0.15);
+	color: #fff;
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.tabla-toggle--on {
+	border-color: rgba(16, 185, 129, 0.45);
+	background: rgba(16, 185, 129, 0.15);
+	color: #fff;
+	font-size: 13px;
+}
+
+.tabla-section--hoverable .tabla-fila:hover {
+	background: rgba(212, 175, 55, 0.08);
+}
+
+.tabla-section--sticky-header .tabla-encabezado .tabla-item {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+.tabla-section--density-compact .tabla-item {
+	padding: 0.4rem;
+	font-size: 13px;
+}
+
+.tabla-section--pos {
+	border: none;
+	background: transparent;
+	padding: 0;
+	max-width: none;
+	max-height: none;
+	height: auto;
+	justify-content: stretch;
+}
+
+.tabla-section--pos .tabla {
+	width: 100%;
+	background-color: transparent;
+	font-size: 0.85rem;
+	display: table;
+	overflow: visible;
+}
+
+.tabla-section--pos .tabla-item {
+	border: none;
+	border-bottom: 1px solid rgba(26, 18, 11, 0.9);
+	padding: 0.5rem 0.4rem;
+}
+
+.tabla-section--pos .tabla-encabezado .tabla-item {
+	color: #999999;
+	font-weight: 100;
+	background: #1A120B;
+	border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.tabla-section--pos .tabla-stepper__value,
+.tabla-section--pos .tabla-toggle {
+	font-size: 0.85rem;
 }
