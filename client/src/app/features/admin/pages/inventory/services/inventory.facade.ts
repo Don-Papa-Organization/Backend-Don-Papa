@@ -94,13 +94,21 @@ export class InventoryFacade {
 
         const activo = typeof filtros?.activo === 'boolean' ? filtros.activo : undefined;
 
-        return this.inventoryApi.listProductsEnriched({
-            nombre: busqueda || undefined,
-            categoria: categoria !== undefined && !Number.isNaN(categoria) ? categoria : undefined,
-            activo,
-            page,
-            limit
-        }).pipe(
+        const query: any = { page, limit };
+
+        if (busqueda) {
+            query.nombre = busqueda;
+        }
+
+        if (categoria !== undefined && !Number.isNaN(categoria)) {
+            query.categoria = categoria;
+        }
+
+        if (typeof activo === 'boolean') {
+            query.activo = activo;
+        }
+
+        return this.inventoryApi.listProductsEnriched(query).pipe(
             map(response => {
                 const data = response.data;
                 const items = this.mapProductsDataToViewModels(data?.productos ?? []);

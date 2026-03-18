@@ -36,6 +36,8 @@ import { InventoryApi } from '../../../../../services/apis/inventory.api';
   styleUrl: './table-sale.scss'
 })
 export class TableSaleComponent implements OnInit, OnDestroy {
+  private readonly stockDebugEnabled = true;
+
   idMesa = 0;
   mesa: MesaPosViewModel | null = null;
   categorias: CategoriaOption[] = [];
@@ -46,6 +48,10 @@ export class TableSaleComponent implements OnInit, OnDestroy {
   categoriaActiva: CategoriaOption | null = null;
   productosCategoria: ProductCatalogItem[] = [];
   cargandoProductos = false;
+  paginaProductos = 1;
+  totalPaginasProductos = 1;
+  totalProductosCategoria = 0;
+  readonly limiteProductosPorPagina = 20;
 
   pedidoActual: PosOrderSummary | null = null;
 
@@ -152,6 +158,12 @@ export class TableSaleComponent implements OnInit, OnDestroy {
         }));
 
         const catalogoBase = this.mapProductosCatalogo(productosResponse.data?.productos ?? []);
+        this.logStockDebug('cargarDatosBase:catalogoBase', {
+          totalProductos: catalogoBase.length,
+          sinStock: catalogoBase.filter(p => p.stockActual <= 0).length,
+          muestraSinStock: catalogoBase.filter(p => p.stockActual <= 0).slice(0, 10)
+            .map(p => ({ idProducto: p.idProducto, nombre: p.nombre, stockActual: p.stockActual }))
+        });
         this.enrichCatalogWithPromotions(catalogoBase).subscribe({
           next: (catalogoPromocionado) => {
             this.productosCatalogo = catalogoPromocionado;
@@ -236,28 +248,7 @@ export class TableSaleComponent implements OnInit, OnDestroy {
   verProductosDeCategoria(categoria: CategoriaOption): void {
     this.categoriaActiva = categoria;
     this.vistaPanelIzq = 'productos';
-    this.cargandoProductos = true;
-
-    this.inventoryFacade.listProductsByCategory(categoria.idCategoria).subscribe({
-      next: (response) => {
-        const productosBase = this.mapProductosCatalogo(response.data?.productos ?? []);
-        this.enrichCatalogWithPromotions(productosBase).subscribe({
-          next: (productosPromocionados) => {
-            this.productosCategoria = productosPromocionados;
-            this.cargandoProductos = false;
-          },
-          error: () => {
-            this.productosCategoria = productosBase;
-            this.cargandoProductos = false;
-          }
-        });
-      },
-      error: (error) => {
-        console.error('No se pudieron cargar los productos por categoría:', error);
-        this.productosCategoria = [];
-        this.cargandoProductos = false;
-      }
-    });
+    this.cargarPaginaProductosCategoria(1);
   }
 
   abrirCategoria(idCategoria: number): void {
@@ -273,6 +264,25 @@ export class TableSaleComponent implements OnInit, OnDestroy {
     this.vistaPanelIzq = 'categorias';
     this.categoriaActiva = null;
     this.productosCategoria = [];
+    this.paginaProductos = 1;
+    this.totalPaginasProductos = 1;
+    this.totalProductosCategoria = 0;
+  }
+
+  irPaginaAnteriorProductos(): void {
+    if (this.cargandoProductos || this.paginaProductos <= 1) {
+      return;
+    }
+
+    this.cargarPaginaProductosCategoria(this.paginaProductos - 1);
+  }
+
+  irPaginaSiguienteProductos(): void {
+    if (this.cargandoProductos || this.paginaProductos >= this.totalPaginasProductos) {
+      return;
+    }
+
+    this.cargarPaginaProductosCategoria(this.paginaProductos + 1);
   }
 
   /** B4: Creación manual de pedido (permitir usuario crear antes de agregar producto) */
@@ -333,14 +343,54 @@ export class TableSaleComponent implements OnInit, OnDestroy {
     }
 
     const cantidadFinal = Number.isFinite(cantidad) ? Math.max(1, Math.floor(cantidad)) : 1;
-    const producto = this.productosCatalogo.find(item => item.idProducto === idProducto);
-    if (!producto || producto.stockActual <= 0) {
+    const producto = this.findProductoLocalById(idProducto);
+
+    this.logStockDebug('sumarCantidad:validacion-local', {
+      idMesa: this.idMesa,
+      idProducto,
+      cantidadSolicitada: cantidad,
+      cantidadFinal,
+      productoEncontrado: Boolean(producto),
+      productoLocal: producto
+        ? {
+          idProducto: producto.idProducto,
+          nombre: producto.nombre,
+          stockActual: producto.stockActual,
+          precio: producto.precio,
+          idCategoria: producto.idCategoria
+        }
+        : null
+    });
+
+    if (!producto) {
+      this.logStockDebug('sumarCantidad:producto-no-encontrado-local', {
+        idProducto,
+        catalogoPrincipal: this.productosCatalogo.length,
+        catalogoCategoria: this.productosCategoria.length,
+        vistaPanelIzq: this.vistaPanelIzq,
+        categoriaActiva: this.categoriaActiva?.idCategoria ?? null
+      });
+      this.debugFetchStockFromApi(idProducto, 'sumarCantidad-producto-no-encontrado-local');
+      this.showFeedback('Producto no encontrado en catálogo local. Recargando catálogo...', 'info');
+      this.refrescarCatalogoEnSegundoPlano();
+      return;
+    }
+
+    if (producto.stockActual <= 0) {
+      this.debugFetchStockFromApi(idProducto, 'sumarCantidad-bloqueado-sin-stock');
       this.showFeedback('Producto sin stock disponible.', 'warning');
       return;
     }
 
     const cantidadActualEnPedido = this.pedidoActual?.lineas.find(linea => linea.idProducto === idProducto)?.cantidad ?? 0;
     if ((cantidadActualEnPedido + cantidadFinal) > producto.stockActual) {
+      this.logStockDebug('sumarCantidad:stock-insuficiente-local', {
+        idProducto,
+        cantidadActualEnPedido,
+        cantidadFinal,
+        stockActual: producto.stockActual
+      });
+      this.debugFetchStockFromApi(idProducto, 'sumarCantidad-bloqueado-stock-insuficiente');
       this.showFeedback(`Stock insuficiente. Disponible: ${producto.stockActual}.`, 'warning');
       return;
     }
@@ -372,6 +422,13 @@ export class TableSaleComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error al agregar producto:', error);
+        this.logStockDebug('sumarCantidad:error-backend', {
+          idProducto,
+          cantidadFinal,
+          status: (error as any)?.status,
+          backendError: (error as any)?.error,
+          message: (error as any)?.message
+        });
         this.showFeedback(this.getUserFriendlyError(error, 'No fue posible agregar el producto.'), 'error');
         this.finishOperationTimer(opStart, 'error');
       }
@@ -604,13 +661,42 @@ export class TableSaleComponent implements OnInit, OnDestroy {
   private validarStockAntesDePagar(): boolean {
     const lineas = this.pedidoActual?.lineas ?? [];
     for (const linea of lineas) {
-      const producto = this.productosCatalogo.find(item => item.idProducto === linea.idProducto);
-      if (!producto || producto.stockActual <= 0) {
+      const producto = this.findProductoLocalById(linea.idProducto);
+      if (!producto) {
+        this.logStockDebug('validarStockAntesDePagar:producto-no-encontrado-local', {
+          idProducto: linea.idProducto,
+          nombre: linea.nombre,
+          cantidadLinea: linea.cantidad,
+          catalogoPrincipal: this.productosCatalogo.length,
+          catalogoCategoria: this.productosCategoria.length,
+          vistaPanelIzq: this.vistaPanelIzq,
+          categoriaActiva: this.categoriaActiva?.idCategoria ?? null
+        });
+        this.debugFetchStockFromApi(linea.idProducto, 'validarStockAntesDePagar-producto-no-encontrado-local');
+        this.showFeedback(`No se pudo validar el stock de ${linea.nombre}. Intente recargar.`, 'warning');
+        return false;
+      }
+
+      if (producto.stockActual <= 0) {
+        this.logStockDebug('validarStockAntesDePagar:sin-stock-local', {
+          idProducto: linea.idProducto,
+          nombre: linea.nombre,
+          cantidadLinea: linea.cantidad,
+          productoLocal: producto ?? null
+        });
+        this.debugFetchStockFromApi(linea.idProducto, 'validarStockAntesDePagar-bloqueado-sin-stock');
         this.showFeedback(`El producto ${linea.nombre} ya no tiene stock disponible.`, 'warning');
         return false;
       }
 
       if (linea.cantidad > producto.stockActual) {
+        this.logStockDebug('validarStockAntesDePagar:stock-insuficiente-local', {
+          idProducto: linea.idProducto,
+          nombre: linea.nombre,
+          cantidadLinea: linea.cantidad,
+          stockActual: producto.stockActual
+        });
+        this.debugFetchStockFromApi(linea.idProducto, 'validarStockAntesDePagar-bloqueado-stock-insuficiente');
         this.showFeedback(`Stock insuficiente para ${linea.nombre}. Disponible: ${producto.stockActual}.`, 'warning');
         return false;
       }
@@ -685,21 +771,45 @@ export class TableSaleComponent implements OnInit, OnDestroy {
   }
 
   private getNombreProducto(idProducto: number): string {
-    return this.productosCatalogo.find(item => item.idProducto === idProducto)?.nombre || '';
+    return this.findProductoLocalById(idProducto)?.nombre || '';
+  }
+
+  private findProductoLocalById(idProducto: number): ProductCatalogItem | undefined {
+    const fromCatalogo = this.productosCatalogo.find(item => item.idProducto === idProducto);
+    if (fromCatalogo) {
+      return fromCatalogo;
+    }
+
+    const fromCategoria = this.productosCategoria.find(item => item.idProducto === idProducto);
+    if (fromCategoria) {
+      return fromCategoria;
+    }
+
+    return undefined;
   }
 
   private refrescarCatalogoEnSegundoPlano(): void {
     this.inventoryFacade.listProducts().subscribe({
       next: (response) => {
         const catalogoBase = this.mapProductosCatalogo(response.data?.productos ?? []);
+        this.logStockDebug('refrescarCatalogoEnSegundoPlano:catalogoBase', {
+          totalProductos: catalogoBase.length,
+          sinStock: catalogoBase.filter(p => p.stockActual <= 0).length,
+          muestraSinStock: catalogoBase.filter(p => p.stockActual <= 0).slice(0, 10)
+            .map(p => ({ idProducto: p.idProducto, nombre: p.nombre, stockActual: p.stockActual }))
+        });
         this.enrichCatalogWithPromotions(catalogoBase).subscribe({
           next: (catalogoPromocionado) => {
             this.productosCatalogo = catalogoPromocionado;
 
             if (this.categoriaActiva && this.vistaPanelIzq === 'productos') {
-              this.inventoryFacade.listProductsByCategory(this.categoriaActiva.idCategoria).subscribe({
+              this.inventoryFacade.listProductsByCategory(this.categoriaActiva.idCategoria, {
+                page: this.paginaProductos,
+                limit: this.limiteProductosPorPagina
+              }).subscribe({
                 next: (categoriaResponse) => {
                   const productosCategoriaBase = this.mapProductosCatalogo(categoriaResponse.data?.productos ?? []);
+                  this.actualizarMetaPaginacionCategoria(categoriaResponse.data);
                   this.enrichCatalogWithPromotions(productosCategoriaBase).subscribe({
                     next: (productosPromocionados) => {
                       this.productosCategoria = productosPromocionados;
@@ -726,8 +836,59 @@ export class TableSaleComponent implements OnInit, OnDestroy {
     });
   }
 
+  private cargarPaginaProductosCategoria(page: number): void {
+    if (!this.categoriaActiva) {
+      return;
+    }
+
+    this.cargandoProductos = true;
+    this.inventoryFacade.listProductsByCategory(this.categoriaActiva.idCategoria, {
+      page,
+      limit: this.limiteProductosPorPagina
+    }).subscribe({
+      next: (response) => {
+        const productosBase = this.mapProductosCatalogo(response.data?.productos ?? []);
+        this.actualizarMetaPaginacionCategoria(response.data);
+        this.enrichCatalogWithPromotions(productosBase).subscribe({
+          next: (productosPromocionados) => {
+            this.productosCategoria = productosPromocionados;
+            this.paginaProductos = this.normalizarPaginaActual(response.data?.pagina, page);
+            this.cargandoProductos = false;
+          },
+          error: () => {
+            this.productosCategoria = productosBase;
+            this.paginaProductos = this.normalizarPaginaActual(response.data?.pagina, page);
+            this.cargandoProductos = false;
+          }
+        });
+      },
+      error: (error) => {
+        console.error('No se pudieron cargar los productos por categoría:', error);
+        this.productosCategoria = [];
+        this.cargandoProductos = false;
+      }
+    });
+  }
+
+  private actualizarMetaPaginacionCategoria(data: any): void {
+    const totalPaginas = Number(data?.totalPaginas ?? 1);
+    const total = Number(data?.total ?? 0);
+
+    this.totalPaginasProductos = Number.isFinite(totalPaginas) && totalPaginas > 0 ? totalPaginas : 1;
+    this.totalProductosCategoria = Number.isFinite(total) && total >= 0 ? total : 0;
+  }
+
+  private normalizarPaginaActual(paginaRespuesta: unknown, fallback: number): number {
+    const pagina = Number(paginaRespuesta ?? fallback);
+    if (!Number.isFinite(pagina) || pagina <= 0) {
+      return fallback;
+    }
+
+    return pagina;
+  }
+
   private mapProductosCatalogo(productosRaw: any[]): ProductCatalogItem[] {
-    return productosRaw
+    const mapeados = productosRaw
       .filter((item: any) => item.activo)
       .map((item: any) => ({
         idProducto: item.idProducto,
@@ -740,6 +901,58 @@ export class TableSaleComponent implements OnInit, OnDestroy {
         stockActual: Number(item.stockActual || 0),
         urlImagen: this.inventoryApi.getProductImageUrl(item.idProducto)
       }));
+
+    const conStockInvalido = mapeados.filter(item => !Number.isFinite(item.stockActual));
+    if (conStockInvalido.length > 0) {
+      this.logStockDebug('mapProductosCatalogo:stock-invalido-post-mapeo', {
+        totalInvalidos: conStockInvalido.length,
+        muestra: conStockInvalido.slice(0, 10)
+      });
+    }
+
+    return mapeados;
+  }
+
+  private logStockDebug(evento: string, payload: Record<string, unknown>): void {
+    if (!this.stockDebugEnabled) {
+      return;
+    }
+
+    console.log(`[POS-STOCK-DEBUG] ${evento}`, payload);
+  }
+
+  private debugFetchStockFromApi(idProducto: number, contexto: string): void {
+    if (!this.stockDebugEnabled) {
+      return;
+    }
+
+    this.inventoryApi.getCatalogDetail(idProducto).subscribe({
+      next: (response) => {
+        const apiProducto = response?.data as any;
+        this.logStockDebug('debugFetchStockFromApi:ok', {
+          contexto,
+          idProducto,
+          statusApi: response?.success,
+          productoApi: apiProducto
+            ? {
+              idProducto: apiProducto.idProducto,
+              nombre: apiProducto.nombre,
+              stockActual: apiProducto.stockActual,
+              activo: apiProducto.activo
+            }
+            : null
+        });
+      },
+      error: (error) => {
+        this.logStockDebug('debugFetchStockFromApi:error', {
+          contexto,
+          idProducto,
+          status: (error as any)?.status,
+          backendError: (error as any)?.error,
+          message: (error as any)?.message
+        });
+      }
+    });
   }
 
   private enrichCatalogWithPromotions(productos: ProductCatalogItem[]): Observable<ProductCatalogItem[]> {

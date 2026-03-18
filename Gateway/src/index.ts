@@ -62,7 +62,7 @@ const routes: Record<string, string> = {
   // Reportes y bitácoras
   "/reports": process.env.REPORTS_AND_BINNACLES_URL || "http://report-service-app:4006/api",
   // Agente IA (MS8)
-  //"/agent": process.env.AGENT_SERVICE_URL || "http://agent-service-app:4008/api",
+  "/agent": process.env.AGENT_SERVICE_URL || "http://agent-service:4008/api",
 };
 
 Object.entries(routes).forEach(([path, target]) => {

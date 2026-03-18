@@ -209,6 +209,25 @@
   padding: 1rem;
 }
 
+.paginacion-productos {
+  margin-top: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+
+  &__meta {
+    color: rgba($color-white, 0.85);
+    font-size: 0.85rem;
+    text-align: center;
+
+    small {
+      color: rgba($color-white, 0.62);
+      margin-left: 0.25rem;
+    }
+  }
+}
+
 
 @media (max-width: 1180px) {
   .pos-page.table-sale-dual {

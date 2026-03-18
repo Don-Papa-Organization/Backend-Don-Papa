@@ -40,6 +40,25 @@
             </ui-button>
           </div>
         </div>
+
+        <div class="paginacion-productos" *ngIf="vistaPanelIzq === 'productos' && !cargandoProductos">
+          <ui-button
+            texto="← Anterior"
+            [disabled]="paginaProductos <= 1 || procesando"
+            (accion)="irPaginaAnteriorProductos()">
+          </ui-button>
+
+          <span class="paginacion-productos__meta">
+            Página {{ paginaProductos }} de {{ totalPaginasProductos }}
+            <small *ngIf="totalProductosCategoria > 0">({{ totalProductosCategoria }} productos)</small>
+          </span>
+
+          <ui-button
+            texto="Siguiente →"
+            [disabled]="paginaProductos >= totalPaginasProductos || procesando"
+            (accion)="irPaginaSiguienteProductos()">
+          </ui-button>
+        </div>
       </div>
     </div>
 
