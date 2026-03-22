@@ -1,0 +1,34 @@
+<main class="order-status-page" aria-live="polite">
+  <section class="card-block">
+    <div class="header-actions" style="margin-bottom: 1rem;">
+      <ui-button visualTheme="client-premium" texto="← Volver" (accion)="volverInicio()"></ui-button>
+    </div>
+    <h1>Consultar estado de pedido</h1>
+
+    <div class="filters">
+      <label for="idPedido">ID del pedido</label>
+      <ui-input theme="client-premium"
+        id="idPedido"
+        [tipo]="'number'"
+        [placeholder]="'Ej: 123'"
+        [(ngModel)]="idPedidoInput"
+      ></ui-input>
+
+      <div class="actions">
+        <ui-button visualTheme="client-premium" [texto]="loading ? 'Consultando...' : 'Consultar estado'" [disabled]="loading" (accion)="consultarEstado()"></ui-button>
+        <ui-button visualTheme="client-premium" texto="Limpiar" [disabled]="loading" (accion)="limpiarConsulta()"></ui-button>
+      </div>
+    </div>
+
+    <p class="state state--error" *ngIf="error">{{ error }}</p>
+
+    <div class="result" *ngIf="resultado">
+      <div class="row"><span class="label">Pedido</span><strong>#{{ resultado.idPedido }}</strong></div>
+      <div class="row"><span class="label">Estado</span><span class="status">{{ resultado.estado }}</span></div>
+      <div class="row"><span class="label">Fecha del pedido</span><span>{{ formatoFecha(resultado.fechaPedido) }}</span></div>
+      <div class="row"><span class="label">Total</span><strong>{{ resultado.total | number:'1.0-0' }}</strong></div>
+    </div>
+  </section>
+</main>
+
+

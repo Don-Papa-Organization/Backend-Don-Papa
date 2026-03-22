@@ -1,0 +1,192 @@
+﻿<app-header *ngIf="mode === 'public'" [icono]="true" [opacidad]="1" [titulo]="titleText">
+  <ui-button visualTheme="client-premium"
+    [texto]="headerPrimaryActionText"
+    [noBackgroundColor]="true"
+    borderRadius="16px"
+    (accion)="onPrimaryHeaderAction()"
+  ></ui-button>
+
+  <ui-button visualTheme="client-premium"
+    *ngIf="!isAuthenticated"
+    texto="Registrarse"
+    [noBackgroundColor]="true"
+    borderRadius="16px"
+    (accion)="irARegistro()"
+  ></ui-button>
+</app-header>
+
+<main class="catalog-page">
+  <!-- SECTION 1: HERO -->
+  <app-hero-section
+    [mode]="mode"
+    [isAuthenticated]="isAuthenticated"
+    (searchSubmitted)="onHeroSearchSubmitted($event)"
+    (suggestionSelected)="onHeroSuggestionSelected($event)"
+    (productClick)="onHeroProductClick($event)"
+  ></app-hero-section>
+
+  <!-- SECTION 2 & 3: SIDEBAR + MAIN LAYOUT -->
+  <section class="catalog-shell">
+    <!-- SIDEBAR: CATEGORIES -->
+    <aside class="catalog-shell__sidebar">
+      <app-category-sidebar
+        [categories]="categorias"
+        [selectedCategoryId]="categoriaSeleccionada"
+        [categoryCounts]="categoryCounts"
+        [loading]="categorySidebarLoading"
+        (categorySelected)="onCategorySidebarSelected($event)"
+      ></app-category-sidebar>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="catalog-shell__main">
+      <!-- SECTION 4: BREADCRUMBS -->
+      <nav class="catalog-breadcrumbs">
+        <app-breadcrumbs [items]="breadcrumbItems"></app-breadcrumbs>
+      </nav>
+
+      <!-- SECTION 4: FEATURED PRODUCTS ROW -->
+      <app-featured-products-row
+        *ngIf="productosDestacados.length > 0 || loadingFeatured"
+        [productos]="productosDestacados"
+        [loading]="loadingFeatured"
+        tipoDestacado="featured"
+        (addToCart)="onFeaturedAddToCart($event)"
+        (quickView)="onFeaturedQuickView($event)"
+        (toggleWishlist)="onFeaturedToggleWishlist($event)"
+      ></app-featured-products-row>
+
+      <!-- SECTION 4: TOOLBAR ADVANCED -->
+      <app-catalog-toolbar-advanced
+        [viewMode]="viewMode"
+        [sortBy]="sortBy"
+        [filtrosActivos]="filtrosActivos"
+        [totalProductos]="productosFiltrados.length"
+        (viewModeChange)="onViewModeChange($event)"
+        (sortByChange)="onSortByChange($event)"
+        (filtrosToggle)="onFiltrosToggle()"
+        (limpiarFiltros)="onLimpiarFiltros()"
+      ></app-catalog-toolbar-advanced>
+
+      <!-- FILTERS SECTION -->
+      <section class="filters" *ngIf="showFilters" aria-label="Filtros de catálogo">
+        <div class="filters-grid">
+          <ui-input theme="client-premium"
+            tituloInput="Precio mínimo"
+            tipo="number"
+            placeholder="0"
+            [valorInput]="precioMin !== null ? precioMin.toString() : ''"
+            (valorInputChange)="onPrecioMinChange($event)"
+          ></ui-input>
+
+          <ui-input theme="client-premium"
+            tituloInput="Precio máximo"
+            tipo="number"
+            placeholder="1000000"
+            [valorInput]="precioMax !== null ? precioMax.toString() : ''"
+            (valorInputChange)="onPrecioMaxChange($event)"
+          ></ui-input>
+        </div>
+
+        <div class="actions-row">
+          <ui-button visualTheme="client-premium" texto="Aplicar filtros" (accion)="aplicarFiltros()"></ui-button>
+          <ui-button visualTheme="client-premium" texto="Cerrar filtros" [noBackgroundColor]="true" (accion)="toggleFilters()"></ui-button>
+        </div>
+      </section>
+
+      <!-- CATALOG CONTENT -->
+      <section class="catalog-content" [ngClass]="'catalog-content--' + viewMode" aria-live="polite">
+        <p class="state" *ngIf="loading">Cargando catálogo...</p>
+
+        <div class="state state--error" *ngIf="!loading && error">
+          <p>{{ error }}</p>
+          <ui-button visualTheme="client-premium" texto="Reintentar" (accion)="aplicarFiltros()"></ui-button>
+        </div>
+
+        <p class="state" *ngIf="showEmptyState">
+          No encontramos productos con los filtros actuales.
+        </p>
+
+        <!-- GRID VIEW: Standard 4 columns -->
+        <div class="catalog-grid catalog-grid--4col" *ngIf="!loading && !error && hasItems && viewMode === 'grid'">
+          <app-ui-product-card
+            *ngFor="let producto of productosFiltrados; trackBy: trackByProductId"
+            [idProducto]="producto.idProducto"
+            [urlImagen]="resolveImageUrl(producto)"
+            [nombre]="producto.nombre"
+            [precio]="producto.precio"
+            [precioPromocional]="producto.precioPromocional"
+            [porcentajeDescuento]="producto.porcentajeDescuento"
+            [tienePromocion]="producto.tienePromocion"
+            [idCategoria]="producto.idCategoria || 0"
+            [nombreCategoria]="producto.nombreCategoria || ''"
+            [stockActual]="producto.stockActual"
+            [esFeatured]="!!producto.tienePromocion"
+            [esNuevo]="producto.stockActual > 0 && producto.stockActual < 10"
+            visualVariant="default"
+            (cardClick)="abrirDetalle(producto)"
+            (addToCart)="onCardAddToCart(producto)"
+            (quickView)="onCardQuickView(producto)"
+            (toggleWishlist)="onCardToggleWishlist(producto)"
+          ></app-ui-product-card>
+        </div>
+
+        <!-- LARGE GRID VIEW: 3 columns -->
+        <div class="catalog-grid catalog-grid--3col" *ngIf="!loading && !error && hasItems && viewMode === 'large-grid'">
+          <app-ui-product-card
+            *ngFor="let producto of productosFiltrados; trackBy: trackByProductId"
+            [idProducto]="producto.idProducto"
+            [urlImagen]="resolveImageUrl(producto)"
+            [nombre]="producto.nombre"
+            [precio]="producto.precio"
+            [precioPromocional]="producto.precioPromocional"
+            [porcentajeDescuento]="producto.porcentajeDescuento"
+            [tienePromocion]="producto.tienePromocion"
+            [idCategoria]="producto.idCategoria || 0"
+            [nombreCategoria]="producto.nombreCategoria || ''"
+            [stockActual]="producto.stockActual"
+            [esFeatured]="!!producto.tienePromocion"
+            [esNuevo]="producto.stockActual > 0 && producto.stockActual < 10"
+            visualVariant="featured"
+            (cardClick)="abrirDetalle(producto)"
+            (addToCart)="onCardAddToCart(producto)"
+            (quickView)="onCardQuickView(producto)"
+            (toggleWishlist)="onCardToggleWishlist(producto)"
+          ></app-ui-product-card>
+        </div>
+
+        <!-- LOAD MORE BUTTON -->
+        <div class="load-more" *ngIf="!loading && !error && canLoadMore">
+          <ui-button visualTheme="client-premium"
+            [texto]="loadingMore ? 'Cargando...' : 'Cargar más productos'"
+            [disabled]="loadingMore"
+            (accion)="cargarMas()"
+          ></ui-button>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <app-product-detail-modal
+    [visible]="showDetalleModal"
+    [productId]="selectedProductId"
+    [mode]="mode"
+    [isAuthenticated]="isAuthenticated"
+    (closed)="cerrarDetalle()"
+    (openProduct)="onDetalleModalOpenProduct($event)"
+    (actionMessage)="onDetalleModalActionMessage($event)"
+  ></app-product-detail-modal>
+
+  <div
+    class="catalog-toast"
+    *ngIf="catalogActionMessage"
+    [class.catalog-toast--error]="catalogActionMessageType === 'error'"
+    role="status"
+    aria-live="polite"
+  >
+    <p>{{ catalogActionMessage }}</p>
+    <button type="button" aria-label="Cerrar notificación" (click)="closeCatalogActionMessage()">×</button>
+  </div>
+</main>
+
+

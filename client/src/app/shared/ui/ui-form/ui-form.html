@@ -1,6 +1,8 @@
 <main 
 class="ui-form-container" 
-[ngStyle]="{ 'height': 'fit-content' }"
+[class.full-width]="fullWidth"
+[class.ui-form-container--client-premium]="visualTheme === 'client-premium'"
+[ngStyle]="{ 'height': 'fit-content', 'max-width': maxWidth, 'max-height': maxHeight }"
 >
   <!-- Título opcional -->
   <h2 *ngIf="titulo" class="form-title">{{ titulo }}</h2>

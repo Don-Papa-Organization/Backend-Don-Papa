@@ -1,0 +1,125 @@
+﻿<div class="reserve-table-container">
+  <div class="reserve-header">
+    <h1>Confirmar Reserva de Mesa</h1>
+    <p class="subtitle">Completa los detalles de tu reserva</p>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando informacion de la mesa...</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <p class="error-message">{{ error }}</p>
+  </div>
+
+  <!-- SUCCESS STATE -->
+  <div *ngIf="success" class="success-state">
+    <p class="success-message">Reserva confirmada exitosamente.</p>
+    <p class="success-detail">Seras redirigido a tu historial de reservas...</p>
+  </div>
+
+  <!-- CONTENT STATE -->
+  <div *ngIf="!isLoading && !success" class="content">
+    <div class="form-container">
+      <!-- MESA INFO CARD -->
+      <div *ngIf="mesa" class="mesa-info-card">
+        <h2 class="section-title">Informacion de la Mesa</h2>
+        <div class="mesa-details">
+          <div class="detail-row">
+            <span class="detail-label">Numero de Mesa:</span>
+            <span class="detail-value">{{ mesa.numero }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Tipo:</span>
+            <span class="detail-value">{{ mesa.tipo }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Estado:</span>
+            <span class="detail-value estado"
+              [class.estado-disponible]="mesa.estado === 'Disponible'"
+              [class.estado-no-disponible]="mesa.estado !== 'Disponible'">
+              {{ mesa.estado }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM SECTION -->
+      <div class="form-section">
+        <h2 class="section-title">Detalles de la Reserva</h2>
+
+        <div class="form-group">
+          <label for="fecha">Fecha de Reserva:</label>
+          <input 
+            type="date" 
+            id="fecha" 
+            [(ngModel)]="fechaReserva" 
+            [min]="minDate"
+            class="form-input"
+            [disabled]="isSubmitting">
+        </div>
+
+        <div class="form-group">
+          <label for="personas">Cantidad de Personas:</label>
+          <div class="persons-selector">
+            <button 
+              *ngFor="let p of personasOptions" 
+              class="person-btn" 
+              [class.active]="cantidadPersonas === p"
+              (click)="cantidadPersonas = p"
+              [disabled]="isSubmitting">
+              {{ p }}
+            </button>
+          </div>
+        </div>
+
+        <!-- RESERVATION SUMMARY -->
+        <div class="summary-section">
+          <h3>Resumen de Reserva</h3>
+          <div class="summary-item">
+            <span>Mesa #{{ mesa?.numero }}</span>
+            <span class="badge">{{ mesa?.tipo }}</span>
+          </div>
+          <div class="summary-item">
+            <span>Fecha:</span>
+            <span>{{ fechaReserva | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="summary-item">
+            <span>Personas:</span>
+            <span>{{ cantidadPersonas }}</span>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="form-actions">
+          <button 
+            (click)="confirmarReserva()" 
+            class="btn-primary"
+            [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Procesando...' : 'Confirmar reserva' }}
+          </button>
+          <button 
+            (click)="cancelar()" 
+            class="btn-secondary"
+            [disabled]="isSubmitting">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-ui-toast visualTheme="client-premium"
+    [visible]="mostrarToastBloqueoPerfil"
+    [message]="mensajePerfilIncompleto"
+    tone="warning"
+    actionLabel="Ir a Cuenta"
+    closeLabel="Cerrar"
+    (action)="irACuentaPorBloqueo()"
+    (close)="cerrarToastBloqueo()"
+  ></app-ui-toast>
+</div>
+

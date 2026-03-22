@@ -1,0 +1,83 @@
+<div class="events-list-container">
+  <div class="events-header">
+    <h1>Eventos Proximos</h1>
+    <p class="subtitle">Descubre los proximos eventos y promociones especiales</p>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando eventos...</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <p class="error-message">{{ error }}</p>
+    <button (click)="cargarEventos()" class="btn-retry">Reintentar</button>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div *ngIf="isEmpty && !isLoading && !error" class="empty-state">
+    <p class="empty-message">No hay eventos proximos en este momento.</p>
+  </div>
+
+  <!-- CONTENT STATE -->
+  <div *ngIf="!isLoading && !error && !isEmpty" class="content">
+    <!-- SEARCH SECTION -->
+    <div class="search-section">
+      <div class="search-input-group">
+        <input
+          type="text"
+          [(ngModel)]="busqueda"
+          (input)="buscarEventos()"
+          placeholder="Busca por nombre de evento o fecha..."
+          class="search-input">
+        <button
+          *ngIf="busqueda"
+          (click)="limpiarBusqueda()"
+          class="btn-clear-search">
+          Limpiar
+        </button>
+      </div>
+      <p class="search-results">{{ eventosFiltered.length }} evento(s) encontrado(s)</p>
+    </div>
+
+    <!-- EVENTOS GRID -->
+    <div class="eventos-grid">
+      <div *ngFor="let evento of eventosFiltered" class="evento-card">
+
+        <div class="evento-card__header">
+          <div class="evento-date-badge">
+            <span class="date-day">{{ getDay(evento.fecha) }}</span>
+            <span class="date-month">{{ getMonth(evento.fecha) }}</span>
+          </div>
+          <h3>{{ obtenerNombreEvento(evento.evento?.idEvento) }}</h3>
+        </div>
+
+        <div class="evento-card__content">
+          <div class="detail-item">
+            <span class="detail-label">Fecha</span>
+            <span class="detail-value">{{ formatearFecha(evento.fecha) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Hora</span>
+            <span class="detail-value">{{ formatearHora(evento.horaInicio) }} - {{ formatearHora(evento.horaFin) }}</span>
+          </div>
+
+          <div class="promo-section" *ngIf="tienePromociones(evento)">
+            <span class="promo-badge">{{ evento.promociones.length }} promocion(es)</span>
+          </div>
+        </div>
+
+        <div class="evento-card__footer">
+          <button
+            (click)="verDetalle(evento.evento?.idEvento)"
+            class="btn-details">
+            Ver Detalles
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,256 @@
+@use '../../../../../../styles/variables' as *;
+@use '../../../../../../styles/shared-states' as *;
+
+.check-availability-container {
+  @extend %page-base;
+  padding-top: 0.5rem;
+  max-width: 900px;
+}
+
+.search-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    color: $color-white;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: rgba($color-white, 0.72);
+    margin: 0;
+  }
+}
+
+.search-form-section {
+  @extend %card-block;
+  padding: 2rem;
+  margin-bottom: 2rem;
+
+  .search-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    align-items: flex-end;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    .form-group {
+      label {
+        display: block;
+        font-weight: 600;
+        color: rgba($color-white, 0.9);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+      }
+
+      .form-input,
+      .form-select {
+        @extend %input-control;
+      }
+
+      .persons-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+
+        .person-btn {
+          min-width: 40px;
+          padding: 0.5rem 0.75rem;
+          border: 1px solid rgba($color-gold, 0.34);
+          border-radius: 6px;
+          background: rgba($color-black, 0.28);
+          color: rgba($color-white, 0.75);
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-color: $color-gold;
+            background: rgba($color-gold, 0.16);
+          }
+
+          &.active {
+            background: $color-gold;
+            color: $color-bg-primary;
+            border-color: $color-gold;
+          }
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .btn-primary {
+        @extend %btn-primary;
+      }
+
+      .btn-secondary {
+        @extend %btn-secondary;
+      }
+    }
+  }
+}
+
+.loading-state,
+.empty-state,
+.error-state {
+  @extend %card-block;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.spinner {
+  @extend %spinner;
+}
+
+.error-message {
+  color: $color-danger;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.empty-message {
+  color: rgba($color-white, 0.8);
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.suggestion {
+  color: rgba($color-white, 0.65);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.results-section {
+  .results-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h2 {
+      font-size: 1.8rem;
+      color: $color-white;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .result-info {
+      color: rgba($color-white, 0.72);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+  }
+
+  .mesas-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    .mesa-result-card {
+      @extend %card-block;
+      border: 2px solid rgba($color-success, 0.7);
+      border-radius: 8px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .mesa-info {
+        margin-bottom: 1rem;
+
+        h3 {
+          font-size: 1.3rem;
+          color: $color-white;
+          margin: 0 0 0.5rem 0;
+          font-weight: 700;
+        }
+
+        .mesa-type {
+          color: rgba($color-white, 0.74);
+          font-size: 0.95rem;
+          margin: 0 0 0.75rem 0;
+        }
+
+        .mesa-estado {
+          margin: 0;
+
+          .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .mesa-action {
+        .btn-select {
+          width: 100%;
+          padding: 0.75rem;
+          @extend %btn-primary;
+          background: $color-success;
+          color: $color-white;
+          border-radius: 6px;
+          font-weight: 600;
+          font-size: 0.95rem;
+          transition: all 0.3s ease;
+
+          &:hover {
+            filter: brightness(1.06);
+            transform: translateY(-2px);
+          }
+        }
+
+        .login-hint {
+          font-size: 0.8rem;
+          color: rgba($color-white, 0.62);
+          margin: 0.5rem 0 0 0;
+        }
+      }
+    }
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  &.available {
+    background: rgba($color-success, 0.2);
+    color: $color-success;
+    border: 1px solid rgba($color-success, 0.4);
+  }
+}

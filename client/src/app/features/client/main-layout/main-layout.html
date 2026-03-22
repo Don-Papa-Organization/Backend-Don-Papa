@@ -1,4 +1,54 @@
-<app-header>
-    <app-ui-icon-button texto="Salir" urlIcono="icons/iconoSalir.svg" (action)="onLogout()">
+<app-header [mode]="'client'">
+    <a class="brand-link" routerLink="/client/catalogo">Don Papa</a>
+
+    <app-ui-icon-button 
+        texto="Cuenta"
+        urlIcono="icons/profile.svg"
+        link="/client/perfil"
+        [exactMatch]="true"
+        iconSize="25px"
+        [hideUnderline]="true"
+        >
+
+        </app-ui-icon-button>
+
+    <app-ui-icon-button 
+        texto="Carrito"
+        urlIcono="icons/cart.svg"
+        link="/client/carrito"
+        iconSize="25px"
+        [hideUnderline]="true"
+        >
+
+        </app-ui-icon-button>
+    <app-ui-icon-button 
+        texto="Reservas"
+        urlIcono="icons/iconoMesas.svg"
+        link="/client/reservas"
+        iconSize="25px"
+        [hideUnderline]="true"
+        >
+
+        </app-ui-icon-button>
+    <app-ui-icon-button 
+        texto="Eventos"
+        urlIcono="icons/iconoAyuda.svg"
+        link="/client/eventos"
+        iconSize="25px"
+        [hideUnderline]="true"
+        >
+
+        </app-ui-icon-button>
+
+    <app-ui-icon-button texto="Salir" urlIcono="icons/iconoSalir.svg" (action)="onLogout()" [hideUnderline]="true">
     </app-ui-icon-button>
 </app-header>
+
+<div class="layout">
+    <div class="main-content">
+        <div class="main-content-body">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
+

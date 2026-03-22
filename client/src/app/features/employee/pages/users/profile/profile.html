@@ -34,49 +34,23 @@
       </div>
 
       <div class="profile-card__actions">
+        <div class="report-actions">
           <ui-button
-            [texto]="mostrarFormClave ? 'Cancelar' : 'Cambiar contraseña'"
+            texto="Registrar comentario"
             [noBackgroundColor]="true"
             backgroundColor="#D4AF37"
             customWidth="100%"
-            (accion)="toggleFormClave()">
+            (accion)="abrirModalReporte('comentario')">
           </ui-button>
-      </div>
-
-      <div class="change-password-form" *ngIf="mostrarFormClave">
-        <h3 class="change-password-form__title">Cambiar contraseña</h3>
-
-          <ui-input
-            tituloInput="Contraseña actual"
-            tipo="password"
-            [(ngModel)]="formClave.contrasenaActual"
-            name="claveActual">
-          </ui-input>
-
-          <ui-input
-            tituloInput="Nueva contraseña"
-            tipo="password"
-            [(ngModel)]="formClave.nuevaContrasena"
-            name="claveNueva">
-          </ui-input>
-
-          <ui-input
-            tituloInput="Confirmar contraseña"
-            tipo="password"
-            [(ngModel)]="formClave.confirmarContrasena"
-            name="claveConfirmar">
-          </ui-input>
-
-        <p class="form-mensaje" *ngIf="mensajeClave" [class.error]="tipoClave === 'error'" [class.success]="tipoClave === 'success'">
-          {{ mensajeClave }}
-        </p>
 
           <ui-button
-            [texto]="procesandoClave ? 'Guardando...' : 'Guardar cambios'"
-            [disabled]="procesandoClave"
+            texto="Registrar incidente"
+            [noBackgroundColor]="true"
+            variant="danger"
             customWidth="100%"
-            (accion)="cambiarContrasena()">
+            (accion)="abrirModalReporte('incidente')">
           </ui-button>
+        </div>
       </div>
     </div>
 
@@ -129,6 +103,76 @@
             [noBackgroundColor]="true"
             variant="success"
             (accion)="onDescargarReciboDirecto()"
+          ></ui-button>
+        </div>
+      </div>
+    </app-ui-modal>
+
+    <app-ui-modal
+      [mostrar]="mostrarModalReporte"
+      [titulo]="tipoReporteActivo === 'incidente' ? 'Registrar Incidente' : 'Registrar Comentario'"
+      (cerrar)="cerrarModalReporte()"
+    >
+      <div class="report-modal">
+        <p class="report-modal__helper">
+          Completa la información para registrar en bitácora.
+        </p>
+
+        <div class="report-form-grid">
+          <ui-input
+            tituloInput="Fecha (opcional)"
+            tipo="date"
+            [(ngModel)]="formReporte.fecha"
+            name="reporteFecha"
+          ></ui-input>
+
+          <ui-input
+            tituloInput="Hora inicio (opcional)"
+            tipo="time"
+            [(ngModel)]="formReporte.horaInicio"
+            name="reporteHoraInicio"
+          ></ui-input>
+
+          <ui-input
+            tituloInput="Hora fin (opcional)"
+            tipo="time"
+            [(ngModel)]="formReporte.horaFin"
+            name="reporteHoraFin"
+          ></ui-input>
+        </div>
+
+        <label class="report-modal__label" for="reporte-descripcion">Descripción</label>
+        <textarea
+          id="reporte-descripcion"
+          class="report-modal__textarea"
+          [(ngModel)]="formReporte.descripcion"
+          name="reporteDescripcion"
+          rows="4"
+          placeholder="Describe lo sucedido"
+        ></textarea>
+
+        <p
+          class="form-mensaje"
+          *ngIf="mensajeReporte"
+          [class.error]="tipoMensajeReporte === 'error'"
+          [class.success]="tipoMensajeReporte === 'success'"
+        >
+          {{ mensajeReporte }}
+        </p>
+
+        <div class="report-modal__actions">
+          <ui-button
+            texto="Cancelar"
+            [noBackgroundColor]="true"
+            backgroundColor="#D4AF37"
+            (accion)="cerrarModalReporte()"
+          ></ui-button>
+
+          <ui-button
+            [texto]="procesandoReporte ? 'Guardando...' : 'Guardar reporte'"
+            [disabled]="procesandoReporte"
+            [variant]="tipoReporteActivo === 'incidente' ? 'danger' : 'success'"
+            (accion)="guardarReporte()"
           ></ui-button>
         </div>
       </div>

@@ -1,0 +1,106 @@
+<div class="events-detail-container">
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando detalle del evento...</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <p class="error-message">{{ error }}</p>
+    <button (click)="volver()" class="btn-back-error">Volver a eventos</button>
+  </div>
+
+  <!-- CONTENT STATE -->
+  <div *ngIf="evento && !isLoading && !error" class="content">
+    <!-- HEADER WITH BACK BUTTON -->
+    <div class="detail-header">
+      <button (click)="volver()" class="btn-back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Volver
+      </button>
+      <h1 class="event-title">{{ evento.nombre }}</h1>
+    </div>
+
+    <!-- EVENTO INFO CARD -->
+    <div class="evento-info-card">
+      <div class="event-meta">
+        <div class="meta-item">
+          <span class="meta-label">Precio</span>
+          <span class="meta-value price" *ngIf="evento.precio">{{ evento.precio | currency: 'COP': 'symbol': '1.0-0' }}</span>
+          <span class="meta-value" *ngIf="!evento.precio">Consultar</span>
+        </div>
+      </div>
+
+      <div class="description">
+        <h3>Descripcion</h3>
+        <p>{{ evento.descripcion || 'No hay descripcion disponible.' }}</p>
+      </div>
+
+      <!-- RESTRICCIONES -->
+      <div class="restricciones-section" *ngIf="tieneRestricciones()">
+        <h3>Restricciones</h3>
+        <ul class="restricciones-list">
+          <li *ngFor="let restriccion of evento.restricciones">
+            {{ restriccion }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- HORARIOS SECTION -->
+    <div class="horarios-section" *ngIf="tieneHorarios()">
+      <h2>Horarios disponibles</h2>
+      <div class="horarios-grid">
+        <div *ngFor="let horario of evento.horarios" class="horario-card">
+
+          <div class="horario-card__header">
+            <div class="horario-date-badge">
+              <span class="badge-day">{{ getDay(horario.fecha) }}</span>
+              <span class="badge-month">{{ getMonth(horario.fecha) }}</span>
+            </div>
+            <h3>{{ formatearFecha(horario.fecha) }}</h3>
+          </div>
+
+          <div class="horario-card__content">
+            <div class="horario-times">
+              <span class="time-badge">
+                {{ formatearHora(horario.horaInicio) }} - {{ formatearHora(horario.horaFin) }}
+              </span>
+            </div>
+
+            <!-- PROMOCIONES DEL HORARIO -->
+            <div class="horario-promociones" *ngIf="horario.promociones && horario.promociones.length > 0">
+              <div class="promo-header">Promociones</div>
+              <div class="promo-items">
+                <div *ngFor="let promo of horario.promociones" class="promo-item">
+                  <span class="promo-name">{{ promo.nombre }}</span>
+                  <span class="promo-desc" *ngIf="promo.descripcion">{{ promo.descripcion }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- NO HORARIOS -->
+    <div *ngIf="!tieneHorarios()" class="empty-horarios">
+      <p>No hay horarios disponibles en este momento.</p>
+    </div>
+
+    <!-- GENERAL PROMOCIONES SECTION -->
+    <div class="general-promociones-section" *ngIf="obtenerPromocionesDeHorario(evento.horarios || []).length > 0">
+      <h2>Todas las promociones</h2>
+      <div class="all-promos-grid">
+        <div *ngFor="let promo of obtenerPromocionesDeHorario(evento.horarios || [])" class="all-promo-card">
+          <h4>{{ promo.nombre }}</h4>
+          <p *ngIf="promo.descripcion">{{ promo.descripcion }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

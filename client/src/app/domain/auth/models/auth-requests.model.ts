@@ -23,7 +23,6 @@ export interface AuthUpdateProfileRequest {
   nombre?: string;
   telefono?: string;
   direccion?: string;
-  documento?: string;
 }
 
 export interface AuthChangePasswordRequest {

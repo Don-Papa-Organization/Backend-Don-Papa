@@ -1,12 +1,12 @@
 @if (!sidebarStyles) {
     @if (link) {
-        <a [routerLink]="link" class="link">
-            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img">
+        <a [routerLink]="link" class="link" [class.hide-underline]="hideUnderline" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: exactMatch }">
+            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">
             <p class="texto">{{ texto }}</p>
         </a>    
     } @else {
-        <a class="link" (click)="onClick()">
-            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img">
+        <a class="link" [class.hide-underline]="hideUnderline" (click)="onClick()">
+            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">
             <p class="texto">{{ texto }}</p>
         </a>
     }
@@ -15,15 +15,18 @@
         <a 
         [routerLink]="link" 
         [class]="customClass"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: exactMatch }"
         [ngClass]="{
             'full-width': fullWidth,
             'bordered': showBorder,
+            'hide-underline': hideUnderline
         }"
         [ngStyle]="{
             'height': customHeight
         }"
         >
-            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img">
+            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">
             <p class="texto">{{ texto }}</p>
         </a>   
     } @else {
@@ -33,13 +36,14 @@
         [ngClass]="{
             'full-width': fullWidth,
             'bordered': showBorder,
+            'hide-underline': hideUnderline
         }"
         [ngStyle]="{
             'height': customHeight
         }"
         (click)="onClick()"
         >
-            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img">
+            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">
             <p class="texto">{{ texto }}</p>
         </button>   
     }

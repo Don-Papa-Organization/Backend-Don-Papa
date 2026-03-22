@@ -49,6 +49,25 @@
   color: $color-info;
 }
 
+.payment-summary--client-premium {
+  border-radius: 12px;
+  border: 1px solid rgba($color-gold, 0.4);
+  background: linear-gradient(140deg, rgba(31, 24, 18, 0.95), rgba(12, 9, 7, 0.98));
+  box-shadow: 0 10px 20px rgba($color-black, 0.35);
+
+  .payment-summary__value {
+    text-shadow: 0 0 10px rgba($color-black, 0.35);
+  }
+
+  .payment-summary__value--total {
+    background: linear-gradient(180deg, #f4de87, #d4af37 58%, #b8860b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+  }
+}
+
 @media (max-width: 900px) {
   .payment-summary {
     grid-template-columns: 1fr;

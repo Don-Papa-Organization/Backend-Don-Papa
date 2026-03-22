@@ -1,0 +1,169 @@
+<section
+  *ngIf="visible"
+  class="modal-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="product-modal-title"
+  aria-describedby="product-modal-description"
+  (click)="onOverlayClick($event)"
+>
+  <article #modalPanel class="modal-panel" tabindex="-1" (click)="$event.stopPropagation()">
+    <button
+      #closeButton
+      type="button"
+      class="modal-close"
+      aria-label="Cerrar detalle de producto"
+      (click)="close()"
+    >
+      ×
+    </button>
+
+    <div *ngIf="state === 'loading'" class="modal-state">
+      <p>Cargando detalle premium...</p>
+    </div>
+
+    <div *ngIf="state === 'error'" class="modal-state modal-state--error">
+      <p>{{ feedbackMessage || 'No se pudo cargar el detalle del producto.' }}</p>
+      <button type="button" class="btn-secondary" (click)="close()">Cerrar</button>
+    </div>
+
+    <div *ngIf="state !== 'loading' && state !== 'error' && producto" class="modal-content">
+      <div class="modal-main">
+        <section class="image-gallery" aria-label="Galería de imágenes del producto">
+          <div
+            class="image-gallery__main"
+            (touchstart)="onTouchStart($event)"
+            (touchend)="onTouchEnd($event)"
+          >
+            <button
+              *ngIf="galleryImages.length > 1"
+              class="gallery-nav gallery-nav--prev"
+              type="button"
+              aria-label="Imagen anterior"
+              (click)="prevImage()"
+            >
+              ‹
+            </button>
+
+            <img
+              [src]="currentImage"
+              [alt]="producto.nombre"
+              loading="lazy"
+              (click)="openLightbox()"
+            />
+
+            <button
+              *ngIf="galleryImages.length > 1"
+              class="gallery-nav gallery-nav--next"
+              type="button"
+              aria-label="Siguiente imagen"
+              (click)="nextImage()"
+            >
+              ›
+            </button>
+          </div>
+
+          <div class="image-gallery__thumbs" *ngIf="galleryImages.length > 1">
+            <button
+              type="button"
+              *ngFor="let image of galleryImages; let i = index"
+              class="thumb"
+              [class.thumb--active]="i === selectedImageIndex"
+              [attr.aria-label]="'Seleccionar imagen ' + (i + 1)"
+              (click)="selectImage(i)"
+            >
+              <img [src]="image" [alt]="producto.nombre + ' miniatura ' + (i + 1)" loading="lazy" />
+            </button>
+          </div>
+        </section>
+
+        <section class="product-info" aria-live="polite">
+          <h2 id="product-modal-title">{{ producto.nombre }}</h2>
+
+          <div class="pricing">
+            <p class="price-current">
+              {{ (tienePromocion && precioPromocional !== null ? precioPromocional : producto.precio) | number:'1.0-0' }} COP
+            </p>
+            <p class="price-original" *ngIf="tienePromocion && precioPromocional !== null">
+              antes {{ producto.precio | number:'1.0-0' }} COP
+            </p>
+            <span class="discount-badge" *ngIf="tienePromocion && porcentajeDescuento !== null">
+              -{{ porcentajeDescuento }}%
+            </span>
+          </div>
+
+          <div class="stock" [class.stock--low]="isLowStock" [class.stock--empty]="producto.stockActual <= 0">
+            <span *ngIf="producto.stockActual > 0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg>
+              Stock: {{ producto.stockActual }} unidades
+            </span>
+            <span *ngIf="producto.stockActual <= 0">Sin stock disponible</span>
+            <small *ngIf="isLowStock">Últimas unidades disponibles</small>
+          </div>
+
+          <p id="product-modal-description" class="description">
+            {{ producto.descripcion || 'Sin descripción adicional por el momento.' }}
+          </p>
+
+          <p class="category" *ngIf="producto.idCategoria">Categoría: #{{ producto.idCategoria }}</p>
+
+          <div class="quantity-row">
+            <label for="qty-input">Cantidad</label>
+            <div class="qty-control" role="group" aria-label="Selector de cantidad">
+              <button type="button" (click)="decreaseQuantity()" aria-label="Disminuir cantidad">−</button>
+              <input
+                id="qty-input"
+                type="number"
+                min="1"
+                [max]="producto.stockActual"
+                [value]="cantidad"
+                (input)="onQuantityInput(($any($event.target)).value)"
+                aria-label="Cantidad de producto"
+              />
+              <button type="button" (click)="increaseQuantity()" aria-label="Aumentar cantidad">+</button>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="!canAddToCart"
+              (click)="addToCart()"
+            >
+              {{ state === 'adding-to-cart' ? 'Agregando...' : 'Agregar al carrito' }}
+            </button>
+          </div>
+
+          <p class="feedback" *ngIf="feedbackMessage" [class.feedback--error]="feedbackType === 'error'">
+            {{ feedbackMessage }}
+          </p>
+        </section>
+      </div>
+
+      <section class="related" *ngIf="relatedProducts.length > 0" aria-label="Productos relacionados">
+        <h3>Productos relacionados</h3>
+        <div class="related-grid">
+          <button
+            type="button"
+            *ngFor="let related of relatedProducts"
+            class="related-card"
+            (click)="onRelatedClick(related)"
+          >
+            <img [src]="relatedImageUrl(related)" [alt]="related.nombre" loading="lazy" />
+            <div class="related-card__info">
+              <p class="related-card__name">{{ related.nombre }}</p>
+              <p class="related-card__price">{{ related.precio | number:'1.0-0' }} COP</p>
+            </div>
+          </button>
+        </div>
+      </section>
+    </div>
+  </article>
+
+  <div class="lightbox" *ngIf="lightboxOpen" (click)="closeLightbox()">
+    <img [src]="currentImage" [alt]="producto?.nombre || 'Imagen ampliada'" />
+  </div>
+</section>

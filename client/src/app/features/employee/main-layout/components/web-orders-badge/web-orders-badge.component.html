@@ -1,0 +1,82 @@
+<div class="web-orders-badge">
+  <button class="badge-btn" (click)="toggleDropdown()" [class.active]="isOpen">
+    <img src="icons/payment.svg" alt="" />
+    <span>Pedidos</span>
+    @if (inProgressCount > 0) {
+      <span class="badge-count">{{ inProgressCount }}</span>
+    }
+  </button>
+
+  @if (isOpen) {
+    <div class="dropdown">
+      <div class="dropdown__header">
+        <span class="dropdown__title">Pedidos Web</span>
+        @if (loading) {
+          <span class="dropdown__spinner"></span>
+        }
+      </div>
+
+      @if (error) {
+        <div class="dropdown__error">{{ error }}</div>
+      }
+
+      @if (!error && !loading) {
+        @if (sinConfirmar.length === 0 && pendiente.length === 0) {
+          <div class="dropdown__empty">No hay pedidos en curso</div>
+        }
+
+        @if (sinConfirmar.length > 0) {
+          <div class="dropdown__section">
+            <span class="dropdown__section-label">Sin Confirmar ({{ sinConfirmar.length }})</span>
+            @for (pedido of sinConfirmar; track pedido.idPedido) {
+              <div class="dropdown__item">
+                <div class="item-info">
+                  <span class="item-id">#{{ pedido.idPedido }}</span>
+                  <span class="item-date">{{ formatearFecha(pedido.fechaPedido) }}</span>
+                </div>
+                <div class="item-actions">
+                  @for (sig of getSiguientesEstados(pedido.estado); track sig.value) {
+                    <button
+                      class="btn-mini"
+                      [class.btn-mini--confirm]="sig.value === 'pendiente' || sig.value === 'entregado'"
+                      [class.btn-mini--cancel]="sig.value === 'cancelado'"
+                      [disabled]="isUpdating(pedido.idPedido)"
+                      (click)="cambiarEstado(pedido.idPedido, sig.value)">
+                      {{ sig.label }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (pendiente.length > 0) {
+          <div class="dropdown__section">
+            <span class="dropdown__section-label">Pendientes ({{ pendiente.length }})</span>
+            @for (pedido of pendiente; track pedido.idPedido) {
+              <div class="dropdown__item">
+                <div class="item-info">
+                  <span class="item-id">#{{ pedido.idPedido }}</span>
+                  <span class="item-date">{{ formatearFecha(pedido.fechaPedido) }}</span>
+                </div>
+                <div class="item-actions">
+                  @for (sig of getSiguientesEstados(pedido.estado); track sig.value) {
+                    <button
+                      class="btn-mini"
+                      [class.btn-mini--confirm]="sig.value === 'pendiente' || sig.value === 'entregado'"
+                      [class.btn-mini--cancel]="sig.value === 'cancelado'"
+                      [disabled]="isUpdating(pedido.idPedido)"
+                      (click)="cambiarEstado(pedido.idPedido, sig.value)">
+                      {{ sig.label }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

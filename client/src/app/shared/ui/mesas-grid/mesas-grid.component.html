@@ -1,0 +1,23 @@
+<div class="mesas-grid-container">
+  <div class="tipo-grupo" *ngFor="let tipo of tiposOrden">
+    <div *ngIf="mesasAgrupadas[tipo] && mesasAgrupadas[tipo].length > 0">
+      <h2 class="tipo-titulo">{{ tipo }}</h2>
+      
+      <div class="mesas-grid">
+        <button
+          *ngFor="let mesa of mesasAgrupadas[tipo]"
+          type="button"
+          class="mesa-card"
+          [ngClass]="getEstadoClass(mesa.estado)"
+          [disabled]="!isClickeable(mesa)"
+          (click)="onClickMesa(mesa)"
+          [attr.aria-label]="'Mesa ' + mesa.numero + ' - ' + mesa.tipo"
+        >
+          <div class="mesa-numero">#{{ mesa.numero }}</div>
+          <div class="mesa-tipo">{{ mesa.tipo }}</div>
+          <div class="mesa-estado">{{ getEstadoLabel(mesa.estado) }}</div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

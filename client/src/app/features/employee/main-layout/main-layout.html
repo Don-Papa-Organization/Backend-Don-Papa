@@ -3,8 +3,10 @@
   [class.table-sale-mode]="isTableSaleRoute">
 
   <ng-container *ngIf="!isPosMode">
-    <app-header>
+    <app-header [mode]="'employee'">
       <nav class="header-nav" aria-label="Navegación principal empleado">
+        
+
         @for (item of menuItems; track item.texto) {
           <a
             class="header-nav__item"
@@ -16,13 +18,54 @@
         }
       </nav>
 
-      <app-ui-icon-button texto="Salir" urlIcono="icons/iconoSalir.svg" (action)="onLogout()">
-      </app-ui-icon-button>
+      <div class="header-actions">
+        <div class="web-orders-badge" (click)="toggleWebPedidosDropdown()" [class.active]="webPedidosDropdownOpen">
+          <img src="icons/payment.svg" alt="" />
+          <span class="badge-count" *ngIf="webPedidosCount > 0">{{ webPedidosCount }}</span>
+          <div class="web-orders-dropdown" *ngIf="webPedidosDropdownOpen" (click)="$event.stopPropagation()">
+            <div class="dropdown-header">
+              <span>Pedidos Web Activos</span>
+              <button class="btn-close" (click)="closeWebPedidosDropdown()">x</button>
+            </div>
+            <div class="dropdown-body">
+              <div *ngIf="webPedidosActivos.length === 0" class="dropdown-empty">
+                No hay pedidos web activos
+              </div>
+              <div *ngFor="let pedido of webPedidosActivos" class="dropdown-item">
+                <div class="dropdown-item__header">
+                  <span class="item-id">#{{ pedido.idPedido }}</span>
+                  <span class="item-date">{{ formatearFechaCorta(pedido.fechaPedido) }}</span>
+                  <span class="badge" [ngClass]="getBadgeClassWeb(pedido.estado)">{{ pedido.estado === 'sin_confirmar' ? 'Sin Confirmar' : 'Pendiente' }}</span>
+                </div>
+                <div class="dropdown-item__meta">
+                  <span class="item-total">{{ formatoMoneda(pedido.total) }}</span>
+                  <span *ngIf="pedido.tipoAtencion">{{ pedido.tipoAtencion === 'local' ? 'Local' : 'Para llevar' }}</span>
+                </div>
+                <div class="dropdown-item__actions">
+                  <ng-container *ngFor="let sig of getSiguientesEstados(pedido.estado)">
+                    <button
+                      class="btn-action"
+                      [class.btn-action--confirm]="sig.value === 'pendiente' || sig.value === 'entregado'"
+                      [class.btn-action--cancel]="sig.value === 'cancelado'"
+                      [disabled]="isUpdatingWebPedido(pedido.idPedido)"
+                      (click)="cambiarEstadoWebPedido(pedido.idPedido, sig.value)">
+                      {{ sig.label }}
+                    </button>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <app-ui-icon-button texto="Salir" urlIcono="icons/iconoSalir.svg" (action)="onLogout()">
+        </app-ui-icon-button>
+      </div>
     </app-header>
   </ng-container>
 
   <ng-container *ngIf="isPosMode">
-    <app-header>
+    <app-header [mode]="'employee'">
       <ng-container *ngIf="!isTableSaleRoute; else tableSaleHeader">
         <nav class="header-nav header-nav--pos" aria-label="Navegación POS">
           @for (item of menuItems; track item.texto) {
@@ -36,7 +79,46 @@
           }
         </nav>
 
-        <div class="pos-topbar__right">
+        <div class="header-actions header-actions--pos">
+          <div class="web-orders-badge web-orders-badge--pos" (click)="toggleWebPedidosDropdown()" [class.active]="webPedidosDropdownOpen">
+            <img src="icons/payment.svg" alt="" />
+            <span class="badge-count" *ngIf="webPedidosCount > 0">{{ webPedidosCount }}</span>
+            <div class="web-orders-dropdown web-orders-dropdown--pos" *ngIf="webPedidosDropdownOpen" (click)="$event.stopPropagation()">
+              <div class="dropdown-header">
+                <span>Pedidos Web Activos</span>
+                <button class="btn-close" (click)="closeWebPedidosDropdown()">x</button>
+              </div>
+              <div class="dropdown-body">
+                <div *ngIf="webPedidosActivos.length === 0" class="dropdown-empty">
+                  No hay pedidos web activos
+                </div>
+                <div *ngFor="let pedido of webPedidosActivos" class="dropdown-item">
+                  <div class="dropdown-item__header">
+                    <span class="item-id">#{{ pedido.idPedido }}</span>
+                    <span class="item-date">{{ formatearFechaCorta(pedido.fechaPedido) }}</span>
+                    <span class="badge" [ngClass]="getBadgeClassWeb(pedido.estado)">{{ pedido.estado === 'sin_confirmar' ? 'Sin Confirmar' : 'Pendiente' }}</span>
+                  </div>
+                  <div class="dropdown-item__meta">
+                    <span class="item-total">{{ formatoMoneda(pedido.total) }}</span>
+                    <span *ngIf="pedido.tipoAtencion">{{ pedido.tipoAtencion === 'local' ? 'Local' : 'Para llevar' }}</span>
+                  </div>
+                  <div class="dropdown-item__actions">
+                    <ng-container *ngFor="let sig of getSiguientesEstados(pedido.estado)">
+                      <button
+                        class="btn-action"
+                        [class.btn-action--confirm]="sig.value === 'pendiente' || sig.value === 'entregado'"
+                        [class.btn-action--cancel]="sig.value === 'cancelado'"
+                        [disabled]="isUpdatingWebPedido(pedido.idPedido)"
+                        (click)="cambiarEstadoWebPedido(pedido.idPedido, sig.value)">
+                        {{ sig.label }}
+                      </button>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <app-ui-only-icon-button
             texto="Salir"
             urlIcono="icons/iconoSalir.svg"

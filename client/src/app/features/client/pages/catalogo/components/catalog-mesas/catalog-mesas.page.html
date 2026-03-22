@@ -1,0 +1,247 @@
+<div class="mesas-container">
+  <!-- BARRA DE FILTRO (compartida mapa + cards) -->
+  <div class="filter-bar-wrapper" *ngIf="!isLoading">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Fecha</label>
+        <input type="date" [(ngModel)]="fechaFiltro" [min]="minDate" class="filter-input" />
+      </div>
+      <div class="filter-group">
+        <label>Hora</label>
+        <select [(ngModel)]="horaFiltro" class="filter-select">
+          <option value="">--:--</option>
+          <option *ngFor="let h of horasDisponibles" [value]="h">{{ h }}</option>
+        </select>
+      </div>
+      <button 
+        class="filter-btn"
+        (click)="aplicarFiltro()"
+        [disabled]="!fechaFiltro || !horaFiltro"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Ver disponibilidad
+      </button>
+    </div>
+
+    <!-- Info bar si ya se buscó -->
+    <div class="filter-result-info" *ngIf="mesas.length > 0 && fechaFiltro && horaFiltro && !isEmpty">
+      <span>{{ mesas.length }} mesa(s) disponible(s) para el {{ fechaFiltro }} a las {{ horaFiltro }}</span>
+    </div>
+  </div>
+
+  <div class="mesas-tabs">
+    <app-ui-tabs
+      visualTheme="client-premium"
+      [tabItems]="viewTabs"
+      [tabActiva]="vistaActiva"
+      (tabChange)="onVistaChange($event)"
+    ></app-ui-tabs>
+  </div>
+
+  <div class="floor-wrap" *ngIf="vistaActiva === 'mapa'">
+    <div class="floor">
+      <div class="layout-grid">
+
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Cargando mesas...</p>
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="error && !isLoading" class="error-state">
+        <p class="error-message"> {{ error }}</p>
+        <button (click)="cargarMesas()" class="btn-retry">Reintentar</button>
+      </div>
+
+      <!-- Empty -->
+      <div *ngIf="isEmpty && !isLoading && !error" class="empty-state">
+        <p class="empty-message">No hay mesas disponibles en este momento.</p>
+      </div>
+
+      <!-- Fila Superior: VIP + Entrada + Salon -->
+      <div class="top-row" *ngIf="!isLoading && !error && !isEmpty">
+
+        <!-- Zona VIP -->
+        <div class="zone zone--vip">
+          <span class="zone__label">Zona VIP</span>
+          <div class="zone__header">
+            <span class="zone__badge zone__badge--vip">
+              {{ grupos.vip.length }} Mesas
+            </span>
+          </div>
+          <div class="zone__grid zone__grid--vip">
+            <div *ngFor="let mesa of grupos.vip" 
+                 class="mesa-card"
+                 [style.border-left-color]="obtenerColorEstado(mesa.estado)"
+                 [class.mesa-card--clickeable]="mesa.estado === 'Disponible'"
+                 (click)="onMesaClick(mesa)">
+              <div class="mesa-card__header">
+                <h3>Mesa #{{ mesa.numero }}</h3>
+                <span class="tipo-badge">{{ mesa.tipo }}</span>
+              </div>
+              <div class="mesa-card__content">
+                <p class="detail-label">{{ obtenerLabelEstado(mesa.estado) }}</p>
+              </div>
+              <div class="mesa-card__footer">
+                <p class="mesa-id">ID: {{ mesa.idMesa }}</p>
+                <p class="mesa-estado-dot" [style.background-color]="obtenerColorEstado(mesa.estado)"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Referencia de entrada -->
+        <div class="entrada-espacio">
+          <span class="ref-label">Acceso Principal / Entrada</span>
+        </div>
+
+        <!-- Zona Salon -->
+        <div class="zone zone--salon">
+          <span class="zone__label">Salon Social</span>
+          <div class="zone__header">
+            <span class="zone__badge zone__badge--salon">
+              {{ grupos.salon.length }} Mesas
+            </span>
+          </div>
+          <div class="zone__grid">
+            <div *ngFor="let mesa of grupos.salon" 
+                 class="mesa-card"
+                 [style.border-left-color]="obtenerColorEstado(mesa.estado)"
+                 [class.mesa-card--clickeable]="mesa.estado === 'Disponible'"
+                 (click)="onMesaClick(mesa)">
+              <div class="mesa-card__header">
+                <h3>Mesa #{{ mesa.numero }}</h3>
+                <span class="tipo-badge">{{ mesa.tipo }}</span>
+              </div>
+              <div class="mesa-card__content">
+                <p class="detail-label">{{ obtenerLabelEstado(mesa.estado) }}</p>
+              </div>
+              <div class="mesa-card__footer">
+                <p class="mesa-id">ID: {{ mesa.idMesa }}</p>
+                <p class="mesa-estado-dot" [style.background-color]="obtenerColorEstado(mesa.estado)"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Fila Inferior: Barra -->
+      <div class="bottom-row" *ngIf="!isLoading && !error && !isEmpty">
+        <div class="zone zone--barra">
+          <span class="zone__label">Barra</span>
+          <div class="zone__header">
+            <span class="zone__badge zone__badge--barra">
+              {{ grupos.barra.length }} Mesas
+            </span>
+          </div>
+          <div class="zone__grid zone__grid--barra">
+            <div *ngFor="let mesa of grupos.barra" 
+                 class="mesa-card"
+                 [style.border-left-color]="obtenerColorEstado(mesa.estado)"
+                 [class.mesa-card--clickeable]="mesa.estado === 'Disponible'"
+                 (click)="onMesaClick(mesa)">
+              <div class="mesa-card__header">
+                <h3>Mesa #{{ mesa.numero }}</h3>
+                <span class="tipo-badge">{{ mesa.tipo }}</span>
+              </div>
+              <div class="mesa-card__content">
+                <p class="detail-label">{{ obtenerLabelEstado(mesa.estado) }}</p>
+              </div>
+              <div class="mesa-card__footer">
+                <p class="mesa-id">ID: {{ mesa.idMesa }}</p>
+                <p class="mesa-estado-dot" [style.background-color]="obtenerColorEstado(mesa.estado)"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="cards-view" *ngIf="vistaActiva === 'cards'">
+    <div class="cards-view__state loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Cargando mesas...</p>
+    </div>
+
+    <div class="cards-view__state error-state" *ngIf="error && !isLoading">
+      <p class="error-message">{{ error }}</p>
+      <button (click)="cargarMesas()" class="btn-retry">Reintentar</button>
+    </div>
+
+    <div class="cards-view__state empty-state" *ngIf="isEmpty && !isLoading && !error">
+      <p class="empty-message">No hay mesas disponibles en este momento.</p>
+    </div>
+
+    <div class="filter-chips" *ngIf="!isLoading && !error && !isEmpty">
+      <button 
+        *ngFor="let filtro of filtrosZona"
+        class="chip"
+        [class.active]="zonaFiltro === filtro.id"
+        (click)="filtrarPorZona(filtro.id)"
+      >
+        {{ filtro.label }}
+      </button>
+    </div>
+
+    <div class="cards-view__grid" *ngIf="!isLoading && !error && !isEmpty">
+      <div
+        *ngFor="let mesa of mesasFiltradas"
+        class="mesa-card"
+        [class.mesa-card--clickeable]="mesa.estado === 'Disponible'"
+        (click)="mesa.estado === 'Disponible' && onCardClick(mesa)"
+      >
+        <div class="mesa-card__header">
+          <h3>Mesa #{{ mesa.numero }}</h3>
+          <span class="tipo-badge" [ngClass]="'tipo-badge--' + mesa.tipo.toLowerCase()">{{ mesa.tipo }}</span>
+        </div>
+        <div class="mesa-card__content">
+          <span class="estado-badge" [ngClass]="'estado-badge--' + mesa.estado.toLowerCase().replace(' ', '-')">
+             <div class="dot"></div> {{ obtenerLabelEstado(mesa.estado) }}
+          </span>
+        </div>
+        <div class="mesa-card__footer">
+          <p class="mesa-id">ID: {{ mesa.idMesa }}</p>
+          <button
+            *ngIf="mesa.estado === 'Disponible'"
+            class="btn-reservar"
+            (click)="onCardClick(mesa); $event.stopPropagation()"
+          >
+            Reservar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE RESERVA -->
+  <app-ui-reservation-modal
+    *ngIf="mostrarModalReserva && mesaSeleccionadaModal"
+    [mesa]="mesaSeleccionadaModal"
+    [fecha]="fechaFiltro"
+    [horaInicio]="horaFiltro"
+    [confirmando]="confirmandoReserva"
+    (cerrar)="cerrarModalReserva()"
+    (confirmar)="confirmarReservaModal($event)"
+    (fechaCambiada)="fechaFiltro = $event"
+    (horaInicioCambiada)="horaFiltro = $event"
+  ></app-ui-reservation-modal>
+
+  <app-ui-toast visualTheme="client-premium"
+    [visible]="mostrarToastPerfil"
+    [message]="mensajePerfilIncompleto"
+    tone="warning"
+    actionLabel="Ir a Cuenta"
+    closeLabel="Cerrar"
+    (action)="router.navigate(['/client/perfil'])"
+    (close)="mostrarToastPerfil = false"
+  ></app-ui-toast>
+</div>
+

@@ -1,0 +1,84 @@
+@use '../../../styles/variables' as *;
+
+.ui-toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 120;
+  width: min(420px, calc(100vw - 2rem));
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 0.9rem;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(3px);
+
+  &--warning {
+    background: rgba(38, 30, 12, 0.96);
+    border-color: rgba($color-gold, 0.55);
+  }
+
+  &--success {
+    background: rgba(15, 45, 28, 0.96);
+    border-color: rgba($color-success, 0.55);
+  }
+
+  &--error {
+    background: rgba(55, 18, 18, 0.96);
+    border-color: rgba($color-danger, 0.55);
+  }
+
+  &__message {
+    margin: 0;
+    color: $color-white;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  &__actions {
+    margin-top: 0.7rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+
+  &__btn {
+    border: none;
+    border-radius: 8px;
+    min-height: 34px;
+    padding: 0 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+
+    &--ghost {
+      background: rgba($color-white, 0.08);
+      color: rgba($color-white, 0.9);
+      border: 1px solid rgba($color-white, 0.18);
+    }
+
+    &--primary {
+      background: $color-gold;
+      color: #1f1f1f;
+    }
+  }
+
+  &--client-premium {
+    border-radius: 12px;
+    border-color: rgba($color-gold, 0.65);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba($color-white, 0.08);
+
+    .ui-toast__message {
+      text-shadow: 0 0 8px rgba($color-gold, 0.18);
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .ui-toast {
+    right: 0.6rem;
+    left: 0.6rem;
+    bottom: 0.6rem;
+    width: auto;
+  }
+}

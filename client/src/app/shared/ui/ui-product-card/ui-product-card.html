@@ -1,10 +1,68 @@
-<article class="product-card" [routerLink]="link">
-    <img src="" alt="">
-    <main class="card-content">
-        
-        <img [src]="urlImagen" alt="" class="imagen">
-        <p class="price">{{precio}} COP</p>
-        <p class="name">{{nombre}}</p>
-        <p class="actualStock">{{stockActual}}</p>
+<article
+    class="product-card"
+    [class.product-card--client-premium]="visualVariant === 'client-premium'"
+    [class.product-card--featured]="visualVariant === 'featured'"
+    [class.product-card--horizontal]="visualVariant === 'horizontal'"
+    [class.product-card--compact]="visualVariant === 'compact'"
+    [class.product-card--out-of-stock]="isOutOfStock"
+    [class.product-card--in-cart]="inCart"
+    [class.product-card--loading]="loading"
+    [routerLink]="link || null"
+    (click)="onCardClick()"
+>
+    <div class="product-card__skeleton" *ngIf="loading">
+        <div class="line shimmer"></div>
+        <div class="line line--small shimmer"></div>
+        <div class="line line--small shimmer"></div>
+    </div>
+
+    <main class="card-content" *ngIf="!loading">
+        <div class="media-wrap">
+            <img [src]="urlImagen" [alt]="nombre" class="imagen product-image">
+
+            <div class="badges">
+                <span class="badge badge--category" *ngIf="nombreCategoria">{{ nombreCategoria }}</span>
+                <span class="badge badge--promo" *ngIf="tienePromocion && porcentajeDescuento !== null">-{{ porcentajeDescuento }}%</span>
+                <span class="badge badge--new" *ngIf="esNuevo">Nuevo</span>
+                <span class="badge badge--featured" *ngIf="esFeatured">Destacado</span>
+                <span class="badge badge--out-of-stock" *ngIf="isOutOfStock">Agotado</span>
+            </div>
+
+            <div class="quick-actions">
+                <button type="button" class="quick-action" aria-label="Vista rapida" (click)="onQuickView($event)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+                <button type="button" class="quick-action" aria-label="Agregar al carrito" (click)="onAddToCart($event)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                  </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <p class="name">{{ nombre }}</p>
+
+            <p class="rating" *ngIf="rating !== undefined && rating !== null">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" style="display:inline-block;vertical-align:middle;margin-right:2px">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              {{ rating | number:'1.1-1' }}
+            </p>
+
+            <div class="price-block" [class.price-block--promo]="tienePromocion && precioPromocional !== null">
+                <p class="price price--original" *ngIf="tienePromocion && precioPromocional !== null">{{ precio | number:'1.0-0' }} COP</p>
+                <p class="price price--promo" *ngIf="tienePromocion && precioPromocional !== null">{{ precioPromocional | number:'1.0-0' }} COP</p>
+                <p class="price" *ngIf="!tienePromocion || precioPromocional === null">{{ precio | number:'1.0-0' }} COP</p>
+            </div>
+
+            <p class="actualStock" *ngIf="!isOutOfStock">Disponible: {{ stockActual }}</p>
+            <p class="actualStock actualStock--empty" *ngIf="isOutOfStock">Sin stock</p>
+        </div>
     </main>
 </article>

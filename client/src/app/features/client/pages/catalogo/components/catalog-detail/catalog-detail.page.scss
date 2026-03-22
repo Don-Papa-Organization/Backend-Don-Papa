@@ -1,0 +1,134 @@
+@use '../../../../../../styles/variables' as *;
+@use '../../../../../../styles/shared-states' as *;
+
+.detail-page {
+  min-height: 100vh;
+  background: $color-bg-primary;
+  padding: 0 1.2rem 1.2rem;
+}
+
+.state {
+  text-align: center;
+  color: $color-white;
+}
+
+.state--error {
+  color: $color-danger;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.detail-card {
+  @extend %card-block;
+  margin: 0 auto;
+  max-width: 1000px;
+  border: 1px solid $color-gold-border-medium;
+  border-radius: 8px;
+  background: rgba($color-black, 0.24);
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.image-block {
+  margin: 0;
+
+  img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid $color-gold-border-medium;
+    object-fit: cover;
+    max-height: 420px;
+  }
+}
+
+.content-block {
+  color: $color-white;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 100;
+  }
+}
+
+.price-block {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.price-original {
+  margin: 0;
+  color: rgba($color-white, 0.6);
+  text-decoration: line-through;
+}
+
+.price-promo {
+  margin: 0;
+  color: $color-success;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.price-normal {
+  margin: 0;
+  color: $color-gold;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.discount-badge {
+  background-color: $color-gold;
+  color: $color-bg-primary;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  padding: 0.15rem 0.55rem;
+}
+
+.description {
+  margin: 0;
+  color: $color-white;
+  line-height: 1.45;
+}
+
+.stock {
+  margin: 0;
+  color: $color-success;
+}
+
+.stock--empty {
+  color: $color-danger;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .detail-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-page {
+    padding: 0 1rem 1.2rem;
+  }
+
+  .content-block h1 {
+    font-size: 1.5rem;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}

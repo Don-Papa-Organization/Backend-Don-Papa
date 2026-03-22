@@ -1,5 +1,5 @@
 <div class="layout" [class.sidebar-collapsed]="isSidebarCollapsed">
-    <app-header>
+    <app-header [mode]="'admin'">
         <app-ui-icon-button texto="Asistente" urlIcono="icons/iconoAgente.svg" (action)="toggleAgentPanel()">
         </app-ui-icon-button>
         <app-ui-icon-button texto="Salir" urlIcono="icons/iconoSalir.svg" (action)="onLogout()">

@@ -1,10 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, HostListener } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subscription, interval } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import * as AuthActions from '../../../domain/auth/state/auth.actions';
+import { Pedido, EstadoPedido } from '../../../domain/orders/models/pedido.model';
 import { MenuItem } from '../../../shared/interfaces/menu-item';
+import { OrdersApi } from '../../../services/apis/orders.api';
 import { PosPreferencesService } from '../pages/orders/services/pos-preferences.service';
 import { TableSaleHeaderService } from '../pages/orders/services/table-sale-header.service';
 
@@ -19,7 +22,8 @@ export class MainLayout implements OnInit, OnDestroy {
     private store: Store,
     private router: Router,
     private posPreferences: PosPreferencesService,
-    private tableSaleHeader: TableSaleHeaderService
+    private tableSaleHeader: TableSaleHeaderService,
+    private ordersApi: OrdersApi
   ) {}
 
   isPosMode = false;
@@ -29,16 +33,23 @@ export class MainLayout implements OnInit, OnDestroy {
   isTableSaleRoute = false;
   tableSaleTitle = '';
 
+  webPedidos: Pedido[] = [];
+  webPedidosLoading = false;
+  webPedidosDropdownOpen = false;
+  webPedidosUpdatingId: number | null = null;
+
   private routerSub?: Subscription;
   private autoPrintSub?: Subscription;
   private tableSaleHeaderSub?: Subscription;
   private paraLlevarSub?: Subscription;
+  private pollSub?: Subscription;
 
   menuItems: MenuItem[] = [
     { texto: 'POS', urlIcono: 'icons/iconoMesas.svg', link: '/employee/orders' },
     { texto: 'Cuadre', urlIcono: 'icons/iconoReportes.svg', link: '/employee/cuadre-caja' },
     { texto: 'Perfil', urlIcono: 'icons/profile.svg', link: '/employee/users' },
-    { texto: 'Eventos', urlIcono: 'icons/calendar-yellow.svg', link: '/employee/events-promotions' }
+    { texto: 'Eventos', urlIcono: 'icons/calendar-yellow.svg', link: '/employee/events-promotions' },
+    { texto: 'Pedidos', urlIcono: 'icons/payment.svg', link: '/employee/pedidos-web' }
   ];
 
   ngOnInit(): void {
@@ -60,6 +71,9 @@ export class MainLayout implements OnInit, OnDestroy {
     this.paraLlevarSub = this.tableSaleHeader.paraLlevar$.subscribe(value => {
       this.paraLlevar = value;
     });
+
+    this.cargarWebPedidos();
+    this.pollSub = interval(30000).subscribe(() => this.cargarWebPedidos());
   }
 
   ngOnDestroy(): void {
@@ -67,6 +81,7 @@ export class MainLayout implements OnInit, OnDestroy {
     this.autoPrintSub?.unsubscribe();
     this.tableSaleHeaderSub?.unsubscribe();
     this.paraLlevarSub?.unsubscribe();
+    this.pollSub?.unsubscribe();
   }
 
   private checkPosMode(url: string): void {
@@ -87,10 +102,7 @@ export class MainLayout implements OnInit, OnDestroy {
 
   private extractTableId(url: string): number | null {
     const match = url.match(/\/employee\/orders\/table\/(\d+)/);
-    if (!match) {
-      return null;
-    }
-
+    if (!match) return null;
     const idMesa = Number(match[1]);
     return Number.isFinite(idMesa) && idMesa > 0 ? idMesa : null;
   }
@@ -107,8 +119,6 @@ export class MainLayout implements OnInit, OnDestroy {
     this.router.navigate(['/employee/orders']);
   }
 
-  
-
   onAutoPrintChange(value: boolean): void {
     this.posPreferences.setAutoPrint(value);
   }
@@ -119,5 +129,115 @@ export class MainLayout implements OnInit, OnDestroy {
 
   onReloadTableSale(): void {
     this.tableSaleHeader.requestReload();
+  }
+
+  get webPedidosActivos(): Pedido[] {
+    return this.webPedidos.filter(p =>
+      p.estado === EstadoPedido.SIN_CONFIRMAR || p.estado === EstadoPedido.PENDIENTE
+    );
+  }
+
+  get webPedidosCount(): number {
+    return this.webPedidosActivos.length;
+  }
+
+  cargarWebPedidos(): void {
+    this.webPedidosLoading = true;
+    this.ordersApi.listAllOrders().subscribe({
+      next: (response) => {
+        this.webPedidosLoading = false;
+        if (response.success && response.data) {
+          this.webPedidos = response.data.filter((p: Pedido) => p.canalVenta === 'web');
+        }
+      },
+      error: () => {
+        this.webPedidosLoading = false;
+      }
+    });
+  }
+
+  toggleWebPedidosDropdown(): void {
+    this.webPedidosDropdownOpen = !this.webPedidosDropdownOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.web-orders-badge')) {
+      this.webPedidosDropdownOpen = false;
+    }
+  }
+
+  closeWebPedidosDropdown(): void {
+    this.webPedidosDropdownOpen = false;
+  }
+
+  getSiguientesEstados(estado: string): Array<{ value: string; label: string }> {
+    switch (estado) {
+      case 'sin_confirmar':
+        return [
+          { value: 'pendiente', label: 'Confirmar' },
+          { value: 'cancelado', label: 'Cancelar' }
+        ];
+      case 'pendiente':
+        return [
+          { value: 'entregado', label: 'Marcar Entregado' },
+          { value: 'cancelado', label: 'Cancelar' }
+        ];
+      default:
+        return [];
+    }
+  }
+
+  cambiarEstadoWebPedido(idPedido: number, nuevoEstado: string): void {
+    if (this.webPedidosUpdatingId !== null) return;
+    this.webPedidosUpdatingId = idPedido;
+
+    this.ordersApi.updateOrderStatus(idPedido, { nuevoEstado: nuevoEstado as 'sin_confirmar' | 'pendiente' | 'entregado' | 'cancelado' })
+      .subscribe({
+        next: (response) => {
+          this.webPedidosUpdatingId = null;
+          if (response.success && response.data) {
+            const idx = this.webPedidos.findIndex(p => p.idPedido === idPedido);
+            if (idx !== -1) {
+              this.webPedidos[idx] = { ...this.webPedidos[idx], ...response.data };
+            }
+          }
+        },
+        error: () => {
+          this.webPedidosUpdatingId = null;
+        }
+      });
+  }
+
+  isUpdatingWebPedido(id: number): boolean {
+    return this.webPedidosUpdatingId === id;
+  }
+
+  formatearFechaCorta(fecha: string): string {
+    try {
+      return new Date(fecha).toLocaleDateString('es-CO', {
+        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+      });
+    } catch {
+      return fecha;
+    }
+  }
+
+  formatoMoneda(valor: number): string {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency', currency: 'COP',
+      minimumFractionDigits: 0, maximumFractionDigits: 0
+    }).format(valor || 0);
+  }
+
+  getBadgeClassWeb(estado: string): string {
+    switch (estado) {
+      case 'sin_confirmar': return 'badge--pending';
+      case 'pendiente': return 'badge--confirmed';
+      case 'entregado': return 'badge--delivered';
+      case 'cancelado': return 'badge--cancelled';
+      default: return '';
+    }
   }
 }

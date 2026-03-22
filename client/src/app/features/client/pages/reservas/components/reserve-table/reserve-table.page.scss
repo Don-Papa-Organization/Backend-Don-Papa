@@ -1,0 +1,244 @@
+@use '../../../../../../styles/variables' as *;
+@use '../../../../../../styles/shared-states' as *;
+
+.reserve-table-container {
+  @extend %page-base;
+  max-width: 900px;
+}
+
+.reserve-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2rem;
+    color: $color-white;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: rgba($color-white, 0.72);
+    margin: 0;
+  }
+}
+
+.loading-state,
+.error-state,
+.success-state {
+  @extend %card-block;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.spinner {
+  @extend %spinner;
+}
+
+.error-message {
+  color: $color-danger;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.success-message {
+  color: $color-success;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.success-detail {
+  color: rgba($color-white, 0.72);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.content {
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .mesa-info-card,
+  .form-section {
+    @extend %card-block;
+    padding: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    color: $color-white;
+    margin: 0 0 1.5rem 0;
+    font-weight: 700;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid rgba($color-gold, 0.32);
+  }
+
+  .mesa-info-card {
+    .mesa-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: rgba($color-black, 0.26);
+        border-radius: 6px;
+
+        .detail-label {
+          color: rgba($color-white, 0.72);
+          font-weight: 600;
+        }
+
+        .detail-value {
+          color: $color-white;
+          font-weight: 600;
+          font-size: 1.05rem;
+
+          &.estado {
+            font-weight: 700;
+
+            &.estado-disponible {
+              color: $color-success;
+            }
+
+            &.estado-no-disponible {
+              color: $color-gold;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .form-section {
+    .form-group {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        font-weight: 600;
+        color: $color-white;
+        margin-bottom: 0.75rem;
+      }
+
+      .form-input {
+        @extend %input-control;
+      }
+
+      .persons-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+
+        .person-btn {
+          min-width: 45px;
+          padding: 0.6rem 0.8rem;
+          border: 2px solid rgba($color-gold, 0.3);
+          border-radius: 6px;
+          background: rgba($color-black, 0.26);
+          color: rgba($color-white, 0.75);
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s ease;
+
+          &:hover:not(:disabled) {
+            border-color: $color-gold;
+            background: rgba($color-gold, 0.15);
+          }
+
+          &.active {
+            background: $color-gold;
+            color: $color-bg-primary;
+            border-color: $color-gold;
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+
+    .summary-section {
+      background: rgba($color-black, 0.26);
+      border-left: 4px solid $color-gold;
+      padding: 1.5rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+
+      h3 {
+        color: $color-white;
+        margin: 0 0 1rem 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba($color-gold, 0.16);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        span:first-child {
+          color: rgba($color-white, 0.72);
+          font-weight: 500;
+        }
+
+        span:last-child {
+          color: $color-white;
+          font-weight: 600;
+        }
+
+        .badge {
+          display: inline-block;
+          background: rgba($color-black, 0.35);
+          color: rgba($color-white, 0.85);
+          padding: 0.3rem 0.8rem;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          border: 1px solid rgba($color-gold, 0.3);
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+
+      @media (max-width: 480px) {
+        flex-direction: column;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        flex: 1;
+        padding: 0.85rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .btn-primary {
+        @extend %btn-primary;
+      }
+
+      .btn-secondary {
+        @extend %btn-secondary;
+      }
+    }
+  }
+}

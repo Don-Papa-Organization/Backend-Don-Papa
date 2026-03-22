@@ -1,0 +1,218 @@
+@use '../../../../../../styles/variables' as *;
+@use '../../../../../../styles/shared-states' as *;
+
+.reservation-history-container {
+  @extend %page-base;
+  max-width: 1100px;
+  padding-top: 0.5rem;
+}
+
+.history-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    color: $color-white;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: rgba($color-white, 0.72);
+    margin: 0;
+  }
+}
+
+.loading-state,
+.empty-state,
+.error-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  @extend %card-block;
+}
+
+.spinner {
+  @extend %spinner;
+}
+
+.error-message {
+  color: $color-danger;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.btn-retry,
+.btn-make-reservation,
+.btn-new-reservation {
+  padding: 0.7rem 1.5rem;
+  @extend %btn-primary;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.empty-message {
+  color: rgba($color-white, 0.8);
+  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+}
+
+.content {
+  .filters-section {
+    @extend %card-block;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      label {
+        font-weight: 600;
+        color: $color-white;
+      }
+
+      .select-filter {
+        @extend %input-control;
+        width: auto;
+        min-width: 200px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+      }
+    }
+
+    .results-count {
+      margin: 0;
+      color: rgba($color-white, 0.72);
+      font-size: 0.95rem;
+      margin-left: auto;
+    }
+  }
+
+  .reservas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    .reserva-card {
+      @extend %card-block;
+      overflow: hidden;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .reserva-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid;
+        background: rgba($color-black, 0.2);
+        border-bottom: 1px solid rgba($color-gold, 0.2);
+
+        @media (max-width: 480px) {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+
+        .reserva-title {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+
+          h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: $color-white;
+            font-weight: 700;
+          }
+
+          .tipo-badge {
+            background: rgba($color-black, 0.25);
+            color: rgba($color-white, 0.75);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba($color-gold, 0.25);
+          }
+        }
+
+        .estado-badge {
+          padding: 0.4rem 1rem;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          font-weight: 600;
+        }
+      }
+
+      .reserva-content {
+        padding: 1.5rem;
+
+        .info-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1rem;
+
+          @media (max-width: 480px) {
+            grid-template-columns: 1fr;
+          }
+
+          .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+
+            .info-label {
+              color: rgba($color-white, 0.65);
+              font-size: 0.85rem;
+              font-weight: 600;
+            }
+
+            .info-value {
+              color: $color-white;
+              font-size: 1rem;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+
+      .reserva-actions {
+        padding: 0 1.5rem 1.5rem 1.5rem;
+
+        .btn-details {
+          width: 100%;
+          padding: 0.7rem 1rem;
+          @extend %btn-primary;
+          border-radius: 6px;
+          font-size: 0.95rem;
+        }
+      }
+    }
+  }
+
+  .new-reservation-section {
+    text-align: center;
+    padding: 1rem;
+
+    .btn-new-reservation {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1rem;
+      background: $color-gold;
+      color: $color-bg-primary;
+    }
+  }
+}

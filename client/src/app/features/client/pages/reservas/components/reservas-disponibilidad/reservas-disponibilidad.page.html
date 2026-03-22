@@ -1,0 +1,191 @@
+<main class="reservas-page" aria-live="polite">
+  <section class="page-section">
+    <h1>Reservar Mesa</h1>
+
+    <!-- Selector de Fecha y Hora -->
+    <section class="selector-section">
+      <app-ui-date-time-picker
+        [fecha]="fechaSeleccionada"
+        [hora]="horaSeleccionada"
+        (actualizado)="onFechaHoraActualizada($event)"
+      ></app-ui-date-time-picker>
+
+      <button 
+        class="btn-buscar"
+        (click)="buscarDisponibilidad()"
+        [disabled]="cargando"
+      >
+        {{ cargando ? 'Buscando...' : 'Buscar disponibilidad' }}
+      </button>
+    </section>
+
+    <!-- Mensajes de Error -->
+    <div class="error-message" *ngIf="error">
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Estado Cargando -->
+    <div class="loading-message" *ngIf="cargando">
+      <p>Buscando mesas disponibles...</p>
+    </div>
+
+    <!-- Toolbar de vistas -->
+    <div class="reservas-toolbar" *ngIf="!cargando && mesasDisponibles.length > 0">
+      <span class="toolbar-text">{{ mesasDisponibles.length }} mesas disponibles encontradas</span>
+      <app-ui-tabs
+        visualTheme="client-premium"
+        [tabItems]="viewTabs"
+        [tabActiva]="vistaActiva"
+        (tabChange)="onVistaChange($event)"
+      ></app-ui-tabs>
+    </div>
+
+    <!-- Contenido de Mesas -->
+    <section class="mesas-section" *ngIf="!cargando && mesasDisponibles.length > 0">
+      <!-- MAP VIEW -->
+      <div class="floor-wrap" *ngIf="vistaActiva === 'mapa'">
+        <div class="floor">
+          <div class="layout-grid">
+            <!-- Fila Superior: VIP + Entrada + Salón -->
+            <div class="top-row">
+              <!-- Zona VIP -->
+              <div class="zone zone--vip" *ngIf="mesasAgrupadas['VIP'].length > 0">
+                <span class="zone__label">Zona VIP</span>
+                <div class="zone__header">
+                  <span class="zone__badge zone__badge--vip">
+                    {{ mesasAgrupadas['VIP'].length }} Mesas
+                  </span>
+                </div>
+                <div class="zone__grid zone__grid--vip">
+                  <div *ngFor="let mesa of mesasAgrupadas['VIP']" 
+                       class="mesa-card"
+                       [style.border-left-color]="obtenerColorEstado(mesa.estado)"
+                       (click)="onMesaSeleccionada(mesa)">
+                    <div class="mesa-card__header">
+                      <h3>Mesa #{{ mesa.numero }}</h3>
+                      <span class="tipo-badge">{{ mesa.tipo }}</span>
+                    </div>
+                    <div class="mesa-card__content">
+                      <p class="detail-label">{{ obtenerLabelEstado(mesa.estado) }}</p>
+                    </div>
+                    <div class="mesa-card__footer">
+                      <p class="mesa-id">ID: {{ mesa.idMesa }}</p>
+                      <p class="mesa-estado-dot" [style.background-color]="obtenerColorEstado(mesa.estado)"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Referencia de entrada -->
+              <div class="entrada-espacio">
+                <span class="ref-label">Acceso Principal / Entrada</span>
+              </div>
+
+              <!-- Zona Salón -->
+              <div class="zone zone--salon" *ngIf="mesasAgrupadas['Salon'].length > 0">
+                <span class="zone__label">Salón Social</span>
+                <div class="zone__header">
+                  <span class="zone__badge zone__badge--salon">
+                    {{ mesasAgrupadas['Salon'].length }} Mesas
+                  </span>
+                </div>
+                <div class="zone__grid">
+                  <div *ngFor="let mesa of mesasAgrupadas['Salon']" 
+                       class="mesa-card"
+                       [style.border-left-color]="obtenerColorEstado(mesa.estado)"
+                       (click)="onMesaSeleccionada(mesa)">
+                    <div class="mesa-card__header">
+                      <h3>Mesa #{{ mesa.numero }}</h3>
+                      <span class="tipo-badge">{{ mesa.tipo }}</span>
+                    </div>
+                    <div class="mesa-card__content">
+                      <p class="detail-label">{{ obtenerLabelEstado(mesa.estado) }}</p>
+                    </div>
+                    <div class="mesa-card__footer">
+                      <p class="mesa-id">ID: {{ mesa.idMesa }}</p>
+                      <p class="mesa-estado-dot" [style.background-color]="obtenerColorEstado(mesa.estado)"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fila Inferior: Barra -->
+            <div class="bottom-row" *ngIf="mesasAgrupadas['Barra'].length > 0">
+              <div class="zone zone--barra">
+                <span class="zone__label">Barra</span>
+                <div class="zone__header">
+                  <span class="zone__badge zone__badge--barra">
+                    {{ mesasAgrupadas['Barra'].length }} Mesas
+                  </span>
+                </div>
+                <div class="zone__grid zone__grid--barra">
+                  <div *ngFor="let mesa of mesasAgrupadas['Barra']" 
+                       class="mesa-card"
+                       [style.border-left-color]="obtenerColorEstado(mesa.estado)"
+                       (click)="onMesaSeleccionada(mesa)">
+                    <div class="mesa-card__header">
+                      <h3>Mesa #{{ mesa.numero }}</h3>
+                      <span class="tipo-badge">{{ mesa.tipo }}</span>
+                    </div>
+                    <div class="mesa-card__content">
+                      <p class="detail-label">{{ obtenerLabelEstado(mesa.estado) }}</p>
+                    </div>
+                    <div class="mesa-card__footer">
+                      <p class="mesa-id">ID: {{ mesa.idMesa }}</p>
+                      <p class="mesa-estado-dot" [style.background-color]="obtenerColorEstado(mesa.estado)"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- CARDS VIEW -->
+      <div class="cards-view" *ngIf="vistaActiva === 'cards'">
+        <div class="cards-view__grid">
+          <div
+            *ngFor="let mesa of mesasDisponibles"
+            class="mesa-card"
+            (click)="onMesaSeleccionada(mesa)"
+          >
+            <div class="mesa-card__header">
+              <h3>Mesa #{{ mesa.numero }}</h3>
+              <span class="tipo-badge" [ngClass]="'tipo-badge--' + mesa.tipo.toLowerCase()">{{ mesa.tipo }}</span>
+            </div>
+            <div class="mesa-card__content">
+              <span class="estado-badge" [ngClass]="'estado-badge--' + mesa.estado.toLowerCase().replace(' ', '-')">
+                 <div class="dot"></div> {{ obtenerLabelEstado(mesa.estado) }}
+              </span>
+            </div>
+            <div class="mesa-card__footer">
+              <p class="mesa-id">ID: {{ mesa.idMesa }}</p>
+              <button class="btn-reservar" (click)="onMesaSeleccionada(mesa); $event.stopPropagation()">Reservar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sin resultados -->
+    <div class="empty-state" *ngIf="!cargando && mesasDisponibles.length === 0 && !error">
+      <p>No hay mesas disponibles para esta fecha y hora</p>
+    </div>
+  </section>
+
+  <!-- Modal de Confirmacion de Reserva -->
+  <app-ui-reservation-modal
+    *ngIf="mostrarModal && reservationContext.mesaSeleccionada"
+    [mesa]="reservationContext.mesaSeleccionada"
+    [fecha]="fechaSeleccionada"
+    [horaInicio]="horaSeleccionada"
+    [mesasDisponibles]="mesasDisponibles"
+    [confirmando]="confirmandoReserva"
+    (cerrar)="onCerrarModal()"
+    (confirmar)="onConfirmarReserva($event)"
+  ></app-ui-reservation-modal>
+</main>
+

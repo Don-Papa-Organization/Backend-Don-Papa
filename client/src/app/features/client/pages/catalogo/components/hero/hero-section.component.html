@@ -1,0 +1,119 @@
+<section
+  class="hero"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  aria-label="Promociones destacadas Don Papa"
+>
+  <div class="hero__skeleton" *ngIf="contentState === 'loading'">
+    <div class="hero__skeleton-banner shimmer"></div>
+    <div class="hero__skeleton-search shimmer"></div>
+  </div>
+
+  <ng-container *ngIf="contentState !== 'loading'">
+    <article class="hero__slide" *ngIf="activeSlide" [style.backgroundImage]="'url(' + activeSlide.imageUrl + ')'">
+      <div class="hero__overlay"></div>
+
+      <div class="hero__status" *ngIf="contentState === 'empty' || contentState === 'error'">
+        {{ statusMessage }}
+      </div>
+
+      <div class="hero__content">
+        <p class="hero__kicker">
+          {{ activeSlide.type === 'promotion' ? 'PROMOCION' : activeSlide.type === 'event' ? 'EVENTO' : 'DESTACADO' }}
+        </p>
+        <h1>{{ activeSlide.title }}</h1>
+        <p>{{ activeSlide.subtitle || 'Descubre experiencias premium y ofertas con entrega segura.' }}</p>
+
+        <div class="hero__cta-row">
+          <ui-button
+            visualTheme="client-premium"
+            [texto]="activeSlide.ctaText || 'Ver ofertas'"
+            (accion)="onPrimaryCta()"
+          ></ui-button>
+          <ui-button
+            visualTheme="client-premium"
+            [texto]="isAuthenticated ? 'Explorar eventos' : 'Registrarse'"
+            [noBackgroundColor]="true"
+            *ngIf="activeSlide.type !== 'event' && activeSlide.type !== 'featured'"
+            (accion)="onSecondaryCta()"
+          ></ui-button>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="hero__arrow hero__arrow--prev"
+        *ngIf="hasMultipleSlides"
+        aria-label="Slide anterior"
+        (click)="onPrevSlide()"
+      >
+        &#10094;
+      </button>
+
+      <button
+        type="button"
+        class="hero__arrow hero__arrow--next"
+        *ngIf="hasMultipleSlides"
+        aria-label="Siguiente slide"
+        (click)="onNextSlide()"
+      >
+        &#10095;
+      </button>
+
+      <div class="hero__dots" *ngIf="hasMultipleSlides" role="tablist" aria-label="Navegacion de slides">
+        <button
+          type="button"
+          class="hero__dot"
+          *ngFor="let slide of slides; let index = index; trackBy: trackBySlide"
+          [class.hero__dot--active]="index === activeSlideIndex"
+          [attr.aria-label]="'Ir al slide ' + (index + 1)"
+          (click)="onGoToSlide(index)"
+        ></button>
+      </div>
+
+      <div class="hero__search-wrap">
+        <form class="hero__search" role="search" (submit)="onSearchSubmit($event)">
+          <input
+            type="search"
+            class="hero__search-input"
+            [ngModel]="searchTerm"
+            (ngModelChange)="onSearchInput($event)"
+            name="heroSearch"
+            autocomplete="off"
+            placeholder="Busca productos, sabores o marcas"
+            aria-label="Buscar productos"
+            (focus)="onSearchFocus()"
+            (blur)="onSearchBlur()"
+          />
+
+          <ui-button
+            class="hero__search-action"
+            visualTheme="client-premium"
+            texto="Buscar"
+            tipo="submit"
+            customWidth="124px"
+          ></ui-button>
+        </form>
+
+        <div class="hero__autocomplete" *ngIf="showSuggestions">
+          <p class="hero__autocomplete-state" *ngIf="searchLoading">Buscando productos...</p>
+
+          <button
+            type="button"
+            class="hero__suggestion"
+            *ngFor="let suggestion of suggestions"
+            (click)="onSuggestionClick(suggestion)"
+          >
+            <img [src]="suggestion.imageUrl" [alt]="suggestion.nombre" />
+            <span>{{ suggestion.nombre }}</span>
+            <strong>{{ suggestion.precio | number:'1.0-0' }} COP</strong>
+          </button>
+
+          <p class="hero__autocomplete-state" *ngIf="!searchLoading && suggestions.length === 0">
+            No encontramos coincidencias.
+          </p>
+        </div>
+      </div>
+    </article>
+  </ng-container>
+</section>

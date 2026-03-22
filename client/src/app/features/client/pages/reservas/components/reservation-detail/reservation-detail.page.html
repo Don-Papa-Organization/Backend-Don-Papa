@@ -1,0 +1,104 @@
+﻿<div class="reservation-detail-container">
+  <div class="detail-header">
+    <button class="btn-back" (click)="volverAlHistorial()">Volver</button>
+    <h1>Detalles de Reserva</h1>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando detalles de la reserva...</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <p class="error-message">{{ error }}</p>
+    <button (click)="cargarDetalles()" class="btn-retry">Reintentar</button>
+  </div>
+
+  <!-- CANCEL SUCCESS STATE -->
+  <div *ngIf="cancelSuccess" class="success-state">
+    <p class="success-message">Reserva cancelada exitosamente.</p>
+    <p class="success-detail">Seras redirigido a tu historial...</p>
+  </div>
+
+  <!-- CANCEL ERROR STATE -->
+  <div *ngIf="cancelError" class="error-notification">
+    <p>{{ cancelError }}</p>
+  </div>
+
+  <!-- CONTENT STATE -->
+  <div *ngIf="!isLoading && !error && reserva && !cancelSuccess" class="content">
+    <!-- RESERVATION STATUS CARD -->
+    <div class="status-card">
+      <div class="status-header" [style.border-left-color]="obtenerColorEstado(reserva.estado)">
+        <div class="status-info">
+          <h2>Mesa #{{ reserva.numeroMesa }}</h2>
+          <p class="mesa-type">{{ reserva.tipoMesa }}</p>
+        </div>
+        <span class="estado-badge" 
+          [style.background-color]="obtenerColorEstado(reserva.estado) + '20'"
+          [style.color]="obtenerColorEstado(reserva.estado)">
+          {{ obtenerLabelEstado(reserva.estado) }}
+        </span>
+      </div>
+
+      <div class="status-details">
+        <div class="detail-group">
+          <span class="detail-label">ID Reserva:</span>
+          <span class="detail-value">#{{ reserva.idReserva }}</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Fecha de Reserva:</span>
+          <span class="detail-value">{{ formatearFecha(reserva.fecha) }}</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Hora:</span>
+          <span class="detail-value">{{ reserva.hora }}</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Cantidad de Personas:</span>
+          <span class="detail-value">{{ reserva.cantidadPersonas }}</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Hora Estimada de Uso:</span>
+          <span class="detail-value">{{ reserva.horaEstimadaUso }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions-section">
+      <button (click)="volverAlHistorial()" class="btn-back-full">
+        Volver al Historial
+      </button>
+      
+      <button 
+        *ngIf="puedeCancel()" 
+        (click)="abrirConfirmacionCancelacion()" 
+        class="btn-cancel"
+        [disabled]="isCancelling">
+        {{ isCancelling ? 'Cancelando...' : 'Cancelar reserva' }}
+      </button>
+    </div>
+
+    <!-- CANCEL CONFIRMATION DIALOG -->
+    <div *ngIf="showCancelConfirm" class="confirmation-modal">
+      <div class="modal-backdrop" (click)="cerrarConfirmacionCancelacion()"></div>
+      <div class="modal-content">
+        <h3>Confirmar Cancelacion</h3>
+        <p>¿Estas seguro de que deseas cancelar esta reserva?</p>
+        
+        <div class="modal-actions">
+          <button (click)="confirmarCancelacion()" class="btn-confirm" [disabled]="isCancelling">
+            {{ isCancelling ? 'Procesando...' : 'Cancelar' }}
+          </button>
+          <button (click)="cerrarConfirmacionCancelacion()" class="btn-cancel-modal" [disabled]="isCancelling">
+            No, Volver
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

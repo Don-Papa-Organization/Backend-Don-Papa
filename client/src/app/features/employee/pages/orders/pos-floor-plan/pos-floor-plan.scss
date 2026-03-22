@@ -1,3 +1,6 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/floor-plan' as *;
+
 :host {
   display: block;
   width: 100%;
@@ -5,18 +8,7 @@
 
 /* ── Contenedor con cuadrícula blueprint ── */
 .floor-wrap {
-  border: 1px solid rgba(139, 94, 60, 0.3);
-  border-radius: 16px;
-  background-color: #e7d4a0;
-  background-image:
-    linear-gradient(rgba(139, 94, 60, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139, 94, 60, 0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.4),
-    0 8px 16px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
+  @include floor-wrap;
 }
 
 .floor {
@@ -76,20 +68,20 @@
   box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
 
   &--vip {
-    border-color: rgba(94, 25, 20, 0.3);
+    border-color: $floor-zone-vip-border;
   }
 
   &--salon {
-    border-color: rgba(139, 94, 60, 0.3);
+    border-color: $floor-zone-salon-border;
     flex: 1;
   }
 
   &--barra {
-    border-color: rgba(26, 18, 15, 0.2);
+    border-color: $floor-zone-barra-border;
   }
 
   &--varios {
-    border-color: rgba(74, 85, 104, 0.35);
+    border-color: $floor-zone-varios-border;
     min-width: 280px;
   }
 
@@ -100,7 +92,7 @@
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.5px;
-    color: #1a120f;
+    color: $floor-label-color;
     opacity: 0.85;
   }
 
@@ -148,8 +140,26 @@
   }
 }
 
+.zone__badge {
+  &--vip {
+    background: $floor-zone-vip-badge-bg;
+  }
+
+  &--salon {
+    background: $floor-zone-salon-badge-bg;
+  }
+
+  &--barra {
+    background: $floor-zone-barra-badge-bg;
+  }
+
+  &--varios {
+    background: $floor-zone-varios-badge-bg;
+  }
+}
+
 /* ── Responsive ── */
-@media (max-width: 860px) {
+@media (max-width: 768px) {
   .top-row {
     flex-direction: column;
   }

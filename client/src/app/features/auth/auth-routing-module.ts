@@ -5,27 +5,33 @@ import { Register } from './register/register';
 import { ForgotPassword } from './forgot-password/forgot-password';
 import { ResetPassword } from './reset-password/reset-password';
 import { VerifyEmail } from './verify-email/verify-email';
+import { guestGuard } from '../../core/guards/guest.guard';
 
 const routes: Routes = [
   {
     path: 'login',
     component: Login,
+    canActivate: [guestGuard]
   },
   {
     path: 'register',
-    component: Register
+    component: Register,
+    canActivate: [guestGuard]
   },
   {
     path: 'forgot-password',
-    component: ForgotPassword
+    component: ForgotPassword,
+    canActivate: [guestGuard]
   },
   {
     path: 'reset-password',
-    component: ResetPassword
+    component: ResetPassword,
+    canActivate: [guestGuard]
   },
   {
     path: 'verify-email',
-    component: VerifyEmail
+    component: VerifyEmail,
+    canActivate: [guestGuard]
   }
 ];
 

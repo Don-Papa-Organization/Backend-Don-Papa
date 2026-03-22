@@ -1,0 +1,47 @@
+<div class="catalog-toolbar-advanced">
+  <div class="toolbar__left">
+    <div class="toolbar__sort">
+      <label for="sort-select" class="toolbar__label">Ordenar por:</label>
+      <select
+        id="sort-select"
+        class="toolbar__select"
+        [value]="sortBy"
+        (change)="onSortChangeEvent($event)"
+      >
+        <option *ngFor="let option of sortOptions; trackBy: trackBySort" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="toolbar__right">
+    <!-- Filters Button -->
+    <button
+      class="toolbar__filter-btn"
+      [class.has-active]="filtrosActivos > 0"
+      (click)="onFiltrosToggle()"
+      aria-label="Abrir filtros"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toolbar__filter-icon">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      {{ filtrosActivos > 0 ? `Filtros (${filtrosActivos})` : 'Filtros' }}
+    </button>
+
+    <!-- Clear Filters Button -->
+    <button
+      *ngIf="filtrosActivos > 0"
+      class="toolbar__clear-btn"
+      (click)="onLimpiarFiltros()"
+      title="Limpiar todos los filtros"
+      aria-label="Limpiar filtros"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+      Limpiar
+    </button>
+  </div>
+</div>

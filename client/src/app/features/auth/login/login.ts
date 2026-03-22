@@ -4,7 +4,7 @@ import { combineLatest, Subject, takeUntil } from 'rxjs';
 import * as AuthActions from '../../../domain/auth/state/auth.actions';
 import { selectAuthError, selectAuthLoading, selectAuthMessage, selectIsAuthenticated, selectUser } from '../../../domain/auth/state/auth.selectors';
 import { TipoUsuario } from '../../../types/tipo.usuario';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -20,19 +20,21 @@ export class Login implements OnInit, OnDestroy {
   error$: any;
   message$: any;
   successMessage = '';
-  private successTimeoutId: ReturnType<typeof setTimeout> | undefined;
   private lastLoginEmail = '';
   private autoResendTriggered = false;
+  private returnUrl = '';
   
   private destroy$ = new Subject<void>();
   
-  constructor(private store: Store, private router: Router) {
+  constructor(private store: Store, private router: Router, private route: ActivatedRoute) {
     this.loading$ = this.store.select(selectAuthLoading);
     this.error$ = this.store.select(selectAuthError);
     this.message$ = this.store.select(selectAuthMessage);
   }
 
   ngOnInit(): void {
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '';
+
     // Limpiar mensajes previos al inicializar el componente
     this.store.dispatch(AuthActions.clearAuthMessages());
     
@@ -47,14 +49,7 @@ export class Login implements OnInit, OnDestroy {
         }
 
         this.successMessage = 'Inicio de sesión exitoso.';
-        if (this.successTimeoutId) {
-          clearTimeout(this.successTimeoutId);
-        }
-        this.successTimeoutId = setTimeout(() => {
-          this.navigateByRole(user.tipoUsuario);
-        }, 600);
-
-        return;
+        this.navigateByRole(user.tipoUsuario);
       });
 
     this.error$
@@ -90,9 +85,6 @@ export class Login implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.successTimeoutId) {
-      clearTimeout(this.successTimeoutId);
-    }
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -126,6 +118,11 @@ export class Login implements OnInit, OnDestroy {
   }
 
   private navigateByRole(tipoUsuario: TipoUsuario): void {
+    if (this.returnUrl) {
+      this.router.navigateByUrl(this.returnUrl);
+      return;
+    }
+
     switch (tipoUsuario) {
       case TipoUsuario.administrador:
         this.router.navigate(['/admin']);

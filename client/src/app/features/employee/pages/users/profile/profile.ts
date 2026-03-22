@@ -1,11 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersFacade } from '../services/users.facade';
 import { AuthProfileResponseDto } from '../../../../../domain/users/dtos/response/auth-profile.response.dto';
-import { AuthChangePasswordRequestDto } from '../../../../../domain/users/dtos/request/auth-change-password.request.dto';
 import { OrdersFacade } from '../../orders/services/orders.facade';
 import { Pago } from '../../../../../domain/orders/models/pago.model';
 import { AccionTabla, TablaColumnaDef } from '../../../../../shared/ui/ui-tabla/ui-tabla';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ReportsFacade } from '../../reports/services/reports.facade';
+
+type TipoReporte = 'incidente' | 'comentario';
+
+interface ReporteForm {
+  descripcion: string;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+}
 
 interface PaymentHistoryRow {
   idPago: number;
@@ -52,20 +61,22 @@ export class EmployeeProfileComponent implements OnInit {
     }
   ];
 
-  mostrarFormClave = false;
-  procesandoClave = false;
-  mensajeClave = '';
-  tipoClave: 'success' | 'error' = 'success';
-
-  formClave: AuthChangePasswordRequestDto = {
-    contrasenaActual: '',
-    nuevaContrasena: '',
-    confirmarContrasena: ''
+  mostrarModalReporte = false;
+  procesandoReporte = false;
+  mensajeReporte = '';
+  tipoMensajeReporte: 'success' | 'error' = 'success';
+  tipoReporteActivo: TipoReporte = 'comentario';
+  formReporte: ReporteForm = {
+    descripcion: '',
+    fecha: '',
+    horaInicio: '',
+    horaFin: ''
   };
 
   constructor(
     private usersFacade: UsersFacade,
     private ordersFacade: OrdersFacade,
+    private reportsFacade: ReportsFacade,
     private sanitizer: DomSanitizer
   ) {}
 
@@ -169,36 +180,70 @@ export class EmployeeProfileComponent implements OnInit {
     this.reciboObjectURL = null;
   }
 
-  toggleFormClave(): void {
-    this.mostrarFormClave = !this.mostrarFormClave;
-    this.mensajeClave = '';
-    this.formClave = { contrasenaActual: '', nuevaContrasena: '', confirmarContrasena: '' };
+  abrirModalReporte(tipo: TipoReporte): void {
+    this.tipoReporteActivo = tipo;
+    this.mostrarModalReporte = true;
+    this.mensajeReporte = '';
+    this.tipoMensajeReporte = 'success';
+    this.formReporte = {
+      descripcion: '',
+      fecha: '',
+      horaInicio: '',
+      horaFin: ''
+    };
   }
 
-  cambiarContrasena(): void {
-    if (!this.formClave.contrasenaActual || !this.formClave.nuevaContrasena || !this.formClave.confirmarContrasena) {
-      this.mensajeClave = 'Complete todos los campos.';
-      this.tipoClave = 'error';
-      return;
-    }
-    if (this.formClave.nuevaContrasena !== this.formClave.confirmarContrasena) {
-      this.mensajeClave = 'La nueva contraseña y la confirmación no coinciden.';
-      this.tipoClave = 'error';
+  cerrarModalReporte(): void {
+    if (this.procesandoReporte) {
       return;
     }
 
-    this.procesandoClave = true;
-    this.usersFacade.changePassword(this.formClave).subscribe({
+    this.mostrarModalReporte = false;
+    this.mensajeReporte = '';
+  }
+
+  guardarReporte(): void {
+    const descripcion = this.formReporte.descripcion.trim();
+
+    if (!descripcion) {
+      this.mensajeReporte = 'Ingrese una descripción para registrar el reporte.';
+      this.tipoMensajeReporte = 'error';
+      return;
+    }
+
+    const dto = {
+      descripcion,
+      ...(this.formReporte.fecha ? { fecha: this.formReporte.fecha } : {}),
+      ...(this.formReporte.horaInicio ? { horaInicio: this.formReporte.horaInicio } : {}),
+      ...(this.formReporte.horaFin ? { horaFin: this.formReporte.horaFin } : {})
+    };
+
+    this.procesandoReporte = true;
+    const request$ =
+      this.tipoReporteActivo === 'incidente'
+        ? this.reportsFacade.registerIncident(dto)
+        : this.reportsFacade.registerComment(dto);
+
+    request$.subscribe({
       next: () => {
-        this.mensajeClave = 'Contraseña actualizada correctamente.';
-        this.tipoClave = 'success';
-        this.procesandoClave = false;
-        this.formClave = { contrasenaActual: '', nuevaContrasena: '', confirmarContrasena: '' };
+        this.procesandoReporte = false;
+        this.mensajeReporte =
+          this.tipoReporteActivo === 'incidente'
+            ? 'Incidente registrado correctamente.'
+            : 'Comentario registrado correctamente.';
+        this.tipoMensajeReporte = 'success';
+
+        this.formReporte = {
+          descripcion: '',
+          fecha: '',
+          horaInicio: '',
+          horaFin: ''
+        };
       },
       error: (err) => {
-        this.mensajeClave = err?.error?.message || 'No se pudo cambiar la contraseña.';
-        this.tipoClave = 'error';
-        this.procesandoClave = false;
+        this.procesandoReporte = false;
+        this.mensajeReporte = err?.error?.message || 'No se pudo registrar el reporte.';
+        this.tipoMensajeReporte = 'error';
       }
     });
   }

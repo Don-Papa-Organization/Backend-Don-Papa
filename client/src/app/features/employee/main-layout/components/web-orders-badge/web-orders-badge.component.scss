@@ -1,0 +1,215 @@
+@use '../../../../../styles/variables' as *;
+
+:host {
+  position: relative;
+}
+
+.web-orders-badge {
+  position: relative;
+}
+
+.badge-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba($color-gold, 0.25);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  position: relative;
+
+  img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+
+  &:hover {
+    border-color: #D4AF37;
+    background-color: rgba($color-gold, 0.1);
+    color: #D4AF37;
+  }
+
+  &.active {
+    border-color: #D4AF37;
+    background-color: rgba($color-gold, 0.18);
+    color: #D4AF37;
+  }
+}
+
+.badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: $color-gold;
+  color: #1A120B;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  width: 360px;
+  max-height: 480px;
+  overflow-y: auto;
+  background: linear-gradient(145deg, #2B1D13, #1A120B);
+  border: 1px solid rgba($color-gold, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba($color-black, 0.6);
+  z-index: 1000;
+
+  scrollbar-color: rgba($color-gold, 0.3) transparent;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba($color-gold, 0.15);
+    background: rgba($color-black, 0.2);
+  }
+
+  &__title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: $color-gold;
+  }
+
+  &__spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba($color-gold, 0.2);
+    border-top-color: $color-gold;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  &__error {
+    padding: 1rem;
+    color: #f87171;
+    font-size: 0.82rem;
+    text-align: center;
+  }
+
+  &__empty {
+    padding: 1.5rem;
+    color: rgba($color-white, 0.5);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  &__section {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba($color-gold, 0.08);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__section-label {
+    display: block;
+    padding: 0.4rem 1rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba($color-white, 0.45);
+  }
+}
+
+.dropdown__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba($color-white, 0.03);
+  }
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+
+  .item-id {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: $color-white;
+  }
+
+  .item-date {
+    font-size: 0.7rem;
+    color: rgba($color-white, 0.45);
+  }
+}
+
+.item-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.btn-mini {
+  padding: 0.28rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba($color-gold, 0.25);
+  background: rgba($color-white, 0.04);
+  color: rgba($color-white, 0.75);
+  transition: all 0.15s;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba($color-black, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &--confirm {
+    background: rgba($color-gold, 0.12);
+    color: $color-gold;
+    border-color: rgba($color-gold, 0.4);
+
+    &:hover:not(:disabled) {
+      background: rgba($color-gold, 0.22);
+    }
+  }
+
+  &--cancel {
+    background: rgba(#ef4444, 0.08);
+    color: #f87171;
+    border-color: rgba(#ef4444, 0.25);
+
+    &:hover:not(:disabled) {
+      background: rgba(#ef4444, 0.15);
+    }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

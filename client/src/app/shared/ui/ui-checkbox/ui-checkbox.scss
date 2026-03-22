@@ -44,3 +44,13 @@
         }
     }
 }
+
+.ui-checkbox-container--client-premium {
+    border-radius: 11px;
+    background-color: rgba(212, 175, 55, 0.14);
+    border-color: rgba(212, 175, 55, 0.36);
+
+    &:hover:not(.disabled) {
+        box-shadow: 0 0 12px rgba(212, 175, 55, 0.22);
+    }
+}

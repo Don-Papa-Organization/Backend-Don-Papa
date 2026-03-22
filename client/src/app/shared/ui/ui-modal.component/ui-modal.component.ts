@@ -13,7 +13,7 @@ export class UiModalComponent {
   @Input() maxWidth: string = '80%';
   @Input() maxHeight: string = '85vh';
   @Input() padding: string = '20px';
-  @Input() tone: 'default' | 'primary-surface' = 'default';
+  @Input() tone: 'default' | 'primary-surface' | 'client-premium' = 'default';
   @Input() closeOnBackdrop: boolean = true;
 
 

@@ -1,6 +1,9 @@
 <header
 [ngClass]="{
-            'opacity': opacidad
+            'opacity': opacidad,
+            'header--client': mode === 'client',
+            'header--employee': mode === 'employee',
+            'header--admin': mode === 'admin'
         }"
 >
     @if (icono) {

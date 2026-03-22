@@ -9,6 +9,7 @@ import { Component, Input } from '@angular/core';
 export class UiPaymentSummary {
   @Input() totalPagar = 0;
   @Input() diferencia = 0;
+  @Input() visualTheme: 'default' | 'client-premium' = 'default';
 
   formatSigned(value: number): string {
     const sign = value >= 0 ? '+' : '-';

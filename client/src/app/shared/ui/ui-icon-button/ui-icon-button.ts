@@ -11,6 +11,7 @@ export class UiIconButton {
   @Input() texto = "";
   @Input() urlIcono = "";
   @Input() link = "";
+  @Input() exactMatch = false;
 
   @Output() action = new EventEmitter<void>();
 
@@ -19,6 +20,8 @@ export class UiIconButton {
   @Input() fullWidth: boolean = false;
   @Input() showBorder: boolean = false;
   @Input() customHeight: string = "auto";
+  @Input() iconSize: string = '40px';
+  @Input() hideUnderline: boolean = false;
 
   onClick(): void {
     this.action.emit();

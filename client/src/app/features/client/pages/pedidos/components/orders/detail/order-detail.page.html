@@ -1,0 +1,75 @@
+<main class="order-detail-page" aria-live="polite">
+  <div class="order-detail-page__hero">
+    <div class="hero-left">
+      <div class="breadcrumb-nav">
+        <a routerLink="/client/perfil">Mi cuenta</a>
+        <span class="sep">›</span>
+        <a routerLink="/client/perfil" [queryParams]="{seccion: 'pedidos'}">Mis pedidos</a>
+        <span class="sep">›</span>
+        <span>Pedido #{{ detalle?.idPedido }}</span>
+      </div>
+      <h1>Pedido <span class="gold">#{{ detalle?.idPedido }}</span></h1>
+    </div>
+    <div class="hero-actions">
+      <ui-button 
+        visualTheme="client-premium"
+        [texto]="descargandoComprobante ? 'Descargando...' : 'Descargar'" 
+        [disabled]="descargandoComprobante"
+        (accion)="descargarComprobante()">
+      </ui-button>
+      <ui-button 
+        visualTheme="client-premium" 
+        texto="Volver" 
+        (accion)="volverAlPerfil()">
+      </ui-button>
+    </div>
+  </div>
+
+  <p class="state" *ngIf="loading">Cargando detalle...</p>
+
+  <div class="state state--error" *ngIf="!loading && error">
+    <p>{{ error }}</p>
+    <ui-button visualTheme="client-premium" texto="Reintentar" (accion)="reintentar()"></ui-button>
+  </div>
+
+  <ng-container *ngIf="!loading && !error && detalle">
+    <!-- INFO ROW: estado, fecha, total -->
+    <div class="info-strip">
+      <div class="info-chip info-chip--status">
+        <span class="chip-label">Estado</span>
+        <span class="chip-value">{{ detalle.estado }}</span>
+      </div>
+      <div class="info-chip">
+        <span class="chip-label">Fecha</span>
+        <span class="chip-value">{{ formatoFecha(detalle.fechaPedido) }}</span>
+      </div>
+      <div class="info-chip info-chip--total">
+        <span class="chip-label">Total</span>
+        <span class="chip-value">{{ formatoMoneda(detalle.total) }}</span>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <section class="products-section">
+      <h2>Productos</h2>
+      <div class="products-grid" *ngIf="detalle.productos.length; else sinProductos">
+        <article class="product-card" *ngFor="let item of detalle.productos">
+          <div class="product-card__image">
+            <img [src]="resolveProductImageUrl(item)" [alt]="item.productoNombre" />
+          </div>
+          <div class="product-card__info">
+            <h3>{{ item.productoNombre || 'Producto #' + item.idProducto }}</h3>
+            <p class="meta">Cantidad: {{ item.cantidad }}</p>
+            <p class="price-unit">Precio unitario: {{ formatoMoneda(item.precioUnitario) }}</p>
+          </div>
+          <div class="product-card__subtotal">
+            <strong>{{ formatoMoneda(item.subtotal) }}</strong>
+          </div>
+        </article>
+      </div>
+      <ng-template #sinProductos>
+        <p class="state">No hay productos para este pedido.</p>
+      </ng-template>
+    </section>
+  </ng-container>
+</main>

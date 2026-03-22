@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, forkJoin, of, throwError, timer } from 'rxjs';
-import { catchError, finalize, map, retry } from 'rxjs/operators';
+import { catchError, finalize, map, retry, switchMap } from 'rxjs/operators';
 import { CanalVenta, TipoAtencion } from '../../../../../domain/orders/models/pedido.model';
 import { RegisterPaymentRequestDto } from '../../../../../domain/orders/dtos/request/register-payment.request.dto';
 import { InventoryFacade } from '../../inventory/services/inventory.facade';
@@ -499,13 +499,16 @@ export class TableSaleComponent implements OnInit, OnDestroy {
   registrarPago(dto: RegisterPaymentRequestDto): void {
     if (!this.pedidoActual || this.procesando) { return; }
 
-    if (!this.validarStockAntesDePagar()) {
-      return;
-    }
-
     const opStart = this.startOperationTimer('registrar-pago');
     this.procesando = true;
-    this.ordersFacade.registerPayment(this.pedidoActual.idPedido, dto).pipe(
+    this.validarStockAntesDePagarRemoto().pipe(
+      switchMap((esValido) => {
+        if (!esValido || !this.pedidoActual) {
+          return of(null);
+        }
+
+        return this.ordersFacade.registerPayment(this.pedidoActual.idPedido, dto);
+      }),
       retry({
         count: 1,
         delay: (error, retryCount) => this.retryDelayOrFail(error, retryCount)
@@ -515,6 +518,11 @@ export class TableSaleComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (response) => {
+        if (!response) {
+          this.finishOperationTimer(opStart, 'ok');
+          return;
+        }
+
         this.mostrarModalPago = false;
         this.pedidoActual = null;
         this.marcarMesaDisponibleTrasPago();
@@ -658,51 +666,60 @@ export class TableSaleComponent implements OnInit, OnDestroy {
     this.feedbackVisible = true;
   }
 
-  private validarStockAntesDePagar(): boolean {
+  private validarStockAntesDePagarRemoto(): Observable<boolean> {
     const lineas = this.pedidoActual?.lineas ?? [];
-    for (const linea of lineas) {
-      const producto = this.findProductoLocalById(linea.idProducto);
-      if (!producto) {
-        this.logStockDebug('validarStockAntesDePagar:producto-no-encontrado-local', {
-          idProducto: linea.idProducto,
-          nombre: linea.nombre,
-          cantidadLinea: linea.cantidad,
-          catalogoPrincipal: this.productosCatalogo.length,
-          catalogoCategoria: this.productosCategoria.length,
-          vistaPanelIzq: this.vistaPanelIzq,
-          categoriaActiva: this.categoriaActiva?.idCategoria ?? null
-        });
-        this.debugFetchStockFromApi(linea.idProducto, 'validarStockAntesDePagar-producto-no-encontrado-local');
-        this.showFeedback(`No se pudo validar el stock de ${linea.nombre}. Intente recargar.`, 'warning');
-        return false;
-      }
-
-      if (producto.stockActual <= 0) {
-        this.logStockDebug('validarStockAntesDePagar:sin-stock-local', {
-          idProducto: linea.idProducto,
-          nombre: linea.nombre,
-          cantidadLinea: linea.cantidad,
-          productoLocal: producto ?? null
-        });
-        this.debugFetchStockFromApi(linea.idProducto, 'validarStockAntesDePagar-bloqueado-sin-stock');
-        this.showFeedback(`El producto ${linea.nombre} ya no tiene stock disponible.`, 'warning');
-        return false;
-      }
-
-      if (linea.cantidad > producto.stockActual) {
-        this.logStockDebug('validarStockAntesDePagar:stock-insuficiente-local', {
-          idProducto: linea.idProducto,
-          nombre: linea.nombre,
-          cantidadLinea: linea.cantidad,
-          stockActual: producto.stockActual
-        });
-        this.debugFetchStockFromApi(linea.idProducto, 'validarStockAntesDePagar-bloqueado-stock-insuficiente');
-        this.showFeedback(`Stock insuficiente para ${linea.nombre}. Disponible: ${producto.stockActual}.`, 'warning');
-        return false;
-      }
+    if (lineas.length === 0) {
+      return of(false);
     }
 
-    return true;
+    const validaciones = lineas.map((linea) =>
+      this.inventoryApi.getCatalogDetail(linea.idProducto).pipe(
+        map((response) => ({ linea, producto: response.data })),
+        catchError((error) => {
+          this.logStockDebug('validarStockAntesDePagarRemoto:error-consulta-producto', {
+            idProducto: linea.idProducto,
+            nombre: linea.nombre,
+            cantidadLinea: linea.cantidad,
+            status: (error as any)?.status,
+            backendError: (error as any)?.error,
+            message: (error as any)?.message
+          });
+          return of({ linea, producto: null as any });
+        })
+      )
+    );
+
+    return forkJoin(validaciones).pipe(
+      map((resultados) => {
+        for (const resultado of resultados) {
+          const linea = resultado.linea;
+          const producto = resultado.producto as any;
+
+          if (!producto) {
+            this.showFeedback(`No se pudo validar el stock de ${linea.nombre}. Intente recargar.`, 'warning');
+            return false;
+          }
+
+          if (!Boolean(producto.activo)) {
+            this.showFeedback(`El producto ${linea.nombre} ya no está disponible.`, 'warning');
+            return false;
+          }
+
+          const stockActual = Number(producto.stockActual ?? 0);
+          if (!Number.isFinite(stockActual) || stockActual <= 0) {
+            this.showFeedback(`El producto ${linea.nombre} ya no tiene stock disponible.`, 'warning');
+            return false;
+          }
+
+          if (linea.cantidad > stockActual) {
+            this.showFeedback(`Stock insuficiente para ${linea.nombre}. Disponible: ${stockActual}.`, 'warning');
+            return false;
+          }
+        }
+
+        return true;
+      })
+    );
   }
 
   private getRetryDelayMs(retryCount: number): number {

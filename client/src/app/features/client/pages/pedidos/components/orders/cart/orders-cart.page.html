@@ -1,0 +1,83 @@
+﻿<main class="orders-cart-page" aria-live="polite">
+  <section class="cart-section">
+    <div class="cart-header">
+      <h1>Carrito</h1>
+    </div>
+
+    <p class="state" *ngIf="loading">Cargando carrito...</p>
+
+    <div class="state state--error" *ngIf="!loading && error">
+      <p>{{ error }}</p>
+      <ui-button visualTheme="client-premium" texto="Reintentar" (accion)="reintentar()"></ui-button>
+    </div>
+
+    <app-ui-empty-cart *ngIf="carritoVacio"></app-ui-empty-cart>
+
+    <div class="cart-content" *ngIf="!loading && !error && !carritoVacio">
+      <p class="form-message" *ngIf="mensaje" [class.error]="tipoMensaje === 'error'" [class.success]="tipoMensaje === 'success'">
+        {{ mensaje }}
+      </p>
+
+      <div class="warning-banner" *ngIf="hayProductosBloqueados">
+        <p class="warning-text">
+          Hay productos bloqueados debido a cambios en el stock. Actualiza las cantidades o eliminalos para continuar.
+        </p>
+      </div>
+
+      <div class="warning-banner" *ngIf="!validandoPerfil && !perfilCompleto">
+        <p class="warning-text">
+          Completa tu perfil para poder procesar pagos. <a (click)="completarPerfil()" style="cursor: pointer; text-decoration: underline;"> ir a perfil</a>
+        </p>
+      </div>
+
+      <div class="cart-items-list">
+        <app-ui-cart-item visualTheme="client-premium"
+          *ngFor="let item of productos"
+          [item]="item"
+          [imageUrl]="resolveImageUrl(item)"
+          [maxQuantity]="item.stockActual || 999"
+          [isBlocked]="!item.productoEstaEnStock"
+          [blockedReason]="item.razonBloqueo || ''"
+          [isRemoving]="modalEliminar.isConfirming && modalEliminar.itemToRemove?.idProductoPedido === item.idProductoPedido"
+          (quantityChange)="actualizarCantidad(item, $event)"
+          (remove)="abrirModalEliminar(item)"
+          (maxReached)="mensaje = 'Stock maximo alcanzado'"
+        ></app-ui-cart-item>
+      </div>
+
+      <div class="cart-footer">
+        <div class="total-section">
+          <div class="total-row">
+            <span class="total-label">Total del carrito:</span>
+            <strong class="total-amount">{{ formatoMoneda(totalCarrito) }}</strong>
+          </div>
+        </div>
+
+        <div class="actions-section">
+          <ui-button visualTheme="client-premium"
+            [texto]="'Proceder al pago'"
+            [disabled]="!puedeComprar"
+            (accion)="confirmarPedido()"
+          ></ui-button>
+
+          <ui-button visualTheme="client-premium"
+            [texto]="limpiandoCarrito ?  'Limpiando...' : 'Limpiar carrito'"
+            [disabled]="limpiandoCarrito"
+            variant="neutral"
+            [noBackgroundColor]="true"
+            (accion)="limpiarCarrito()"
+          ></ui-button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <app-ui-cart-removal-modal
+    [mostrar]="modalEliminar.mostrar"
+    [productName]="modalEliminar.productName"
+    [isConfirming]="modalEliminar.isConfirming"
+    (confirm)="onConfirmRemove()"
+    (cancel)="onCancelRemove()"
+  ></app-ui-cart-removal-modal>
+</main>
+

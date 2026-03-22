@@ -28,6 +28,7 @@ import { UiPosTableCard } from './ui/ui-pos-table-card/ui-pos-table-card';
 import { UiPosQtyStepper } from './ui/ui-pos-qty-stepper/ui-pos-qty-stepper';
 import { UiPosInlineFeedback } from './ui/ui-pos-inline-feedback/ui-pos-inline-feedback';
 import { UiPosFloorMesa } from './ui/ui-pos-floor-mesa/ui-pos-floor-mesa';
+import { UiToastComponent } from './ui/ui-toast/ui-toast.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { UiPosFloorMesa } from './ui/ui-pos-floor-mesa/ui-pos-floor-mesa';
     UiPosQtyStepper,
     UiPosInlineFeedback,
     UiPosFloorMesa,
+    UiToastComponent,
 
   ],
   imports: [
@@ -90,7 +92,8 @@ import { UiPosFloorMesa } from './ui/ui-pos-floor-mesa/ui-pos-floor-mesa';
     UiPosTableCard,
     UiPosQtyStepper,
     UiPosInlineFeedback,
-    UiPosFloorMesa
+    UiPosFloorMesa,
+    UiToastComponent
   ]
 })
 export class SharedModule { }

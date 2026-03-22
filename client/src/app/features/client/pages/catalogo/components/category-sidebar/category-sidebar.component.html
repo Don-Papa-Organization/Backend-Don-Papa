@@ -1,0 +1,43 @@
+<aside class="category-sidebar" aria-label="Categorias de producto">
+  <header class="category-sidebar__header">
+    <h2>Categorias</h2>
+    <button
+      type="button"
+      class="category-sidebar__toggle"
+      [attr.aria-expanded]="expanded"
+      (click)="toggleExpanded()"
+    >
+      {{ expanded ? 'Ocultar' : 'Mostrar' }}
+    </button>
+  </header>
+
+  <div class="category-sidebar__content" [class.category-sidebar__content--collapsed]="!expanded">
+    <div class="category-sidebar__skeleton" *ngIf="loading">
+      <div class="line shimmer" *ngFor="let item of [1,2,3,4,5,6]"></div>
+    </div>
+
+    <ng-container *ngIf="!loading">
+      <button
+        type="button"
+        class="category-option"
+        [class.category-option--active]="selectedCategoryId === null"
+        (click)="selectAll()"
+      >
+        <span class="category-option__icon">ALL</span>
+        <span class="category-option__label">Ver todas</span>
+      </button>
+
+      <button
+        type="button"
+        class="category-option"
+        *ngFor="let category of categories; trackBy: trackByCategory"
+        [class.category-option--active]="selectedCategoryId === category.idCategoria"
+        (click)="selectCategory(category.idCategoria)"
+      >
+        <span class="category-option__icon">{{ iconFor(category.nombre) }}</span>
+        <span class="category-option__label">{{ category.nombre }}</span>
+        <span class="category-option__count">({{ countFor(category.idCategoria) }})</span>
+      </button>
+    </ng-container>
+  </div>
+</aside>

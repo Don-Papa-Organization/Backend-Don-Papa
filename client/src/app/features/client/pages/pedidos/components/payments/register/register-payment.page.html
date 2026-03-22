@@ -1,0 +1,64 @@
+<main class="register-payment-page" aria-live="polite">
+  <section class="card-block">
+    <div class="header">
+      <h1>Confirmar pago</h1>
+      <ui-button visualTheme="client-premium" texto="Volver" variant="neutral" [noBackgroundColor]="true" (accion)="volver()"></ui-button>
+    </div>
+
+    <p class="state" *ngIf="loading || confirmandoOrden">
+      {{ confirmandoOrden ? 'Preparando tu pedido...' : 'Cargando...' }}
+    </p>
+
+    <div class="state state--error" *ngIf="!loading && !confirmandoOrden && error">
+      <p>{{ error }}</p>
+      <details *ngIf="pasosError.length">
+        <summary>Trace</summary>
+        <pre *ngFor="let paso of pasosError">{{ paso }}</pre>
+      </details>
+    </div>
+
+    <div class="state state--success" *ngIf="exitoso">
+      <p>Pago registrado exitosamente. Redirigiendo...</p>
+    </div>
+
+    <div class="payment-form" *ngIf="!loading && !confirmandoOrden && !error && !exitoso">
+      <div class="summary-card">
+        <div class="summary-row" *ngIf="idPedido">
+          <span class="label">Pedido</span>
+          <strong class="value">#{{ idPedido }}</strong>
+        </div>
+        <div class="summary-row" *ngIf="idPedido">
+          <span class="label">Total a pagar</span>
+          <strong class="value value--gold">{{ formatoMoneda(montoPedido) }}</strong>
+        </div>
+        <div class="summary-row" *ngIf="!idPedido">
+          <span class="label">Total a pagar</span>
+          <strong class="value value--gold">Se calculo al confirmar</strong>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row">
+          <span class="label">Metodo de pago</span>
+          <span class="value value--badge">{{ nombreMetodoSeleccionado }}</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <ui-button visualTheme="client-premium"
+          [texto]="registrando ? 'Procesando...' : 'Confirmar pago'"
+          [disabled]="!puedeRegistrar || registrando"
+          (accion)="registrarPago()"
+        ></ui-button>
+      </div>
+    </div>
+  </section>
+
+  <app-ui-toast visualTheme="client-premium"
+    [visible]="mostrarToastBloqueoPerfil"
+    [message]="mensajePerfilIncompleto"
+    tone="warning"
+    actionLabel="Ir a Cuenta"
+    closeLabel="Cerrar"
+    (action)="irACuentaPorBloqueo()"
+    (close)="cerrarToastBloqueo()"
+  ></app-ui-toast>
+</main>

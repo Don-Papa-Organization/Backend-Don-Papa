@@ -1,4 +1,4 @@
-<div class="ui-checkbox-container">
+<div class="ui-checkbox-container" [class.ui-checkbox-container--client-premium]="visualTheme === 'client-premium'">
     <label [attr.for]="name">
         <input type="checkbox" [id]="name" [name]="name" [checked]="checked" [disabled]="isDisabled"
             (change)="onToggle()" />

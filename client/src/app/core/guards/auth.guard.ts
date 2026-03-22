@@ -5,7 +5,7 @@ import { Store } from "@ngrx/store";
 import { selectAuthLoading, selectIsAuthenticated } from "../../domain/auth/state/auth.selectors";
 import * as AuthActions from "../../domain/auth/state/auth.actions";
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (_route, state) => {
 	const store = inject(Store);
 	const router = inject(Router);
 
@@ -27,7 +27,9 @@ export const authGuard: CanActivateFn = () => {
 				take(1),
 				map(([, isAuthenticated]) => {
 					if (!isAuthenticated) {
-						router.navigate(["/auth/login"]);
+							return router.createUrlTree(["/auth/login"], {
+								queryParams: { returnUrl: state.url }
+							});
 					}
 					return isAuthenticated;
 				})

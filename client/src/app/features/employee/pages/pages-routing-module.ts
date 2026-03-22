@@ -14,7 +14,8 @@ const routes: Routes = [
       { path: 'tables-reserves', loadChildren: () => import('./tables-reserves/tables-reserves-module').then(m => m.TablesReservesModule) },
       { path: 'events-promotions', loadChildren: () => import('./events-promotions/events-promotions-module').then(m => m.EventsPromotionsModule) },
       { path: 'cuadre-caja', loadChildren: () => import('./cash-balance/cash-balance-module').then(m => m.CashBalanceModule) },
-      { path: 'reports', loadChildren: () => import('./reports/reports-module').then(m => m.ReportsModule) }
+      { path: 'reports', loadChildren: () => import('./reports/reports-module').then(m => m.ReportsModule) },
+      { path: 'pedidos-web', loadChildren: () => import('./pedidos-web/pedidos-web-module').then(m => m.PedidosWebModule) }
     ]
   }
 ];

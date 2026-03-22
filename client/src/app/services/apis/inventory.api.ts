@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, map } from "rxjs";
 import { ApiResponse } from "../../types/api-response.type";
 import { Producto } from "../../domain/inventory/models/producto.model";
 import { CategoriaProducto } from "../../domain/inventory/models/categoriaProducto.model";
@@ -15,6 +15,7 @@ import { SearchProductsByNameRequestDto } from "../../domain/inventory/dtos/requ
 import { ListProductsByCategoryRequestDto } from "../../domain/inventory/dtos/request/list-products-by-category.request.dto";
 import { ListProductsEnrichedRequestDto } from "../../domain/inventory/dtos/request/list-products-enriched.request.dto";
 import { CatalogoProductosDataDto } from "../../domain/inventory/dtos/response/list-catalog.response.dto";
+import { CatalogoProductosEnriquecidoDataDto } from "../../domain/inventory/dtos/response/list-catalog-enriched.response.dto";
 import { ListProductsDataDto } from "../../domain/inventory/dtos/response/list-products.response.dto";
 import { ListProductsEnrichedDataDto } from "../../domain/inventory/dtos/response/list-products-enriched.response.dto";
 import { AssociateProductCategoryResponseDto } from "../../domain/inventory/dtos/response/associate-product-category.response.dto";
@@ -27,12 +28,37 @@ export class InventoryApi {
 	private readonly productsUrl = buildApiUrl(API_ENDPOINTS.inventory.products());
 	private readonly categoriesUrl = buildApiUrl(API_ENDPOINTS.inventory.categories());
 
+	private sanitizeQueryParams(dto?: Record<string, unknown>): Record<string, string | number | boolean> {
+		if (!dto) {
+			return {};
+		}
+
+		return Object.entries(dto).reduce<Record<string, string | number | boolean>>((acc, [key, value]) => {
+			if (value === undefined || value === null || value === '') {
+				return acc;
+			}
+
+			if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+				acc[key] = value;
+			}
+
+			return acc;
+		}, {});
+	}
+
 	constructor(private http: HttpClient) {}
 
 	listCatalog(dto?: ListCatalogRequestDto): Observable<ApiResponse<CatalogoProductosDataDto>> {
 		return this.http.get<ApiResponse<CatalogoProductosDataDto>>(this.baseUrl, {
-			params: dto as any
+			params: this.sanitizeQueryParams(dto as any)
 		});
+	}
+
+	listCatalogEnriched(dto?: ListCatalogRequestDto): Observable<ApiResponse<CatalogoProductosEnriquecidoDataDto>> {
+		return this.http.get<ApiResponse<CatalogoProductosEnriquecidoDataDto>>(
+			buildApiUrl(API_ENDPOINTS.inventory.catalogEnriched()),
+			{ params: this.sanitizeQueryParams(dto as any) }
+		);
 	}
 
 	getCatalogDetail(id: number): Observable<ApiResponse<Producto>> {
@@ -41,25 +67,39 @@ export class InventoryApi {
 
 	listProducts(dto?: ListProductsRequestDto): Observable<ApiResponse<ListProductsDataDto>> {
 		return this.http.get<ApiResponse<ListProductsDataDto>>(this.productsUrl, {
-			params: dto as any
+			params: this.sanitizeQueryParams(dto as any)
 		});
 	}
 
 	searchProductsByName(dto: SearchProductsByNameRequestDto): Observable<ApiResponse<ListProductsDataDto>> {
 		return this.http.get<ApiResponse<ListProductsDataDto>>(buildApiUrl(API_ENDPOINTS.inventory.productsSearch()), {
-			params: dto as any
+			params: this.sanitizeQueryParams(dto as any)
+		});
+	}
+
+	searchActiveProductsByName(dto: SearchProductsByNameRequestDto): Observable<ApiResponse<ListProductsDataDto>> {
+		return this.searchProductsByName({
+			...dto,
+			activo: dto.activo ?? true
 		});
 	}
 
 	listProductsByCategory(idCategoria: number, dto?: ListProductsByCategoryRequestDto): Observable<ApiResponse<ListProductsDataDto>> {
 		return this.http.get<ApiResponse<ListProductsDataDto>>(buildApiUrl(API_ENDPOINTS.inventory.productsByCategory(idCategoria)), {
-			params: dto as any
+			params: this.sanitizeQueryParams(dto as any)
+		});
+	}
+
+	listActiveProductsByCategory(idCategoria: number, dto?: ListProductsByCategoryRequestDto): Observable<ApiResponse<ListProductsDataDto>> {
+		return this.listProductsByCategory(idCategoria, {
+			...dto,
+			activo: dto?.activo ?? true
 		});
 	}
 
 	listProductsEnriched(dto?: ListProductsEnrichedRequestDto): Observable<ApiResponse<ListProductsEnrichedDataDto>> {
 		return this.http.get<ApiResponse<ListProductsEnrichedDataDto>>(buildApiUrl(API_ENDPOINTS.inventory.productsEnriched()), {
-			params: dto as any
+			params: this.sanitizeQueryParams(dto as any)
 		});
 	}
 
@@ -103,6 +143,9 @@ export class InventoryApi {
 		if (urlImagen.startsWith("http://") || urlImagen.startsWith("https://")) {
 			return urlImagen;
 		}
+		if (urlImagen.startsWith("/img/") || urlImagen.startsWith("/images/")) {
+			return urlImagen;
+		}
 		if (urlImagen.startsWith("/")) {
 			return buildApiUrl(urlImagen);
 		}
@@ -114,7 +157,12 @@ export class InventoryApi {
 	}
 
 	listCategories(): Observable<ApiResponse<CategoriaProducto[]>> {
-		return this.http.get<ApiResponse<CategoriaProducto[]>>(this.categoriesUrl);
+		return this.http.get<ApiResponse<any>>(this.categoriesUrl).pipe(
+			map((response) => ({
+				...response,
+				data: Array.isArray(response.data) ? response.data : (response.data?.categorias ?? [])
+			}))
+		);
 	}
 
 	getCategory(id: number): Observable<ApiResponse<CategoriaProducto>> {

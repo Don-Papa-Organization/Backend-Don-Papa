@@ -146,6 +146,10 @@ export class OrdersApi {
 		);
 	}
 
+	downloadReceiptByOrderId(idPedido: number): Observable<ArrayBuffer> {
+		return this.http.get(buildApiUrl(API_ENDPOINTS.orders.orderCustomerReceipt(idPedido)), { responseType: "arraybuffer" });
+	}
+
 	listOrdersInProgress(dto?: ListOrdersInProgressRequestDto): Observable<ApiResponse<Pedido[]> & { pagination: PaginationMetaDto }> {
 		return this.http.get<ApiResponse<Pedido[]> & { pagination: PaginationMetaDto }>(
 			buildApiUrl(API_ENDPOINTS.orders.ordersInProgress()),

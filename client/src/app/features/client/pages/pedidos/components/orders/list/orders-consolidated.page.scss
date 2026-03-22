@@ -1,0 +1,132 @@
+@use '../../../../../../../styles/variables' as *;
+@use '../../../../../../../styles/shared-states' as *;
+
+.orders-page {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: calc(100vh - 70px);
+  padding: 0 1.2rem 1.2rem;
+
+  h1 {
+    margin: 0 0 1.5rem;
+    color: $color-white;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+}
+
+.page-section {
+  @extend %section-card;
+  width: 100%;
+}
+
+.tabs-wrapper {
+  margin-bottom: 1.5rem;
+
+  ::ng-deep .ui-tabs {
+    border-bottom: 1px solid rgba($color-gold, 0.2);
+    
+    .ui-tabs__header {
+      display: flex;
+      gap: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .ui-tabs__tab {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: rgba($color-white, 0.65);
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: $color-white;
+      }
+
+      &.active {
+        color: $color-gold;
+        border-bottom-color: $color-gold;
+      }
+    }
+  }
+}
+
+.orders-container {
+  display: block;
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.empty-message {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba($color-gold, 0.06);
+  border-left: 3px solid rgba($color-gold, 0.3);
+  color: rgba($color-white, 0.72);
+  font-size: 0.95rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.state {
+  margin: 1rem 0;
+  color: rgba($color-white, 0.82);
+  font-size: 0.95rem;
+
+  &.state--error {
+    color: $color-danger;
+    padding: 0.75rem;
+    background: rgba($color-danger, 0.08);
+    border-radius: 6px;
+
+    p {
+      margin: 0 0 0.5rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .orders-page {
+    padding: 0 1rem 1.2rem;
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .tabs-wrapper {
+    ::ng-deep .ui-tabs__tab {
+      padding: 0.7rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  .orders-list {
+    gap: 0.8rem;
+  }
+}

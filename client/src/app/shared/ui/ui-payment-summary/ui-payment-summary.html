@@ -1,4 +1,4 @@
-<div class="payment-summary">
+<div class="payment-summary" [class.payment-summary--client-premium]="visualTheme === 'client-premium'">
   <div class="payment-summary__item">
     <span class="payment-summary__label">Total a pagar</span>
     <span class="payment-summary__value payment-summary__value--total">${{ totalPagar.toFixed(2) }}</span>

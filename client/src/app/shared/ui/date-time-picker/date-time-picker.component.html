@@ -1,0 +1,40 @@
+<div class="date-time-picker">
+  <div class="picker-group">
+    <label>Fecha</label>
+    <div class="picker-wrapper">
+      <button class="arrow-btn" (click)="diaAnterior()" type="button" title="Día anterior">
+        ▲
+      </button>
+      <input
+        type="date"
+        [(ngModel)]="fechaLocal"
+        [min]="minFecha"
+        (change)="onFechaChange()"
+        class="picker-input"
+      />
+      <button class="arrow-btn" (click)="siguienteDia()" type="button" title="Día siguiente">
+        ▼
+      </button>
+    </div>
+  </div>
+
+  <div class="picker-group">
+    <label>Hora</label>
+    <div class="picker-wrapper">
+      <button class="arrow-btn" (click)="horaAnterior()" type="button" title="Hora anterior">
+        ▲
+      </button>
+      <input
+        type="time"
+        [(ngModel)]="horaLocal"
+        [min]="horaMinima"
+        [max]="horaMaxima"
+        (change)="onHoraChange()"
+        class="picker-input"
+      />
+      <button class="arrow-btn" (click)="siguienteHora()" type="button" title="Hora siguiente">
+        ▼
+      </button>
+    </div>
+  </div>
+</div>

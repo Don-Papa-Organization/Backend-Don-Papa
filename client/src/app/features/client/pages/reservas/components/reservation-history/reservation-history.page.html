@@ -1,0 +1,95 @@
+﻿<div class="reservation-history-container">
+  <div class="history-header">
+    <h1>Mis Reservas</h1>
+    <p class="subtitle">Historial de tus reservas de mesas</p>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando historial de reservas...</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <p class="error-message">{{ error }}</p>
+    <button (click)="cargarHistorial()" class="btn-retry">Reintentar</button>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div *ngIf="isEmpty && !isLoading && !error" class="empty-state">
+    <p class="empty-message">Aun no tienes reservas registradas.</p>
+    <button (click)="irAReservar()" class="btn-make-reservation">
+      Hacer una Reserva
+    </button>
+  </div>
+
+  <!-- CONTENT STATE -->
+  <div *ngIf="!isLoading && !error && !isEmpty" class="content">
+    <!-- FILTROS -->
+    <div class="filters-section">
+      <div class="filter-group">
+        <label for="estadoFilter">Filtrar por estado:</label>
+        <select 
+          id="estadoFilter" 
+          [(ngModel)]="filtroEstado" 
+          (change)="filtrarPorEstado()"
+          class="select-filter">
+          <option value="">Todos los estados</option>
+          <option *ngFor="let estado of estadosDisponibles" [value]="estado">
+            {{ obtenerLabelEstado(estado) }}
+          </option>
+        </select>
+      </div>
+      <p class="results-count">{{ reservasFiltered.length }} reserva(s)</p>
+    </div>
+
+    <!-- RESERVAS LIST -->
+    <div class="reservas-list">
+      <div *ngFor="let reserva of reservasFiltered" class="reserva-card">
+        <div class="reserva-header" [style.border-left-color]="obtenerColorEstado(reserva.estado)">
+          <div class="reserva-title">
+            <h3>Mesa #{{ reserva.numeroMesa }}</h3>
+            <span class="tipo-badge">{{ reserva.tipoMesa }}</span>
+          </div>
+          <span class="estado-badge" 
+            [style.background-color]="obtenerColorEstado(reserva.estado) + '20'"
+            [style.color]="obtenerColorEstado(reserva.estado)">
+            {{ obtenerLabelEstado(reserva.estado) }}
+          </span>
+        </div>
+
+        <div class="reserva-content">
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Fecha Reserva:</span>
+              <span class="info-value">{{ formatearFecha(reserva.fechaReserva) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Personas:</span>
+              <span class="info-value">{{ reserva.cantidadPersonas }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">ID Reserva:</span>
+              <span class="info-value">#{{ reserva.idReserva }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reserva-actions">
+          <button (click)="verDetalles(reserva.idReserva)" class="btn-details">
+            Ver Detalles
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAKE NEW RESERVATION BUTTON -->
+    <div class="new-reservation-section">
+      <button (click)="irAReservar()" class="btn-new-reservation">
+        + Hacer una Nueva Reserva
+      </button>
+    </div>
+  </div>
+</div>
+

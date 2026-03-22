@@ -1,4 +1,4 @@
-<div class="tabs-container">
+<div class="tabs-container" [class.tabs-container--client-premium]="visualTheme === 'client-premium'">
   <button
     *ngFor="let tab of tabItems"
     class="tab"

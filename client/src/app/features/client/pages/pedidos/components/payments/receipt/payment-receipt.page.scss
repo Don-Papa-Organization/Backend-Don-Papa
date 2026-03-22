@@ -1,0 +1,64 @@
+@use '../../../../../../../styles/variables' as *;
+@use '../../../../../../../styles/shared-states' as *;
+
+.payment-receipt-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: calc(100vh - 70px);
+  padding: 0 1.2rem 1.2rem;
+}
+
+.card-block {
+  @extend %section-card;
+}
+
+h1 {
+  margin: 0 0 0.85rem;
+  color: $color-white;
+}
+
+.state {
+  color: rgba($color-white, 0.85);
+
+  &.state--error {
+    color: $color-danger;
+  }
+}
+
+.payment-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.payment-card {
+  border: 1px solid rgba($color-gold, 0.2);
+  border-radius: 8px;
+  padding: 0.75rem;
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.65rem;
+    margin: 0.2rem 0;
+    color: rgba($color-white, 0.86);
+
+    .label {
+      color: rgba($color-white, 0.62);
+    }
+  }
+
+  .actions {
+    margin-top: 0.55rem;
+  }
+}
+
+.load-more {
+  margin-top: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .payment-list {
+    grid-template-columns: 1fr;
+  }
+}

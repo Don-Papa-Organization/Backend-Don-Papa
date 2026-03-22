@@ -1,0 +1,155 @@
+@use '../../../../../../../styles/variables' as *;
+@use '../../../../../../../styles/shared-states' as *;
+
+.register-payment-page {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: calc(100vh - 70px);
+  padding: 1rem 1rem 1.5rem;
+}
+
+.card-block {
+  @extend %section-card;
+  padding: 1.25rem;
+  border-radius: 12px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: $color-white;
+  }
+}
+
+.state {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  color: rgba($color-white, 0.86);
+  font-size: 0.9rem;
+  text-align: center;
+
+  &.state--error {
+    background: rgba($color-danger, 0.1);
+    border: 1px solid rgba($color-danger, 0.3);
+    color: $color-danger;
+    text-align: left;
+
+    details {
+      margin-top: 0.5rem;
+      color: rgba($color-white, 0.6);
+      font-size: 0.8rem;
+
+      summary {
+        cursor: pointer;
+        margin-bottom: 0.25rem;
+      }
+
+      pre {
+        margin: 0.25rem 0 0;
+        font-size: 0.72rem;
+        white-space: pre-wrap;
+        word-break: break-all;
+        color: rgba($color-danger, 0.7);
+        font-family: monospace;
+      }
+    }
+  }
+
+  &.state--success {
+    background: rgba($color-success, 0.12);
+    border: 1px solid rgba($color-success, 0.3);
+    color: $color-success;
+  }
+}
+
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.summary-card {
+  @extend %card-premium;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .label {
+    color: rgba($color-white, 0.6);
+    font-size: 0.88rem;
+  }
+
+  .value {
+    color: $color-white;
+    font-weight: 600;
+    font-size: 0.95rem;
+
+    &.value--gold {
+      color: $color-gold;
+      font-size: 1.05rem;
+    }
+
+    &.value--badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      background: rgba($color-gold, 0.12);
+      border: 1px solid rgba($color-gold, 0.25);
+      border-radius: 20px;
+      color: $color-gold;
+      font-size: 0.82rem;
+      font-weight: 500;
+
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: $color-gold;
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+.summary-divider {
+  height: 1px;
+  background: rgba($color-gold, 0.12);
+  margin: 0.1rem 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 480px) {
+  .register-payment-page {
+    padding: 0.75rem 0.75rem 1.5rem;
+  }
+
+  .card-block {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .header h1 {
+    font-size: 1rem;
+  }
+}

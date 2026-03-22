@@ -1,0 +1,24 @@
+﻿<main class="payment-methods-page" aria-live="polite">
+  <section class="card-block">
+    <h1>Metodos de pago disponibles</h1>
+
+    <p class="state" *ngIf="loading">Cargando metodos de pago...</p>
+
+    <div class="state state--error" *ngIf="!loading && error">
+      <p>{{ error }}</p>
+      <ui-button visualTheme="client-premium" texto="Reintentar" (accion)="reintentar()"></ui-button>
+    </div>
+
+    <p class="state" *ngIf="vacio">No hay metodos de pago disponibles.</p>
+
+    <div class="methods-list" *ngIf="!loading && !error && metodos.length">
+      <article class="method-card" *ngFor="let metodo of metodos">
+        <div class="icon">ðŸ’³</div>
+        <div class="content">
+          <h3>{{ metodo.nombre }}</h3>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+

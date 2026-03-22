@@ -11,6 +11,15 @@
         cursor: pointer;
         color: #D4AF37
     }
+
+    &.active-link{
+        color: #D4AF37;
+        border-bottom: 2px solid #D4AF37;
+    }
+
+    &.hide-underline.active-link {
+        border-bottom: none;
+    }
     
     &.bordered {
         border-bottom: 2px solid #D4AF37;

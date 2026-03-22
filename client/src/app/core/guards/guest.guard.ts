@@ -4,7 +4,7 @@ import { combineLatest, filter, map, take } from "rxjs";
 import { Store } from "@ngrx/store";
 import { selectAuthLoading, selectIsAuthenticated } from "../../domain/auth/state/auth.selectors";
 
-export const guestGuard: CanActivateFn = () => {
+export const guestGuard: CanActivateFn = (route) => {
 	const store = inject(Store);
 	const router = inject(Router);
 
@@ -16,8 +16,11 @@ export const guestGuard: CanActivateFn = () => {
 		take(1),
 		map(([, isAuthenticated]) => {
 			if (isAuthenticated) {
-				router.navigate(["/"]);
-				return false;
+				const returnUrl = route.queryParamMap.get("returnUrl");
+				if (returnUrl && returnUrl.startsWith("/")) {
+					return router.parseUrl(returnUrl);
+				}
+				return router.createUrlTree(["/"]);
 			}
 			return true;
 		})

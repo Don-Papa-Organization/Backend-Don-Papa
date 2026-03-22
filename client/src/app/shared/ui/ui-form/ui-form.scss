@@ -98,3 +98,23 @@
     align-items: center;
     justify-content: center;
 }
+
+.ui-form-container.full-width {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.ui-form-container--client-premium {
+    border-radius: 13px;
+    border-color: rgba(212, 175, 55, 0.62);
+    background: linear-gradient(160deg, rgba(31, 24, 18, 0.96), rgba(13, 10, 8, 0.98));
+    box-shadow: 0 20px 34px rgba(0, 0, 0, 0.35), 0 0 20px rgba(212, 175, 55, 0.16);
+
+    .form-title {
+        color: #ffffff;
+        font-size: clamp(2rem, 4vw, 2.35rem);
+        letter-spacing: 0.02em;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+}

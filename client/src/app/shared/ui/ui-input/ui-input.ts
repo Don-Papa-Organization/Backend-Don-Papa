@@ -18,12 +18,12 @@
     @Input() tituloInput: string = '';
     @Input() showLabel: boolean = true;
     @Input() placeholder: string = '';
-    @Input() tipo: 'text' | 'password' | 'email' | 'number' | 'checkbox' | 'date' = 'text';
+    @Input() tipo: 'text' | 'password' | 'email' | 'number' | 'checkbox' | 'date' | 'time' = 'text';
     @Input() valorInput: string = '';
     @Input() min?: number;
     @Input() density: 'default' | 'compact' = 'default';
     @Input() stretch: boolean = false;
-    @Input() theme: 'default' | 'pos' = 'default';
+    @Input() theme: 'default' | 'pos' | 'client-premium' = 'default';
 
     @Output() valorInputChange = new EventEmitter<string>();
     @Output() enterPress = new EventEmitter<void>();

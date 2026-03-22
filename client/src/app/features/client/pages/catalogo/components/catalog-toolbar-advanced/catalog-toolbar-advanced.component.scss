@@ -1,0 +1,200 @@
+@use '../../../../../../styles/variables' as *;
+
+.catalog-toolbar-advanced {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(218, 165, 32, 0.15);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  flex-wrap: wrap;
+}
+
+.toolbar {
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  &__sort {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  &__select {
+    background: rgba(218, 165, 32, 0.1);
+    border: 1px solid rgba(218, 165, 32, 0.3);
+    color: $color-white;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 200px;
+
+    &:hover {
+      background: rgba(218, 165, 32, 0.15);
+      border-color: rgba(218, 165, 32, 0.5);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-gold;
+      box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.2);
+    }
+
+    option {
+      background: $color-bg-primary;
+      color: $color-white;
+    }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  &__filter-btn {
+    background: rgba(218, 165, 32, 0.1);
+    border: 1px solid rgba(218, 165, 32, 0.3);
+    color: $color-white;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(218, 165, 32, 0.15);
+      border-color: rgba(218, 165, 32, 0.5);
+    }
+
+    &.has-active {
+      background: rgba(218, 165, 32, 0.2);
+      border-color: $color-gold;
+      color: $color-gold;
+    }
+
+    .toolbar__filter-icon {
+      font-size: 1.1rem;
+    }
+  }
+
+  &__clear-btn {
+    background: rgba(255, 100, 100, 0.15);
+    border: 1px solid rgba(255, 100, 100, 0.3);
+    color: #ff6464;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(255, 100, 100, 0.25);
+      border-color: #ff6464;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .catalog-toolbar-advanced {
+    padding: 0.9rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .toolbar {
+    &__left {
+      min-width: 150px;
+    }
+
+    &__select {
+      min-width: 150px;
+      font-size: 0.85rem;
+      padding: 0.5rem 0.75rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .catalog-toolbar-advanced {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.8rem;
+  }
+
+  .toolbar {
+    &__left {
+      flex: 1 !important;
+    }
+
+    &__right {
+      justify-content: space-between;
+    }
+
+    &__select {
+      width: 100%;
+    }
+
+    &__filter-btn,
+    &__clear-btn {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .catalog-toolbar-advanced {
+    padding: 0.6rem;
+    gap: 0.5rem;
+  }
+
+  .toolbar {
+    &__label {
+      display: none;
+    }
+
+    &__select {
+      min-width: 100%;
+      font-size: 0.8rem;
+    }
+
+    &__view-btn {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    &__filter-btn,
+    &__clear-btn {
+      font-size: 0.8rem;
+      padding: 0.5rem 0.75rem;
+    }
+  }
+}

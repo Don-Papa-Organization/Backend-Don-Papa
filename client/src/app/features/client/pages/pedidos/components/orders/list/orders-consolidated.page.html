@@ -1,0 +1,70 @@
+﻿<main class="orders-page" aria-live="polite">
+  <section class="page-section">
+    <h1>Mis Pedidos</h1>
+
+    <div class="tabs-wrapper">
+      <app-ui-tabs visualTheme="client-premium" 
+        [tabItems]="tabItems" 
+        [tabActiva]="activeTab" 
+        (tabChange)="onTabChange($event)"
+      ></app-ui-tabs>
+    </div>
+
+    <div class="orders-container">
+      <!-- EN PROGRESO TAB CONTENT -->
+      <section class="tab-content" *ngIf="activeTab === 'en-progreso'">
+        <p class="state" *ngIf="enProgreso.loading">Cargando pedidos...</p>
+
+        <div class="state state--error" *ngIf="!enProgreso.loading && enProgreso.error">
+          <p>{{ enProgreso.error }}</p>
+          <ui-button visualTheme="client-premium" 
+            texto="Reintentar" 
+            (accion)="reintentar('enProgreso')"
+          ></ui-button>
+        </div>
+
+        <p class="empty-message" *ngIf="enProgresoVacio">
+          No has realizado ningun pedido aun
+        </p>
+
+        <div class="orders-list" *ngIf="!enProgreso.loading && !enProgreso.error && enProgreso.pedidos.length">
+          <app-ui-order-item visualTheme="client-premium"
+            *ngFor="let pedido of enProgreso.pedidos"
+            [pedido]="pedido"
+            [cantidadProductos]="0"
+            [mostrarAcciones]="true"
+            (downloadReceipt)="descargarComprobante($event)"
+          ></app-ui-order-item>
+        </div>
+      </section>
+
+      <!-- HISTORIAL TAB CONTENT -->
+      <section class="tab-content" *ngIf="activeTab === 'historial'">
+        <p class="state" *ngIf="historial.loading">Cargando historial...</p>
+
+        <div class="state state--error" *ngIf="!historial.loading && historial.error">
+          <p>{{ historial.error }}</p>
+          <ui-button visualTheme="client-premium" 
+            texto="Reintentar" 
+            (accion)="reintentar('historial')"
+          ></ui-button>
+        </div>
+
+        <p class="empty-message" *ngIf="historialVacio">
+          No has recibido ningun pedido aun
+        </p>
+
+        <div class="orders-list" *ngIf="!historial.loading && !historial.error && historial.pedidos.length">
+          <app-ui-order-item visualTheme="client-premium"
+            *ngFor="let pedido of historial.pedidos"
+            [pedido]="pedido"
+            [cantidadProductos]="0"
+            [mostrarAcciones]="true"
+            (downloadReceipt)="descargarComprobante($event)"
+          ></app-ui-order-item>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+

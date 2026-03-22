@@ -13,6 +13,8 @@ export class UiForm implements AfterViewInit, OnDestroy {
   @Input() maxWidth: string = '500px';
   @Input() maxHeight: string = '100vh';
   @Input() showFooter: boolean = true;
+  @Input() fullWidth: boolean = false;
+  @Input() visualTheme: 'default' | 'client-premium' = 'default';
 
   @ViewChild('formRef', { static: false, read: ElementRef }) formElement?: ElementRef;
   @ViewChild('formRef', { static: false, read: NgForm }) ngForm?: NgForm;

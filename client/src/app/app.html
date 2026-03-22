@@ -2,4 +2,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Lora:wght@400&display=swap"
     rel="stylesheet">
 </head>
-<router-outlet></router-outlet>
+<ng-container *ngIf="isAppReady$ | async; else appLoading">
+  <router-outlet></router-outlet>
+</ng-container>
+
+<ng-template #appLoading>
+  <section class="app-loading" aria-live="polite" aria-busy="true">
+    Cargando pagina...
+  </section>
+</ng-template>

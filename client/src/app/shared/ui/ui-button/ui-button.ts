@@ -22,6 +22,7 @@ export class UiButton {
   @Input() fullWidth = false;
   @Input() noBackgroundColor: boolean = false;
   @Input() backgroundColor: string = DEFAULT_BUTTON_COLOR;
+  @Input() visualTheme: 'default' | 'client-premium' = 'default';
 
   get borderColor(): string {
     return this.resolvedToneColor;
@@ -35,6 +36,7 @@ export class UiButton {
     return [
       `ui-btn--${this.variant}`,
       `ui-btn--${this.size}`,
+      this.visualTheme === 'client-premium' ? 'ui-btn--theme-client-premium' : '',
       this.isOutlineAppearance ? 'no-background' : '',
       this.fullWidth ? 'ui-btn--full-width' : ''
     ].filter(Boolean);

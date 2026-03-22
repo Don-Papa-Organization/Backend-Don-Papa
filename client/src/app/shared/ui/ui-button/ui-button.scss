@@ -4,7 +4,7 @@
 .ui-btn {
   background-color: var(--ui-btn-tone, #{$color-gold});
   color: var(--ui-btn-text-color, #{$color-black});
-  padding: 10px;
+  padding: 10px 14px;
   border-radius: $radius-md;
   border: 1px solid transparent;
   cursor: pointer;
@@ -17,7 +17,8 @@
   /* Dimensiones */
   max-width: 450px;
   max-height: 50px;
-  height: 40px;
+  min-height: 44px;
+  height: 44px;
   box-sizing: border-box;
 
   font-family: inherit;
@@ -44,8 +45,9 @@
   }
 
   &.ui-btn--compact {
-    height: 34px;
-    max-height: 34px;
+    height: 40px;
+    max-height: 40px;
+    min-height: 40px;
     padding: 0.45rem 0.75rem;
     font-size: 14px;
   }
@@ -53,6 +55,28 @@
   &.ui-btn--full-width {
     width: 100% !important;
     max-width: none;
+  }
+
+  &.ui-btn--theme-client-premium {
+    border-radius: 10px;
+    border-color: rgba($color-gold, 0.45);
+    background-image: linear-gradient(180deg, rgba($color-white, 0.08) 0%, rgba($color-white, 0) 45%);
+    box-shadow: 0 8px 14px rgba($color-black, 0.35);
+
+    &:hover:not(.no-background) {
+      filter: none;
+      transform: translateY(-1px);
+      background-color: #c9a227 !important;
+      box-shadow: 0 10px 20px rgba($color-black, 0.4), 0 0 14px rgba($color-gold, 0.32);
+    }
+
+    &.no-background {
+      border-color: rgba($color-gold, 0.7);
+
+      &:hover {
+        box-shadow: 0 0 14px rgba($color-gold, 0.25);
+      }
+    }
   }
 
   // Estado deshabilitado

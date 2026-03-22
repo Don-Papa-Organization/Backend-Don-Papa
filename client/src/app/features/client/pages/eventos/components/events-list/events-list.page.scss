@@ -1,0 +1,231 @@
+@use 'sass:color';
+@use '../../../../../../styles/variables' as *;
+@use '../../../../../../styles/shared-states' as *;
+
+.events-list-container {
+  @extend %page-base;
+}
+
+.events-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    color: $color-white;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: rgba($color-white, 0.72);
+    margin: 0;
+  }
+}
+
+.loading-state,
+.empty-state,
+.error-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  @extend %card-block;
+}
+
+.spinner {
+  @extend %spinner;
+}
+
+.error-message {
+  color: $color-danger;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.btn-retry {
+  padding: 0.7rem 1.5rem;
+  @extend %btn-primary;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.empty-message {
+  color: rgba($color-white, 0.8);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.content {
+  .search-section {
+    @extend %section-card;
+    margin-bottom: 2rem;
+    padding: 1.25rem 1.5rem;
+
+    .search-input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .search-input {
+        @extend %input-control;
+        flex: 1;
+        padding: 0.7rem 1rem;
+
+        &::placeholder {
+          color: rgba($color-white, 0.5);
+        }
+      }
+
+      .btn-clear-search {
+        @extend %btn-secondary;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+    }
+
+    .search-results {
+      color: rgba($color-white, 0.62);
+      font-size: 0.85rem;
+      margin: 0.6rem 0 0;
+    }
+  }
+
+  .eventos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .evento-card {
+    @extend %card-premium;
+    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &:hover {
+      border-color: rgba($color-gold, 0.6);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba($color-gold, 0.15);
+    }
+
+    &__header {
+      padding: 1.5rem 1.5rem 1rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+
+      .evento-date-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: linear-gradient(135deg, $color-gold, color.adjust($color-gold, $lightness: -8%));
+        color: $color-bg-primary;
+        padding: 0.4rem 0.7rem;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 700;
+        min-width: 48px;
+
+        .date-day {
+          display: block;
+          font-size: 1.3rem;
+          line-height: 1;
+        }
+
+        .date-month {
+          display: block;
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          margin-top: 0.2rem;
+          letter-spacing: 0.05em;
+        }
+      }
+
+      h3 {
+        font-size: 1.1rem;
+        color: $color-white;
+        font-weight: 700;
+        margin: 0;
+        padding-right: 60px;
+        word-break: break-word;
+        line-height: 1.3;
+      }
+    }
+
+    &__content {
+      padding: 0 1.5rem 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+
+        .detail-label {
+          color: rgba($color-white, 0.5);
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .detail-value {
+          color: $color-white;
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+      }
+
+      .promo-section {
+        margin-top: 0.25rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba($color-gold, 0.2);
+
+        .promo-badge {
+          display: inline-flex;
+          align-items: center;
+          background: linear-gradient(135deg, rgba($color-gold, 0.2), rgba($color-gold, 0.1));
+          color: $color-gold;
+          padding: 0.3rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          border: 1px solid rgba($color-gold, 0.3);
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+      }
+    }
+
+    &__footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba($color-gold, 0.1);
+      background: rgba($color-black, 0.15);
+      display: flex;
+      align-items: center;
+
+      .btn-details {
+        width: 100%;
+        padding: 0.65rem 1rem;
+        @extend %btn-primary;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+      }
+    }
+  }
+}

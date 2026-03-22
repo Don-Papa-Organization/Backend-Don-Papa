@@ -1,0 +1,8 @@
+<section class="ui-toast" *ngIf="visible" [class.ui-toast--warning]="tone === 'warning'" [class.ui-toast--success]="tone === 'success'" [class.ui-toast--error]="tone === 'error'" [class.ui-toast--client-premium]="visualTheme === 'client-premium'" role="status" aria-live="polite">
+  <p class="ui-toast__message">{{ message }}</p>
+
+  <div class="ui-toast__actions">
+    <button type="button" class="ui-toast__btn ui-toast__btn--ghost" (click)="onClose()">{{ closeLabel }}</button>
+    <button type="button" class="ui-toast__btn ui-toast__btn--primary" *ngIf="actionLabel" (click)="onAction()">{{ actionLabel }}</button>
+  </div>
+</section>

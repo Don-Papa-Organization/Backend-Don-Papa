@@ -1,0 +1,116 @@
+<div class="pedidos-web-page">
+  <div class="page-header">
+    <h1>Pedidos Web</h1>
+    <p class="subtitle">Pedidos realizados desde la plataforma web</p>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="state state--loading">
+    <div class="spinner"></div>
+    <p>Cargando pedidos...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="error && !loading" class="state state--error">
+    <p class="error-message">{{ error }}</p>
+    <button class="btn-retry" (click)="cargarPedidos()">Reintentar</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div *ngIf="!loading && !error" class="content">
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="filter-chips">
+        <button
+          class="chip"
+          [class.active]="filtroEstado === ''"
+          (click)="filtroEstado = ''">
+          Pedidos web ({{ pedidosActivos.length }})
+        </button>
+        <button
+          class="chip"
+          [class.active]="filtroEstado === 'entregado'"
+          (click)="filtroEstado = 'entregado'">
+          Entregados ({{ pedidosEntregados.length }})
+        </button>
+      </div>
+    </div>
+
+    <!-- EMPTY -->
+    <div *ngIf="pedidosFiltrados.length === 0" class="state state--empty">
+      <p>No hay pedidos web en este momento.</p>
+    </div>
+
+    <!-- GROUPED ORDERS -->
+    <div *ngFor="let grupo of groupedPedidos" class="orders-group">
+      <h2 class="group-title">{{ grupo.label }} ({{ grupo.pedidos.length }})</h2>
+
+      <div class="orders-list">
+        <div *ngFor="let pedido of grupo.pedidos" class="order-card">
+
+          <div class="order-card__header">
+            <div class="order-info">
+              <span class="order-id">Pedido #{{ pedido.idPedido }}</span>
+              <span class="order-date">{{ formatearFecha(pedido.fechaPedido) }}</span>
+            </div>
+            <span class="badge" [ngClass]="getBadgeClass(pedido.estado)">
+              {{ getEstadoLabel(pedido.estado) }}
+            </span>
+          </div>
+
+          <div class="order-card__body">
+            <div class="order-meta">
+              <div class="meta-item">
+                <span class="meta-label">Total</span>
+                <span class="meta-value price">{{ formatoMoneda(pedido.total) }}</span>
+              </div>
+              <div class="meta-item" *ngIf="pedido.tipoAtencion">
+                <span class="meta-label">Tipo</span>
+                <span class="meta-value">{{ pedido.tipoAtencion === 'local' ? 'Local' : 'Para llevar' }}</span>
+              </div>
+              <div class="meta-item" *ngIf="pedido.idMesa">
+                <span class="meta-label">Mesa</span>
+                <span class="meta-value">#{{ pedido.idMesa }}</span>
+              </div>
+              <div class="meta-item" *ngIf="pedido.direccionEntrega">
+                <span class="meta-label">Direccion</span>
+                <span class="meta-value">{{ pedido.direccionEntrega }}</span>
+              </div>
+            </div>
+
+            <!-- PRODUCTS -->
+            <div class="order-products" *ngIf="pedido.productos?.length">
+              <span class="products-label">{{ pedido.productos!.length }} producto(s)</span>
+              <div class="products-list">
+                <div *ngFor="let item of pedido.productos" class="product-item">
+                  <span class="product-qty">{{ item.cantidad }}x</span>
+                  <span class="product-name">{{ item.productoNombre || 'Producto #' + item.idProducto }}</span>
+                  <span class="product-subtotal">{{ formatoMoneda(item.subtotal) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-card__footer">
+            <div class="actions">
+              <ng-container *ngFor="let sig of getSiguientesEstados(pedido.estado)">
+                <button
+                  class="btn-action"
+                  [class.btn-action--confirm]="sig.value === 'pendiente' || sig.value === 'entregado'"
+                  [class.btn-action--cancel]="sig.value === 'cancelado'"
+                  [disabled]="isUpdating(pedido.idPedido)"
+                  (click)="cambiarEstado(pedido.idPedido, sig.value)">
+                  <span *ngIf="!isUpdating(pedido.idPedido)">{{ sig.label }}</span>
+                  <span *ngIf="isUpdating(pedido.idPedido)">...</span>
+                </button>
+              </ng-container>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

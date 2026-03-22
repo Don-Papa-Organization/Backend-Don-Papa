@@ -1,0 +1,206 @@
+@use '../../../../../../../styles/variables' as *;
+@use '../../../../../../../styles/shared-states' as *;
+
+.orders-cart-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: calc(100vh - 70px);
+  padding: 0 1rem 1rem;
+}
+
+.cart-section {
+  @extend %section-card;
+}
+
+.cart-header {
+  margin-bottom: 1rem;
+
+  h1 {
+    margin: 0;
+    color: $color-white;
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+}
+
+.state {
+  color: rgba($color-white, 0.86);
+  margin: 0.35rem 0;
+  padding: 0.5rem 0.65rem;
+
+  &.state--error {
+    color: $color-danger;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 6px;
+  }
+}
+
+.form-message {
+  margin: 0.7rem 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+
+  &.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: $color-danger;
+    border-left: 3px solid $color-danger;
+  }
+
+  &.success {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+    border-left: 3px solid $color-success;
+  }
+}
+
+.warning-banner {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0.8rem 0;
+}
+
+.warning-text {
+  color: $color-danger;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.cart-content {
+  margin-top: 1rem;
+}
+
+.cart-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.cart-footer {
+  border-top: 1px solid rgba($color-gold, 0.2);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.total-section {
+  margin-bottom: 1rem;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  color: $color-white;
+}
+
+.total-label {
+  font-size: 1rem;
+  color: rgba($color-white, 0.85);
+}
+
+.total-amount {
+  font-size: 1.3rem;
+  color: $color-gold;
+  font-weight: 600;
+}
+
+.actions-section {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+// Empty cart component styling
+::ng-deep .app-ui-empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  text-align: center;
+  border-radius: 8px;
+  background: rgba($color-gold, 0.04);
+  border: 1px dashed rgba($color-gold, 0.2);
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 0.8rem;
+    opacity: 0.6;
+  }
+
+  .empty-text {
+    color: rgba($color-white, 0.7);
+    margin-bottom: 1rem;
+  }
+
+  a {
+    color: $color-gold;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-gold-light;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .cart-section {
+    padding: 1rem;
+  }
+
+  .cart-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .total-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actions-section {
+    width: 100%;
+    flex-direction: column;
+
+    ::ng-deep ui-button {
+      width: 100%;
+    }
+  }
+
+  .warning-banner {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .warning-text {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .orders-cart-page {
+    padding: 0 0.8rem 1rem;
+  }
+
+  .cart-section {
+    padding: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .cart-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .cart-footer {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+  }
+
+  .total-amount {
+    font-size: 1.1rem;
+  }
+}
+

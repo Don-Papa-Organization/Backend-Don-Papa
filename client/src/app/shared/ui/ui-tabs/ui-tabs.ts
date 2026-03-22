@@ -14,6 +14,7 @@ export interface TabItem {
 export class UiTabs {
   @Input() tabItems: TabItem[] = [];
   @Input() tabActiva: string = '';
+  @Input() visualTheme: 'default' | 'client-premium' = 'default';
   @Output() tabChange = new EventEmitter<string>();
 
   onTabChange(tabId: string): void {

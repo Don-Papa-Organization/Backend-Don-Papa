@@ -1,0 +1,37 @@
+﻿<main class="payment-receipt-page" aria-live="polite">
+  <section class="card-block">
+    <h1>Historial de pagos y descargar recibos</h1>
+
+    <p class="state" *ngIf="loading">Cargando historial de pagos...</p>
+
+    <div class="state state--error" *ngIf="!loading && error">
+      <p>{{ error }}</p>
+      <ui-button visualTheme="client-premium" texto="Reintentar" (accion)="reintentar()"></ui-button>
+    </div>
+
+    <p class="state" *ngIf="vacio">No tienes pagos registrados.</p>
+
+    <div class="payment-list" *ngIf="!loading && !error && pagos.length">
+      <article class="payment-card" *ngFor="let pago of pagos">
+        <div class="row"><span class="label">ID Pago</span><strong>#{{ pago.idPago }}</strong></div>
+        <div class="row"><span class="label">Pedido</span><span>#{{ pago.idPedido }}</span></div>
+        <div class="row"><span class="label">Metodo</span><span>{{ pago.metodoPago?.nombre || 'N/A' }}</span></div>
+        <div class="row"><span class="label">Monto</span><strong>{{ formatoMoneda(pago.monto) }}</strong></div>
+        <div class="row"><span class="label">Fecha</span><span>{{ formatoFecha(pago.fechaPago) }}</span></div>
+
+        <div class="actions">
+          <ui-button visualTheme="client-premium"
+            [texto]="descargando ? 'Descargando...' : 'Descargar recibo'"
+            [disabled]="descargando || !pago.idPago"
+            (accion)="descargarRecibo(pago)"
+          ></ui-button>
+        </div>
+      </article>
+    </div>
+
+    <div class="load-more" *ngIf="!loading && !error && puedeCargarMas">
+      <ui-button visualTheme="client-premium" [texto]="loadingMore ? 'Cargando...' : 'Cargar mas'" [disabled]="loadingMore" (accion)="cargarMas()"></ui-button>
+    </div>
+  </section>
+</main>
+

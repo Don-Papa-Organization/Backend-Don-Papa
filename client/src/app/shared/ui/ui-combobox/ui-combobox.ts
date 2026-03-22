@@ -13,7 +13,7 @@ export class UiCombobox implements OnInit, OnChanges {
   @Input() selectedOption: any;
   @Input() density: 'default' | 'compact' = 'default';
   @Input() stretch = false;
-  @Input() theme: 'default' | 'pos' = 'default';
+  @Input() theme: 'default' | 'pos' | 'client-premium' = 'default';
   @Input() searchPlaceholder = 'Buscar...';
   @Input() emptyMessage = 'No hay opciones disponibles';
 

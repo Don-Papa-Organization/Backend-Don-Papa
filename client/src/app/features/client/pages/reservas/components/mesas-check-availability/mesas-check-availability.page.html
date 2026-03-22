@@ -1,0 +1,98 @@
+﻿<div class="check-availability-container">
+  <div class="search-header">
+    <h1>Buscar Disponibilidad de Mesas</h1>
+    <p class="subtitle">Encuentra la mesa perfecta para tu reserva</p>
+  </div>
+
+  <div class="search-form-section">
+    <div class="search-form">
+      <div class="form-group">
+        <label for="fecha">Fecha:</label>
+        <input 
+          type="date" 
+          id="fecha" 
+          [(ngModel)]="fecha" 
+          [min]="minDate"
+          class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="hora">Hora:</label>
+        <select id="hora" [(ngModel)]="hora" class="form-select">
+          <option value="">Selecciona una hora</option>
+          <option *ngFor="let h of horasDisponibles" [value]="h">{{ h }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="personas">Cantidad de Personas:</label>
+        <div class="persons-selector">
+          <button 
+            *ngFor="let p of personasOptions" 
+            class="person-btn" 
+            [class.active]="cantidadPersonas === p"
+            (click)="cantidadPersonas = p">
+            {{ p }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button (click)="buscarDisponibilidad()" class="btn-primary">
+          {{ !isLoading ? 'ðŸ” Buscar Disponibilidad' : 'Buscando...' }}
+        </button>
+        <button (click)="limpiarFormulario()" class="btn-secondary">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <p class="error-message">{{ error }}</p>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Verificando disponibilidad...</p>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div *ngIf="isEmpty && buscaRealizada && !isLoading && !error" class="empty-state">
+    <p class="empty-message">ðŸ˜” No hay mesas disponibles para esa fecha, hora y cantidad de personas.</p>
+    <p class="suggestion">Intenta cambiar la fecha, hora o cantidad de personas.</p>
+  </div>
+
+  <!-- RESULTS STATE -->
+  <div *ngIf="availability && availability.mesasDisponibles.length && !isLoading" class="results-section">
+    <div class="results-header">
+      <h2>Mesas Disponibles</h2>
+      <p class="result-info">
+        {{ availability.totalDisponibles }} mesa(s) para {{ availability.cantidadPersonas }} personas 
+        el {{ availability.fecha }} a las {{ availability.hora }}
+      </p>
+    </div>
+
+    <div class="mesas-results-grid">
+      <div *ngFor="let mesa of availability.mesasDisponibles" class="mesa-result-card">
+        <div class="mesa-info">
+          <h3>Mesa #{{ mesa.numero }}</h3>
+          <p class="mesa-type">{{ mesa.tipo }}</p>
+          <p class="mesa-estado">
+            <span class="status-badge available">
+              Disponible
+            </span>
+          </p>
+        </div>
+
+        <div class="mesa-action">
+          <button (click)="seleccionarMesa(mesa)" class="btn-select">
+            {{ isAuthenticated ? 'ðŸ“Œ Reservar' : 'ðŸ” Reservar' }}
+          </button>
+          <p *ngIf="!isAuthenticated" class="login-hint">Se requiere login</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

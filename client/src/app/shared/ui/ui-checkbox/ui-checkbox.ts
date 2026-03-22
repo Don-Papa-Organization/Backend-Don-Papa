@@ -18,6 +18,7 @@ export class UiCheckbox implements ControlValueAccessor {
   @Input() label: string = '';
   @Input() name: string = '';
   @Input() checked: boolean = false;
+  @Input() visualTheme: 'default' | 'client-premium' = 'default';
 
   @Output() checkedChange = new EventEmitter<boolean>();
 

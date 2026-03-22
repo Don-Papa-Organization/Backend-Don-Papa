@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $color-gold: #D4AF37;
 $color-white: #FFFFFF;
 $color-black: #000000;
@@ -7,6 +9,35 @@ $color-danger: #EF4444;
 $color-success: #2ecc71;
 $color-info: #3B82F6;
 
+// Compatibilidad con estilos existentes.
+$color-gold-light: color.adjust($color-gold, $lightness: 10%);
+
+$color-gold-border-light: rgba($color-gold, 0.15);
+$color-gold-border-medium: rgba($color-gold, 0.22);
+$color-gold-border-strong: rgba($color-gold, 0.35);
+$color-gold-border-accent: rgba($color-gold, 0.45);
+$color-gold-bg-subtle: rgba($color-gold, 0.04);
+$color-gold-bg-light: rgba($color-gold, 0.08);
+$color-gold-bg-medium: rgba($color-gold, 0.14);
+
+$color-white-90: rgba($color-white, 0.90);
+$color-white-85: rgba($color-white, 0.85);
+$color-white-75: rgba($color-white, 0.75);
+$color-white-72: rgba($color-white, 0.72);
+$color-white-68: rgba($color-white, 0.68);
+$color-white-65: rgba($color-white, 0.65);
+$color-white-62: rgba($color-white, 0.62);
+$color-white-50: rgba($color-white, 0.50);
+$color-white-08: rgba($color-white, 0.08);
+$color-white-05: rgba($color-white, 0.05);
+$color-white-02: rgba($color-white, 0.02);
+
+$floor-bg: #e7d4a0;
+$floor-grid-line: rgba(139, 94, 60, 0.05);
+$floor-border: rgba(139, 94, 60, 0.3);
+$floor-label-color: #1a120f;
+$floor-vip-border: rgba(94, 25, 20, 0.3);
+
 $space-page: 1.5rem;
 $space-section: 1rem;
 $space-action: 0.75rem;
@@ -14,9 +45,16 @@ $space-action: 0.75rem;
 $radius-sm: 4px;
 $radius-md: 5px;
 $radius-lg: 8px;
+$radius-xl: 12px;
+$radius-2xl: 16px;
+$radius-pill: 999px;
 
 $shadow-soft: 0 4px 6px rgba($color-black, 0.3);
 $shadow-strong: 0 6px 14px rgba($color-black, 0.35);
+
+$bp-mobile: 480px;
+$bp-tablet: 768px;
+$bp-desktop: 960px;
 
 :root {
   --color-gold: #{$color-gold};
@@ -27,4 +65,5 @@ $shadow-strong: 0 6px 14px rgba($color-black, 0.35);
   --color-danger: #{$color-danger};
   --color-success: #{$color-success};
   --color-info: #{$color-info};
+  --floor-bg: #{$floor-bg};
 }

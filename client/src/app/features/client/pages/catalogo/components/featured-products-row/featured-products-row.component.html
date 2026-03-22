@@ -1,0 +1,50 @@
+<section class="featured-row">
+  <div class="featured-row__header">
+    <div class="featured-row__intro">
+      <h3 class="featured-row__title">{{ titleText }}</h3>
+      <p class="featured-row__subtitle">{{ subtitleText }}</p>
+    </div>
+  </div>
+
+  <div class="featured-row__content">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="featured-row__loading">
+      <div *ngFor="let i of [0, 1, 2, 3]" class="featured-skeleton">
+        <div class="featured-skeleton__image"></div>
+        <div class="featured-skeleton__text"></div>
+        <div class="featured-skeleton__text" style="width: 60%"></div>
+      </div>
+    </div>
+
+        <div class="featured-row__grid">
+          <div
+            *ngFor="let producto of displayProducts; trackBy: trackByProductId"
+            class="featured-row__card"
+          >
+            <app-ui-product-card
+              [idProducto]="producto.idProducto"
+              [nombre]="producto.nombre"
+              [precio]="producto.precio"
+              [precioPromocional]="producto.precioPromocional || null"
+              [tienePromocion]="producto.tienePromocion || false"
+              [porcentajeDescuento]="producto.porcentajeDescuento || null"
+              [urlImagen]="producto.urlImagen || ''"
+              [stockActual]="producto.stockActual"
+              [idCategoria]="producto.idCategoria || 0"
+              [nombreCategoria]="producto.nombreCategoria || ''"
+              [esFeatured]="true"
+              [esNuevo]="producto.esNuevo || false"
+              visualVariant="featured"
+              (addToCart)="onAddToCart(producto)"
+              (quickView)="onQuickView(producto)"
+              (toggleWishlist)="onToggleWishlist(producto)"
+            ></app-ui-product-card>
+          </div>
+        </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && displayProducts.length === 0" class="featured-row__empty">
+      <p>No hay productos destacados disponibles.</p>
+    </div>
+  </div>
+</section>

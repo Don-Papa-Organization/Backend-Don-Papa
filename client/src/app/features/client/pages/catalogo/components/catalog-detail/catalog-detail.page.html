@@ -1,0 +1,63 @@
+﻿<app-header *ngIf="mode === 'public'" [icono]="true" [opacidad]="1" titulo="Detalle de producto">
+  <ui-button visualTheme="client-premium"
+    texto="Volver"
+    [noBackgroundColor]="true"
+    borderRadius="16px"
+    (accion)="volver()"
+  ></ui-button>
+</app-header>
+
+<main class="detail-page" aria-live="polite">
+  <p class="state" *ngIf="loading">Cargando detalle de producto...</p>
+
+  <section class="state state--error" *ngIf="!loading && error">
+    <p>{{ error }}</p>
+    <ui-button visualTheme="client-premium" texto="Regresar" (accion)="volver()"></ui-button>
+  </section>
+
+  <section class="detail-card" *ngIf="!loading && !error && producto">
+    <figure class="image-block">
+      <img [src]="imageUrl" [alt]="producto.nombre" />
+    </figure>
+
+    <article class="content-block">
+      <h1>{{ producto.nombre }}</h1>
+
+      <div class="price-block" *ngIf="tienePromocion && precioPromocional !== null">
+        <p class="price-original">{{ producto.precio | number:'1.0-0' }} COP</p>
+        <p class="price-promo">{{ precioPromocional | number:'1.0-0' }} COP</p>
+        <span *ngIf="porcentajeDescuento !== null" class="discount-badge">-{{ porcentajeDescuento }}%</span>
+      </div>
+
+      <p class="price-normal" *ngIf="!tienePromocion || precioPromocional === null">
+        {{ producto.precio | number:'1.0-0' }} COP
+      </p>
+
+      <p class="description">{{ producto.descripcion || 'Sin descripcion adicional por el momento.' }}</p>
+      <p class="stock" [class.stock--empty]="producto.stockActual <= 0">
+        {{ producto.stockActual > 0 ? 'Stock disponible: ' + producto.stockActual : 'Sin stock disponible' }}
+      </p>
+
+      <div class="actions">
+        <ui-button visualTheme="client-premium" texto="Seguir comprando" (accion)="volver()"></ui-button>
+        <ui-button visualTheme="client-premium"
+          *ngIf="mode === 'client'"
+          texto="Agregar al carrito"
+          [disabled]="producto.stockActual <= 0 || agregandoCarrito"
+          (accion)="agregarAlCarrito()"
+        ></ui-button>
+        <ui-button visualTheme="client-premium"
+          *ngIf="mode === 'public'"
+          texto="Iniciar sesion para comprar"
+          [noBackgroundColor]="true"
+          (accion)="irALogin()"
+        ></ui-button>
+      </div>
+
+      <p class="state" *ngIf="mensaje" [class.state--error]="tipoMensaje === 'error'">
+        {{ mensaje }}
+      </p>
+    </article>
+  </section>
+</main>
+
