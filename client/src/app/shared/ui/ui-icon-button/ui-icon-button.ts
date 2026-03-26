@@ -22,6 +22,7 @@ export class UiIconButton {
   @Input() customHeight: string = "auto";
   @Input() iconSize: string = '40px';
   @Input() hideUnderline: boolean = false;
+  @Input() mostrarIcono: boolean = true;
 
   onClick(): void {
     this.action.emit();

@@ -1,12 +1,12 @@
 @if (!sidebarStyles) {
     @if (link) {
         <a [routerLink]="link" class="link" [class.hide-underline]="hideUnderline" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: exactMatch }">
-            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">
+            @if (mostrarIcono) {<img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">}
             <p class="texto">{{ texto }}</p>
         </a>    
     } @else {
         <a class="link" [class.hide-underline]="hideUnderline" (click)="onClick()">
-            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">
+            @if (mostrarIcono) {<img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">}
             <p class="texto">{{ texto }}</p>
         </a>
     }
@@ -26,7 +26,7 @@
             'height': customHeight
         }"
         >
-            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">
+            @if (mostrarIcono) {<img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">}
             <p class="texto">{{ texto }}</p>
         </a>   
     } @else {
@@ -43,7 +43,7 @@
         }"
         (click)="onClick()"
         >
-            <img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">
+            @if (mostrarIcono) {<img [src]="urlIcono" alt="" [hidden]="!urlIcono" class="img" [style.width]="iconSize" [style.height]="iconSize">}
             <p class="texto">{{ texto }}</p>
         </button>   
     }

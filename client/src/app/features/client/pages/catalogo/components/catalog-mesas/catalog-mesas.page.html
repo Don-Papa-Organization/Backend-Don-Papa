@@ -1,5 +1,14 @@
 <div class="mesas-container">
   <!-- BARRA DE FILTRO (compartida mapa + cards) -->
+  <div class="mesas-tabs">
+    <app-ui-tabs
+      visualTheme="client-premium"
+      [tabItems]="viewTabs"
+      [tabActiva]="vistaActiva"
+      (tabChange)="onVistaChange($event)"
+    ></app-ui-tabs>
+  </div>
+
   <div class="filter-bar-wrapper" *ngIf="!isLoading">
     <div class="filter-bar">
       <div class="filter-group">
@@ -30,15 +39,6 @@
     <div class="filter-result-info" *ngIf="mesas.length > 0 && fechaFiltro && horaFiltro && !isEmpty">
       <span>{{ mesas.length }} mesa(s) disponible(s) para el {{ fechaFiltro }} a las {{ horaFiltro }}</span>
     </div>
-  </div>
-
-  <div class="mesas-tabs">
-    <app-ui-tabs
-      visualTheme="client-premium"
-      [tabItems]="viewTabs"
-      [tabActiva]="vistaActiva"
-      (tabChange)="onVistaChange($event)"
-    ></app-ui-tabs>
   </div>
 
   <div class="floor-wrap" *ngIf="vistaActiva === 'mapa'">
