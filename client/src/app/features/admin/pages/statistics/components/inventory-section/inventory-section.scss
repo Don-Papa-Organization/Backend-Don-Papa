@@ -1,4 +1,109 @@
 .inventory-section-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.charts-grid {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+
+  .chart-wrapper {
+    background: var(--dp-color-common-114);
+    border: 1px solid var(--dp-color-common-117);
+    border-radius: 12px;
+    padding: 1rem;
+    min-height: 320px;
+
+    &.small {
+      min-height: 240px;
+    }
+  }
+}
+
+.product-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
+  
+  .chart-wrapper {
+    background: var(--dp-color-common-114);
+    border: 1px solid var(--dp-color-common-117);
+    border-radius: 12px;
+    padding: 1rem;
+    min-height: 240px;
+  }
+}
+
+.data-card {
+  background: var(--dp-color-common-114);
+  border: 1px solid var(--dp-color-common-117);
+  border-radius: 12px;
+  padding: 1.25rem;
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--dp-color-common-117);
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--dp-color-common-045);
+      margin: 0;
+    }
+
+    .count {
+      font-size: 0.8125rem;
+      color: var(--dp-color-admin-127);
+    }
+  }
+
+  &.danger {
+    border-color: var(--dp-color-admin-105);
+    
+    .card-header h3 {
+      color: var(--dp-color-common-032);
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--dp-color-common-117);
+
+  .page-btn {
+    background: var(--dp-color-common-077);
+    border: 1px solid var(--dp-color-common-080);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    color: var(--dp-color-common-029);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: var(--dp-color-common-029);
+      color: var(--dp-color-common-006);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  .page-info {
+    font-size: 0.875rem;
+    color: var(--dp-color-common-130);
+  }
 }

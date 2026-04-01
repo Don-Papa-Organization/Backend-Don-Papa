@@ -4,9 +4,9 @@
   h2 {
     font-size: 1.25rem;
     font-weight: 100;
-    color: #ffffff;
+    color: var(--dp-color-common-045);
     margin-bottom: 1rem;
-    border-bottom: 1px solid #D4AF37;
+    border-bottom: 1px solid var(--dp-color-common-029);
     padding-bottom: 0.5rem;
   }
 }
@@ -21,28 +21,28 @@
   font-size: 0.875rem;
 
   thead {
-    background-color: rgba(212, 175, 55, 0.1);
+    background-color: var(--dp-color-common-074);
 
     th {
       padding: 0.75rem;
       text-align: left;
       font-weight: 100;
-      color: #D4AF37;
-      border-bottom: 1px solid #D4AF37;
+      color: var(--dp-color-common-029);
+      border-bottom: 1px solid var(--dp-color-common-029);
     }
   }
 
   tbody {
     tr {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid var(--dp-color-common-117);
 
       &:hover {
-        background-color: rgba(212, 175, 55, 0.05);
+        background-color: var(--dp-color-admin-073);
       }
 
       td {
         padding: 0.75rem;
-        color: #ffffff;
+        color: var(--dp-color-common-045);
       }
     }
   }
@@ -58,12 +58,12 @@
 }
 
 .loading {
-  color: #D4AF37;
+  color: var(--dp-color-common-029);
 }
 
 .error {
-  color: #EF4444;
-  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--dp-color-common-031);
+  background-color: var(--dp-color-common-099);
 
   p {
     margin-bottom: 0.75rem;
@@ -71,8 +71,8 @@
 
   .retry-button {
     padding: 0.5rem 1rem;
-    background-color: #D4AF37;
-    color: #1a1a1a;
+    background-color: var(--dp-color-common-029);
+    color: var(--dp-color-common-006);
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -81,17 +81,17 @@
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: #c9a347;
+      background-color: var(--dp-color-admin-025);
     }
 
     &:active {
-      background-color: #b8933f;
+      background-color: var(--dp-color-admin-022);
     }
   }
 }
 
 .empty {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--dp-color-admin-127);
   font-style: italic;
 
   p {

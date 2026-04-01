@@ -1,0 +1,12 @@
+<section class="chart-section">
+  <h3 class="chart-title">{{ title }}</h3>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && data.length === 0" class="no-data">Sin datos disponibles</div>
+
+  <div *ngIf="!loading && !error && data.length > 0" class="chart-container" [style.height.px]="height">
+    <canvas #chartCanvas></canvas>
+  </div>
+</section>

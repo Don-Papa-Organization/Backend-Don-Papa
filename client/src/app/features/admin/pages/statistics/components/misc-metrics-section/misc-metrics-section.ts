@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { StatisticMetricItem } from '../statistics-metrics-grid/statistics-metrics-grid';
 
 @Component({
   selector: 'app-misc-metrics-section',
@@ -15,6 +14,4 @@ export class MiscMetricsSectionComponent {
   @Input() frequentUsersLoading = false;
   @Input() frequentUsersError: string | null = null;
   @Input() frequentUsersRows: Array<Record<string, string | number>> = [];
-
-  @Input() occupancyMetrics: StatisticMetricItem[] = [];
 }

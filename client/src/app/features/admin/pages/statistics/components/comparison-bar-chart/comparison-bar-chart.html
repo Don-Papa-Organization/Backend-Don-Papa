@@ -1,0 +1,12 @@
+<section class="comparison-chart-section">
+  <h3 class="comparison-chart-title">{{ title }}</h3>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && !hasData()" class="no-data">Sin datos disponibles</div>
+
+  <div *ngIf="!loading && !error && hasData()" class="chart-container" [style.height.px]="height">
+    <canvas #chartCanvas></canvas>
+  </div>
+</section>

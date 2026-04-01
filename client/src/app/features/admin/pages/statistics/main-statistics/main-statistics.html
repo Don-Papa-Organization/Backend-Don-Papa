@@ -1,5 +1,5 @@
 <div class="statistics-page">
-  <!-- Header estandarizado según guia_DeEstilos.md -->
+  <!-- Header estandarizado -->
   <div class="statistics-header">
     <h1>Estadísticas</h1>
     <div class="acciones-header">
@@ -10,7 +10,7 @@
     </div>
   </div>
 
-  <!-- Filtros de rango de fechas -->
+  <!-- Filtros: rango de fechas + chips rápidos -->
   <app-statistics-filters
     [filters]="filters"
     [isLoading]="isLoading"
@@ -20,43 +20,129 @@
     (downloadJson)="onDownloadJSON()"
   ></app-statistics-filters>
 
-  <!-- Dashboard con secciones modulares -->
-  <div *ngIf="dashboardState$ | async as state" class="dashboard-content">
-    <app-sales-section
-      class="sales-section"
-      [loading]="state.loadingState['salesSummary']"
-      [error]="state.errorState['salesSummary']"
-      [metrics]="buildSalesMetrics(state)"
-      [timelineRows]="buildSalesTimelineRows(state.salesTimeline)"
-    ></app-sales-section>
+  <!-- Chips de filtros rápidos -->
+  <div class="quick-filters">
+    <button 
+      class="chip" 
+      [class.active]="isActiveFilter(quickFilter7Days)"
+      (click)="setQuickFilter(7)"
+    >
+      Últimos 7 días
+    </button>
+    <button 
+      class="chip" 
+      [class.active]="isActiveFilter(quickFilter30Days)"
+      (click)="setQuickFilter(30)"
+    >
+      Últimos 30 días
+    </button>
+    <button 
+      class="chip" 
+      [class.active]="isActiveFilter(quickFilter90Days)"
+      (click)="setQuickFilter(90)"
+    >
+      Últimos 3 meses
+    </button>
+  </div>
 
-    <app-inventory-section
-      class="inventory-section"
-      [topProductsLoading]="state.loadingState['topProducts']"
-      [topProductsError]="state.errorState['topProducts']"
-      [topProductsRows]="buildTopProductsRows(state.topProducts)"
-      [deadStockLoading]="state.loadingState['deadStock']"
-      [deadStockError]="state.errorState['deadStock']"
-      [deadStockRows]="buildDeadStockRows(state.deadStock)"
-    ></app-inventory-section>
+  <!-- Tabs de navegación -->
+  <app-ui-tabs
+    [tabItems]="tabs"
+    [tabActiva]="activeTab"
+    (tabChange)="setActiveTab($event)"
+  ></app-ui-tabs>
 
-    <app-user-occupancy-section
-      [userGrowthLoading]="state.loadingState['userGrowth']"
-      [userGrowthError]="state.errorState['userGrowth']"
-      [userMetrics]="buildUserGrowthMetrics(state)"
-      [occupancyLoading]="state.loadingState['occupancy']"
-      [occupancyError]="state.errorState['occupancy']"
-      [occupancyRows]="buildOccupancyRows(state.occupancy)"
-    ></app-user-occupancy-section>
+  <!-- Dashboard con secciones modulares por tabs -->
+  <div class="dashboard-content">
+    
+    <!-- TAB VENTAS -->
+    <div *ngIf="activeTab === 'ventas'" class="tab-content">
+      <app-sales-section
+        [loading]="salesLoading"
+        [error]="salesError"
+        [metrics]="salesMetrics"
+        [timelineRows]="timelineRows"
+        [weeklySalesLabels]="weeklySalesLabels"
+        [weeklySalesData]="weeklySalesData"
+        [weeklyComparisonLabels]="weeklyComparisonLabels"
+        [weeklyCurrentData]="weeklyCurrentData"
+        [weeklyPreviousData]="weeklyPreviousData"
+        [currentWeekLabel]="'Semana Actual'"
+        [previousWeekLabel]="'Semana Anterior'"
+        [ventasFisico]="ventasFisico"
+        [ventasWeb]="ventasWeb"
+      ></app-sales-section>
+    </div>
 
-    <app-misc-metrics-section
-      [promotionsLoading]="state.loadingState['promotions']"
-      [promotionsError]="state.errorState['promotions']"
-      [promotionsRows]="buildPromotionsRows(state.promotions)"
-      [frequentUsersLoading]="state.loadingState['frequentUsers']"
-      [frequentUsersError]="state.errorState['frequentUsers']"
-      [frequentUsersRows]="buildFrequentUsersRows(state.frequentUsers)"
-      [occupancyMetrics]="buildOccupancyMetrics(state.occupancy)"
-    ></app-misc-metrics-section>
+    <!-- TAB INVENTARIO -->
+    <div *ngIf="activeTab === 'inventario'" class="tab-content">
+      <app-inventory-section
+        [topProductsLoading]="inventoryLoading"
+        [topProductsError]="inventoryError"
+        [topProductsRows]="topProductsRows"
+        [deadStockLoading]="inventoryLoading"
+        [deadStockError]="inventoryError"
+        [deadStockRows]="deadStockRows"
+        [top5Labels]="top5Labels"
+        [top5Data]="top5Data"
+        [top3ProductsWithComparison]="top3ProductsWithComparison"
+        [totalSales]="totalSales"
+      ></app-inventory-section>
+    </div>
+
+    <!-- TAB USUARIOS -->
+    <div *ngIf="activeTab === 'usuarios'" class="tab-content">
+      <app-user-occupancy-section
+        [userGrowthLoading]="usersLoading"
+        [userGrowthError]="usersError"
+        [userMetrics]="userMetrics"
+      ></app-user-occupancy-section>
+
+      <app-misc-metrics-section
+        [promotionsLoading]="usersLoading"
+        [promotionsError]="usersError"
+        [promotionsRows]="promotionsRows"
+        [frequentUsersLoading]="usersLoading"
+        [frequentUsersError]="usersError"
+        [frequentUsersRows]="frequentUsersRows"
+      ></app-misc-metrics-section>
+    </div>
+
+    <!-- TAB OCUPACIÓN -->
+    <div *ngIf="activeTab === 'ocupacion'" class="tab-content">
+      <!-- Métricas de Ocupación - PRIMERO -->
+      <div class="occupancy-metrics-card">
+        <h3>Métricas de Ocupación</h3>
+        <div class="metrics-grid">
+          <div class="metric-item highlight">
+            <span class="metric-label">Tasa No-Show</span>
+            <span class="metric-value danger">{{ noShowRate }}</span>
+          </div>
+          <div class="metric-item highlight">
+            <span class="metric-label">Hora Pico</span>
+            <span class="metric-value">{{ peakHour }}</span>
+          </div>
+          <div class="metric-item highlight">
+            <span class="metric-label">Reservas Totales</span>
+            <span class="metric-value">{{ totalReservations }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico de Horas Pico - SEGUNDO -->
+      <div class="chart-section">
+        <app-statistics-chart
+          title="Reservas por Hora del Día"
+          type="bar"
+          [labels]="occupancyChartLabels"
+          [data]="occupancyChartData"
+          label="Reservas"
+          [loading]="occupancyLoading"
+          [error]="occupancyError"
+          [height]="250"
+        ></app-statistics-chart>
+      </div>
+    </div>
+
   </div>
 </div>

@@ -6,7 +6,7 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1.5rem;
-  color: #ffffff;
+  color: var(--dp-color-common-045);
 }
 
 .statistics-header {
@@ -14,12 +14,12 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #D4AF37;
+  border-bottom: 1px solid var(--dp-color-common-029);
 
   h1 {
     font-size: 2rem;
     font-weight: 100;
-    color: #ffffff;
+    color: var(--dp-color-common-045);
     margin: 0;
   }
 
@@ -29,15 +29,163 @@
   }
 }
 
-.dashboard-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1rem;
+.quick-filters {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+
+  .chip {
+    background: var(--dp-color-common-117);
+    border: 1px solid var(--dp-color-common-078);
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    color: var(--dp-color-common-045);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--dp-color-common-077);
+      border-color: var(--dp-color-common-029);
+    }
+
+    &.active {
+      background: var(--dp-color-common-029);
+      color: var(--dp-color-common-006);
+      border-color: var(--dp-color-common-029);
+      font-weight: 600;
+    }
+  }
 }
 
-.sales-section,
-.inventory-section {
-  grid-column: 1 / -1;
+.tabs-container {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--dp-color-common-051);
+  padding: 0.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--dp-color-common-117);
+
+  .tab-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--dp-color-common-130);
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .tab-icon {
+      font-size: 1.125rem;
+    }
+
+    &:hover {
+      background: var(--dp-color-common-117);
+      color: var(--dp-color-common-045);
+    }
+
+    &.active {
+      background: var(--dp-color-common-029);
+      color: var(--dp-color-common-006);
+      font-weight: 600;
+    }
+  }
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.occupancy-metrics-card {
+  background: var(--dp-color-common-114);
+  border: 1px solid var(--dp-color-common-117);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--dp-color-common-045);
+    margin: 0 0 1rem 0;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 1.25rem;
+      background: var(--dp-color-common-051);
+      border-radius: 12px;
+      border: 1px solid var(--dp-color-common-078);
+
+      &.highlight {
+        background: linear-gradient(135deg, var(--dp-color-common-075) 0%, var(--dp-color-common-051) 100%);
+        border-color: var(--dp-color-common-081);
+      }
+
+      .metric-label {
+        font-size: 0.8125rem;
+        color: var(--dp-color-common-128);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .metric-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--dp-color-common-029);
+
+        &.danger {
+          color: var(--dp-color-common-032);
+        }
+
+        &.success {
+          color: var(--dp-color-common-013);
+        }
+      }
+    }
+  }
+}
+
+.chart-section {
+  background: var(--dp-color-common-114);
+  border: 1px solid var(--dp-color-common-117);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.occupancy-table-section {
+  background: var(--dp-color-common-114);
+  border: 1px solid var(--dp-color-common-117);
+  border-radius: 12px;
+  padding: 1.25rem;
 }
 
 @media (max-width: 900px) {
@@ -46,7 +194,24 @@
     padding: 1rem;
   }
 
-  .dashboard-content {
-    grid-template-columns: 1fr;
+  .tabs-container {
+    flex-wrap: wrap;
+    
+    .tab-button {
+      flex: 1;
+      justify-content: center;
+      min-width: 100px;
+      
+      .tab-label {
+        display: none;
+      }
+    }
+  }
+
+  .quick-filters {
+    .chip {
+      padding: 0.375rem 1rem;
+      font-size: 0.8125rem;
+    }
   }
 }

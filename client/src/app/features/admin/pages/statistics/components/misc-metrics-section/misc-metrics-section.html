@@ -1,24 +1,10 @@
 <div class="misc-section-wrapper">
-  <app-statistics-metrics-grid
-    title="Métricas de Ocupación"
-    [loading]="false"
-    [error]="null"
-    [metrics]="occupancyMetrics"
-  ></app-statistics-metrics-grid>
-
   <app-statistics-data-table
     title="Efectividad de Promociones"
     [loading]="promotionsLoading"
     [error]="promotionsError"
-    [columns]="['ID Promoción', 'Uso', 'Ingresos Generados']"
+    [columns]="['ID Promoción', 'Nombre Promoción', 'Uso']"
     [rows]="promotionsRows"
-  ></app-statistics-data-table>
-
-  <app-statistics-data-table
-    title="Usuarios Frecuentes"
-    [loading]="frequentUsersLoading"
-    [error]="frequentUsersError"
-    [columns]="['ID Usuario', 'Compras', 'Monto Total']"
-    [rows]="frequentUsersRows"
+    emptyMessage="No hay datos de promociones"
   ></app-statistics-data-table>
 </div>

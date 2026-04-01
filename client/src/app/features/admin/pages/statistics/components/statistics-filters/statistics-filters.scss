@@ -4,18 +4,18 @@
   align-items: flex-end;
   gap: 1rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #d4af37;
+  border-bottom: 1px solid var(--dp-color-common-029);
   padding-bottom: 1rem;
 
   h2 {
     margin: 0;
-    color: #ffffff;
+    color: var(--dp-color-common-045);
     font-weight: 100;
   }
 
   .subtitle {
     margin: 0.35rem 0 0;
-    color: #757575;
+    color: var(--dp-color-admin-016);
   }
 }
 
@@ -42,19 +42,19 @@
   label {
     font-size: 0.8rem;
     font-weight: 100;
-    color: #555;
+    color: var(--dp-color-admin-014);
   }
 }
 
 .input-field {
   min-width: 170px;
   padding: 0.5rem 0.65rem;
-  border: 1px solid #d0d0d0;
+  border: 1px solid var(--dp-color-admin-027);
   border-radius: 5px;
 
   &:focus {
     outline: none;
-    border-color: #d4af37;
+    border-color: var(--dp-color-common-029);
   }
 }
 

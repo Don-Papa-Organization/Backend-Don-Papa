@@ -4,9 +4,9 @@
   h2 {
     font-size: 1.25rem;
     font-weight: 100;
-    color: #ffffff;
+    color: var(--dp-color-common-045);
     margin-bottom: 1rem;
-    border-bottom: 1px solid #D4AF37;
+    border-bottom: 1px solid var(--dp-color-common-029);
     padding-bottom: 0.5rem;
   }
 }
@@ -19,21 +19,21 @@
 
 .metric-card {
   padding: 1rem;
-  background-color: rgba(212, 175, 55, 0.1);
+  background-color: var(--dp-color-common-074);
   border-radius: 4px;
-  border-left: 3px solid #D4AF37;
+  border-left: 3px solid var(--dp-color-common-029);
 
   h3 {
     font-size: 0.875rem;
     font-weight: 100;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--dp-color-common-130);
     margin: 0 0 0.5rem 0;
   }
 
   .metric-value {
     font-size: 1.5rem;
     font-weight: 100;
-    color: #ffffff;
+    color: var(--dp-color-common-045);
     margin: 0;
   }
 }
@@ -47,19 +47,19 @@
 }
 
 .loading {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--dp-color-common-130);
 }
 
 .error {
-  color: #EF4444;
-  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--dp-color-common-031);
+  background-color: var(--dp-color-common-099);
 }
 
 .loading {
-  color: #D4AF37;
+  color: var(--dp-color-common-029);
 }
 
 .error {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: var(--dp-color-common-043);
+  color: var(--dp-color-common-023);
 }

@@ -1,17 +1,80 @@
 <div class="inventory-section-wrapper">
-  <app-statistics-data-table
-    title="Top 10 Productos"
-    [loading]="topProductsLoading"
-    [error]="topProductsError"
-    [columns]="['ID Producto', 'Unidades Vendidas', 'Ingresos']"
-    [rows]="topProductsRows"
-  ></app-statistics-data-table>
+  <!-- Gráficos de Productos -->
+  <div class="charts-grid">
+    <!-- Gráfico Pastel Top 5 Productos (NUEVO) -->
+    <div class="chart-wrapper">
+      <app-pie-chart-card
+        title="Top 5 Productos Más Vendidos"
+        [labels]="top5Labels"
+        [data]="top5Data"
+        [loading]="topProductsLoading"
+        [error]="topProductsError"
+        [height]="280"
+      ></app-pie-chart-card>
+    </div>
 
-  <app-statistics-data-table
-    title="Stock Muerto"
-    [loading]="deadStockLoading"
-    [error]="deadStockError"
-    [columns]="['ID Producto', 'Nombre', 'Días sin ventas']"
-    [rows]="deadStockRows"
-  ></app-statistics-data-table>
+    <!-- Gráficos Producto vs Resto (NUEVO) - Top 3 -->
+    <div class="product-comparison-grid" *ngIf="top3ProductsWithComparison.length > 0">
+      <div *ngFor="let product of top3ProductsWithComparison" class="chart-wrapper small">
+        <app-pie-chart-card
+          [title]="product.name + ' vs Resto'"
+          [labels]="[product.name, 'Resto de Productos']"
+          [data]="[product.sales, product.totalSales - product.sales]"
+          [colors]="['#D4AF37', 'rgba(255, 255, 255, 0.2)']"
+          [showLegend]="true"
+          [loading]="topProductsLoading"
+          [error]="topProductsError"
+          [height]="200"
+        ></app-pie-chart-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Productos con paginación -->
+  <div class="data-card">
+    <div class="card-header">
+      <h3>Top Productos Vendidos</h3>
+      <span class="count">{{ topProductsRows.length }} productos</span>
+    </div>
+    <app-statistics-data-table
+      [loading]="topProductsLoading"
+      [error]="topProductsError"
+      [columns]="['ID Producto', 'Nombre Producto', 'Unidades Vendidas', 'Ingresos']"
+      [rows]="paginatedTopProducts"
+    ></app-statistics-data-table>
+    
+    <div *ngIf="topProductsRows.length > topProductsPageSize" class="pagination">
+      <button class="page-btn" [disabled]="topProductsPage <= 1" (click)="prevTopProducts()">
+        ← Anterior
+      </button>
+      <span class="page-info">Página {{ topProductsPage }} de {{ topProductsTotalPages }}</span>
+      <button class="page-btn" [disabled]="!topProductsHasMore" (click)="nextTopProducts()">
+        Siguiente →
+      </button>
+    </div>
+  </div>
+
+  <!-- Stock Muerto con paginación -->
+  <div class="data-card danger">
+    <div class="card-header">
+      <h3>Stock Sin Movimiento</h3>
+      <span class="count">{{ deadStockRows.length }} productos</span>
+    </div>
+    <app-statistics-data-table
+      [loading]="deadStockLoading"
+      [error]="deadStockError"
+      [columns]="['ID Producto', 'Nombre', 'Días sin ventas']"
+      [rows]="paginatedDeadStock"
+    ></app-statistics-data-table>
+    
+    <div *ngIf="deadStockRows.length > deadStockPageSize" class="pagination">
+      <button class="page-btn" [disabled]="deadStockPage <= 1" (click)="prevDeadStock()">
+        ← Anterior
+      </button>
+      <span class="page-info">Página {{ deadStockPage }} de {{ deadStockTotalPages }}</span>
+      <button class="page-btn" [disabled]="!deadStockHasMore" (click)="nextDeadStock()">
+        Siguiente →
+      </button>
+    </div>
+  </div>
 </div>

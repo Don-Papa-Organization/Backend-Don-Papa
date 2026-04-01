@@ -1,0 +1,44 @@
+.chart-section {
+  background: var(--dp-color-common-113);
+  border: 1px solid var(--dp-color-common-077);
+  border-radius: 8px;
+  padding: 1rem;
+  height: 100%;
+
+  .chart-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--dp-color-common-029);
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--dp-color-common-077);
+  }
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+}
+
+.loading,
+.error,
+.no-data {
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  border-radius: 4px;
+}
+
+.loading {
+  color: var(--dp-color-common-128);
+}
+
+.error {
+  color: var(--dp-color-common-031);
+  background-color: var(--dp-color-common-099);
+}
+
+.no-data {
+  color: var(--dp-color-common-125);
+  background-color: var(--dp-color-common-112);
+}

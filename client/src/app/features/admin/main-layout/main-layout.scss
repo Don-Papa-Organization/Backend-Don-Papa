@@ -24,7 +24,7 @@
   height: calc(100vh - 70px);
   overflow-y: auto;
   overflow-x: auto;
-  background-color: #2B1D13;
+  background-color: var(--dp-color-employee-009);
   padding: 1.25rem;
   transition: left 0.2s ease, width 0.2s ease;
 
@@ -33,7 +33,7 @@
   align-items: center;
   gap: 1rem;
 
-  scrollbar-color: grey #1A120B;
+  scrollbar-color: grey var(--dp-color-common-005);
 }
 
 

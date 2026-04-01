@@ -1,16 +1,78 @@
 <div class="sales-section-wrapper">
-  <app-statistics-metrics-grid
-    title="Ventas"
-    [loading]="loading"
-    [error]="error"
-    [metrics]="metrics"
-  ></app-statistics-metrics-grid>
+  <!-- KPIs Prominentes -->
+  <div class="kpi-section">
+    <h2 class="section-title">Resumen de Ventas</h2>
+    <app-statistics-metrics-grid
+      [loading]="loading"
+      [error]="error"
+      [metrics]="metrics"
+    ></app-statistics-metrics-grid>
+  </div>
 
-  <app-statistics-data-table
-    title="Timeline de Ventas"
-    [loading]="loading"
-    [error]="error"
-    [columns]="['Fecha', 'Ventas', 'Pedidos']"
-    [rows]="timelineRows"
-  ></app-statistics-data-table>
+  <!-- Gráficos de Ventas -->
+  <div class="charts-grid">
+    <!-- Gráfico Comparativo Semanal (NUEVO) -->
+    <div class="chart-wrapper">
+      <app-comparison-bar-chart
+        title="Ventas Semanales (Comparativa)"
+        [labels]="weeklyComparisonLabels"
+        [currentData]="weeklyCurrentData"
+        [previousData]="weeklyPreviousData"
+        [currentLabel]="currentWeekLabel"
+        [previousLabel]="previousWeekLabel"
+        [loading]="loading"
+        [error]="error"
+        [height]="280"
+      ></app-comparison-bar-chart>
+    </div>
+
+    <!-- Gráfico Físico vs Web (NUEVO) -->
+    <div class="chart-wrapper">
+      <app-pie-chart-card
+        title="Distribución por Canal"
+        [labels]="['Ventas Físicas', 'Ventas Web']"
+        [data]="[ventasFisico, ventasWeb]"
+        [colors]="['#D4AF37', '#4CAF50']"
+        [loading]="loading"
+        [error]="error"
+        [height]="280"
+      ></app-pie-chart-card>
+    </div>
+  </div>
+
+  <!-- Timeline con paginación -->
+  <div class="timeline-section">
+    <div class="timeline-header">
+      <h3>Últimas Transacciones</h3>
+      <span class="total-count">{{ timelineRows.length }} registros</span>
+    </div>
+    
+    <app-statistics-data-table
+      [loading]="loading"
+      [error]="error"
+      [columns]="['Fecha', 'Ventas', 'Pedidos']"
+      [rows]="paginatedTimeline"
+    ></app-statistics-data-table>
+
+    <!-- Paginación -->
+    <div *ngIf="timelineRows.length > pageSize" class="pagination">
+      <button 
+        class="page-btn" 
+        [disabled]="!hasPreviousPages"
+        (click)="previousPage()"
+      >
+        ← Anterior
+      </button>
+      <span class="page-info">
+        Página {{ currentPage }} de {{ totalPages }}
+      </span>
+      <button 
+        class="page-btn" 
+        [disabled]="!hasMorePages"
+        (click)="nextPage()"
+      >
+        Siguiente →
+      </button>
+    </div>
+  </div>
 </div>
