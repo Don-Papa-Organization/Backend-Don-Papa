@@ -1,4 +1,8 @@
 @use './app/styles/variables' as *;
+@use './app/styles/colors-common';
+@use './app/styles/colors-admin';
+@use './app/styles/colors-client';
+@use './app/styles/colors-employee';
 
 /* Reset de valores predeterminados */
 * {

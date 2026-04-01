@@ -10,16 +10,6 @@
     </div>
   </div>
 
-  <!-- Filtros: rango de fechas + chips rápidos -->
-  <app-statistics-filters
-    [filters]="filters"
-    [isLoading]="isLoading"
-    (filterChange)="onFilterChange()"
-    (refresh)="loadDashboard()"
-    (downloadPdf)="onDownloadPDF()"
-    (downloadJson)="onDownloadJSON()"
-  ></app-statistics-filters>
-
   <!-- Chips de filtros rápidos -->
   <div class="quick-filters">
     <button 

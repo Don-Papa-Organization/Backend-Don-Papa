@@ -7,10 +7,9 @@ import {
 	AnalyticsFilterDto,
 	DashboardStateDto,
 	SalesTimelineItemDto,
-	WeeklySalesItemDto,
 	TopProductDto,
 	DeadStockDto,
-	FrequentUsersResponseDto,
+	FrequentUserDto,
 	OccupancyResponseDto,
 	PromotionEffectivenessResponseDto
 } from '../../../../../domain/statistics/dtos/analytics.dto';
@@ -119,13 +118,13 @@ export class MainStatistics implements OnInit, OnDestroy {
 	private updateViewModels(state: DashboardStateDto): void {
 		// Loading states
 		this.isLoading = Object.values(state.loadingState).some(val => val === true);
-		this.salesLoading = state.loadingState['salesSummary'] || state.loadingState['salesTimeline'] || state.loadingState['weeklySales'] || false;
+		this.salesLoading = state.loadingState['salesSummary'] || state.loadingState['salesTimeline'] || false;
 		this.inventoryLoading = state.loadingState['topProducts'] || state.loadingState['deadStock'] || false;
 		this.usersLoading = state.loadingState['userGrowth'] || state.loadingState['promotions'] || state.loadingState['frequentUsers'] || false;
 		this.occupancyLoading = state.loadingState['occupancy'] || false;
 
 		// Error states
-		this.salesError = state.errorState['salesSummary'] || state.errorState['salesTimeline'] || state.errorState['weeklySales'] || null;
+		this.salesError = state.errorState['salesSummary'] || state.errorState['salesTimeline'] || null;
 		this.inventoryError = state.errorState['topProducts'] || state.errorState['deadStock'] || null;
 		this.usersError = state.errorState['userGrowth'] || state.errorState['promotions'] || state.errorState['frequentUsers'] || null;
 		this.occupancyError = state.errorState['occupancy'] || null;
@@ -146,12 +145,12 @@ export class MainStatistics implements OnInit, OnDestroy {
 		this.timelineRows = this.buildTimelineRows(state.salesTimeline);
 
 		// Weekly sales chart
-		const weeklySeries = this.buildWeeklySalesChartSeries(state.weeklySales);
+		const weeklySeries = this.buildWeeklySalesChartSeries(state.salesTimeline);
 		this.weeklySalesLabels = weeklySeries.labels;
 		this.weeklySalesData = weeklySeries.data;
 		
 		// Nuevos viewModels para gráficos comparativos de ventas
-		this.buildWeeklyComparisonViewModel(state.weeklySales);
+		this.buildWeeklyComparisonViewModel(state.salesTimeline);
 		this.buildSalesChannelViewModel(state.salesSummary);
 
 		// Top products
@@ -250,14 +249,14 @@ export class MainStatistics implements OnInit, OnDestroy {
 		}));
 	}
 
-	private buildWeeklySalesChartSeries(weeklySales: any): { labels: string[]; data: number[] } {
-		const ventasSemanales: WeeklySalesItemDto[] = weeklySales?.ventasSemanales || [];
-		if (ventasSemanales.length === 0) {
+	private buildWeeklySalesChartSeries(timeline: SalesTimelineItemDto[] | null): { labels: string[]; data: number[] } {
+		if (!timeline?.length) {
 			return { labels: [], data: [] };
 		}
+		const ventasSemanales = timeline.slice(-8);
 		return {
 			labels: ventasSemanales.map(item => {
-				const fecha = new Date(item.semana);
+				const fecha = new Date(item.fecha);
 				return `${fecha.getDate()}/${fecha.getMonth() + 1}`;
 			}),
 			data: ventasSemanales.map(item => Number(item.totalVentas ?? 0))
@@ -266,29 +265,22 @@ export class MainStatistics implements OnInit, OnDestroy {
 	
 	// Nuevos métodos para viewModels de gráficos
 	
-	private buildWeeklyComparisonViewModel(weeklySales: any): void {
-		const ventasSemanales: WeeklySalesItemDto[] = weeklySales?.ventasSemanales || [];
-		if (ventasSemanales.length === 0) {
+	private buildWeeklyComparisonViewModel(timeline: SalesTimelineItemDto[] | null): void {
+		if (!timeline?.length) {
 			this.weeklyComparisonLabels = [];
 			this.weeklyCurrentData = [];
 			this.weeklyPreviousData = [];
 			return;
 		}
+		const ventasSemanales = timeline.slice(-8);
 		
 		this.weeklyComparisonLabels = ventasSemanales.map(item => {
-			const fecha = new Date(item.semana);
+			const fecha = new Date(item.fecha);
 			return `Sem ${fecha.getDate()}/${fecha.getMonth() + 1}`;
 		});
 		
 		this.weeklyCurrentData = ventasSemanales.map(item => Number(item.totalVentas ?? 0));
-		
-		// Usar datos de comparación si existen
-		if (weeklySales.comparacion?.cambioVentas && Array.isArray(weeklySales.comparacion.cambioVentas)) {
-			this.weeklyPreviousData = weeklySales.comparacion.cambioVentas;
-		} else {
-			// Si no hay datos de comparación, crear array vacío
-			this.weeklyPreviousData = [];
-		}
+		this.weeklyPreviousData = [];
 	}
 	
 	private buildSalesChannelViewModel(salesSummary: any): void {
@@ -370,23 +362,23 @@ export class MainStatistics implements OnInit, OnDestroy {
 	}
 
 	private buildPromotionsRows(promotions: PromotionEffectivenessResponseDto | null): Array<Record<string, string | number>> {
-		if (!promotions?.topPromociones?.length) return [];
+		if (!promotions?.detalles?.length) return [];
 		// Limitar a top 10
-		return promotions.topPromociones.slice(0, 10).map(promo => ({
+		return promotions.detalles.slice(0, 10).map((promo: { idPromocion: number; usosAplicados: number }) => ({
 			'ID Promoción': promo.idPromocion,
 			'Nombre Promoción': `Promoción ${promo.idPromocion}`,
 			'Uso': promo.usosAplicados
 		}));
 	}
 
-	private buildFrequentUsersRows(frequentUsers: FrequentUsersResponseDto | null): Array<Record<string, string | number>> {
-		if (!frequentUsers?.serie?.length) return [];
+	private buildFrequentUsersRows(frequentUsers: FrequentUserDto[] | null): Array<Record<string, string | number>> {
+		if (!frequentUsers?.length) return [];
 		// Limitar a últimos 10 registros
-		const serie = frequentUsers.serie.slice(-10);
-		return serie.map(item => ({
-			'Fecha': new Date(item.fecha).toLocaleDateString('es-CO'),
-			'Clientes Frecuentes': item.clientesFrecuentesActivos,
-			'Nuevos Registros': item.nuevosRegistros
+		const serie = frequentUsers.slice(-10);
+		return serie.map((item: FrequentUserDto) => ({
+			'Fecha': item.fecha ? new Date(item.fecha).toLocaleDateString('es-CO') : '-',
+			'Clientes Frecuentes': item.cantidadCompras,
+			'Monto Total': this.toCurrency(item.montoTotal)
 		}));
 	}
 

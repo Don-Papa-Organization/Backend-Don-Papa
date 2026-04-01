@@ -6,14 +6,14 @@ import {
   AnalyticsFilterDto,
   DashboardStateDto,
   PeriodoDto,
+  AnalyticsApiResponseDto,
   SalesSummaryResponseDto,
   SalesTimelineItemDto,
-  WeeklySalesResponseDto,
   TopProductDto,
   DeadStockDto,
   CategoryStockDto,
   UserGrowthResponseDto,
-  FrequentUsersResponseDto,
+  FrequentUserDto,
   PeakHourDto,
   ReservationOccupancyDto,
   OccupancyResponseDto,
@@ -26,7 +26,6 @@ export class StatisticsFacade {
   private readonly initialState: DashboardStateDto = {
     salesSummary: null,
     salesTimeline: null,
-    weeklySales: null,
     topProducts: null,
     deadStock: null,
     categoryStock: null,
@@ -37,7 +36,6 @@ export class StatisticsFacade {
     loadingState: {
       salesSummary: false,
       salesTimeline: false,
-      weeklySales: false,
       topProducts: false,
       deadStock: false,
       categoryStock: false,
@@ -49,7 +47,6 @@ export class StatisticsFacade {
     errorState: {
       salesSummary: null,
       salesTimeline: null,
-      weeklySales: null,
       topProducts: null,
       deadStock: null,
       categoryStock: null,
@@ -107,13 +104,6 @@ export class StatisticsFacade {
         tap(response => this.setSalesTimeline(this.normalizeSalesTimelineData(response.data))),
         catchError(error => {
           this.setError('salesTimeline', this.getErrorMessage(error));
-          return of(null);
-        })
-      ),
-      weeklySales: this.statisticsApi.getWeeklySales(filters).pipe(
-        tap(response => this.setWeeklySales(response.data || null)),
-        catchError(error => {
-          this.setError('weeklySales', this.getErrorMessage(error));
           return of(null);
         })
       ),
@@ -200,11 +190,6 @@ export class StatisticsFacade {
       case 'salesTimeline':
         request$ = this.statisticsApi.getSalesTimeline(filters).pipe(
           tap(response => this.setSalesTimeline(this.normalizeSalesTimelineData(response.data)))
-        );
-        break;
-      case 'weeklySales':
-        request$ = this.statisticsApi.getWeeklySales(filters).pipe(
-          tap(response => this.setWeeklySales(response.data || null))
         );
         break;
       case 'topProducts':
@@ -312,7 +297,6 @@ export class StatisticsFacade {
       loadingState: {
         salesSummary: loading,
         salesTimeline: loading,
-        weeklySales: loading,
         topProducts: loading,
         deadStock: loading,
         categoryStock: loading,
@@ -362,12 +346,6 @@ export class StatisticsFacade {
     if (data) this.clearError('salesTimeline');
   }
 
-  private setWeeklySales(data: WeeklySalesResponseDto | null): void {
-    const state = this.getCurrentState();
-    this.dashboardState$.next({ ...state, weeklySales: data });
-    if (data) this.clearError('weeklySales');
-  }
-
   private setTopProducts(data: TopProductDto[] | null): void {
     const state = this.getCurrentState();
     this.dashboardState$.next({ ...state, topProducts: data });
@@ -392,7 +370,7 @@ export class StatisticsFacade {
     if (data) this.clearError('userGrowth');
   }
 
-  private setFrequentUsers(data: FrequentUsersResponseDto | null): void {
+  private setFrequentUsers(data: FrequentUserDto[] | null): void {
     const state = this.getCurrentState();
     this.dashboardState$.next({ ...state, frequentUsers: data });
     if (data) this.clearError('frequentUsers');
@@ -518,38 +496,31 @@ export class StatisticsFacade {
     return [];
   }
 
-  private normalizeFrequentUsersData(rawData: any): FrequentUsersResponseDto | null {
+  private normalizeFrequentUsersData(rawData: unknown): FrequentUserDto[] | null {
     if (!rawData) return null;
 
     if (Array.isArray(rawData)) {
-      return {
-        serie: rawData.map((item: any) => ({
-          fecha: item?.fecha,
-          clientesFrecuentesActivos: Number(item?.clientesFrecuentesActivos ?? item?.cantidadCompras ?? 0),
-          nuevosRegistros: Number(item?.nuevosRegistros ?? 0)
-        })),
-        resumen: {
-          ultimoValorFrecuentes: 0,
-          promedioFrecuentes: 0
-        }
-      };
+      return rawData.map((item: any) => ({
+        idUsuario: Number(item?.idUsuario ?? item?.usuarioId ?? 0),
+        cantidadCompras: Number(item?.cantidadCompras ?? item?.clientesFrecuentesActivos ?? 0),
+        montoTotal: Number(item?.montoTotal ?? 0),
+        fecha: item?.fecha
+      }));
     }
 
-    const serie = Array.isArray(rawData?.serie)
-      ? rawData.serie.map((item: any) => ({
-          fecha: item?.fecha,
-          clientesFrecuentesActivos: Number(item?.clientesFrecuentesActivos ?? 0),
-          nuevosRegistros: Number(item?.nuevosRegistros ?? 0)
-        }))
-      : [];
+    const data = rawData as { serie?: Array<any>; detalles?: Array<any> };
+    const source = Array.isArray(data.serie)
+      ? data.serie
+      : Array.isArray(data.detalles)
+        ? data.detalles
+        : [];
 
-    return {
-      serie,
-      resumen: {
-        ultimoValorFrecuentes: Number(rawData?.resumen?.ultimoValorFrecuentes ?? 0),
-        promedioFrecuentes: Number(rawData?.resumen?.promedioFrecuentes ?? 0)
-      }
-    };
+    return source.map((item: any) => ({
+      idUsuario: Number(item?.idUsuario ?? item?.usuarioId ?? 0),
+      cantidadCompras: Number(item?.cantidadCompras ?? item?.clientesFrecuentesActivos ?? 0),
+      montoTotal: Number(item?.montoTotal ?? 0),
+      fecha: item?.fecha
+    }));
   }
 
   private normalizePromotionEffectivenessData(
@@ -558,34 +529,38 @@ export class StatisticsFacade {
   ): PromotionEffectivenessResponseDto | null {
     if (!rawData) return null;
 
-    if (rawData?.resumen && Array.isArray(rawData?.topPromociones)) {
-      return {
-        periodo: this.resolvePeriodo(rawData?.periodo, filters),
-        resumen: {
-          totalPromociones: Number(rawData.resumen.totalPromociones ?? 0),
-          totalUsosAplicados: Number(rawData.resumen.totalUsosAplicados ?? 0),
-          ingresoTotalPromo: Number(rawData.resumen.ingresoTotalPromo ?? 0),
-          ingresoPromedio: Number(rawData.resumen.ingresoPromedio ?? 0)
-        },
-        topPromociones: rawData.topPromociones
-      };
-    }
-
     if (rawData?.resumen && Array.isArray(rawData?.detalles)) {
       return {
         periodo: this.resolvePeriodo(rawData?.periodo, filters),
         resumen: {
-          totalPromociones: rawData.detalles.length,
-          totalUsosAplicados: Number(rawData.resumen.totalUsos ?? 0),
-          ingresoTotalPromo: Number(rawData.resumen.totalIngresos ?? 0),
-          ingresoPromedio: Number(rawData.resumen.ingresoPromedioPorUso ?? 0)
+          totalUsos: Number(rawData.resumen.totalUsos ?? rawData.resumen.totalUsosAplicados ?? 0),
+          totalIngresos: Number(rawData.resumen.totalIngresos ?? rawData.resumen.ingresoTotalPromo ?? 0),
+          ingresoPromedioPorUso: Number(rawData.resumen.ingresoPromedioPorUso ?? rawData.resumen.ingresoPromedio ?? 0)
         },
-        topPromociones: rawData.detalles.map((item: any) => ({
-          idPromocion: item.idPromocion,
-          idEvento: item.idEvento,
-          usosAplicados: Number(item.usosAplicados ?? 0),
-          ingresoTotal: Number(item.ingresoBajoPromocion ?? 0),
-          fecha: item.fecha
+        detalles: rawData.detalles.map((item: any) => ({
+          idPromocion: Number(item?.idPromocion ?? 0),
+          idEvento: item?.idEvento,
+          fecha: item?.fecha,
+          usosAplicados: Number(item?.usosAplicados ?? 0),
+          ingresoBajoPromocion: Number(item?.ingresoBajoPromocion ?? item?.ingresoTotal ?? 0)
+        }))
+      };
+    }
+
+    if (Array.isArray(rawData?.topPromociones)) {
+      return {
+        periodo: this.resolvePeriodo(rawData?.periodo, filters),
+        resumen: {
+          totalUsos: Number(rawData?.resumen?.totalUsos ?? rawData?.resumen?.totalUsosAplicados ?? 0),
+          totalIngresos: Number(rawData?.resumen?.totalIngresos ?? rawData?.resumen?.ingresoTotalPromo ?? 0),
+          ingresoPromedioPorUso: Number(rawData?.resumen?.ingresoPromedioPorUso ?? rawData?.resumen?.ingresoPromedio ?? 0)
+        },
+        detalles: rawData.topPromociones.map((item: any) => ({
+          idPromocion: Number(item?.idPromocion ?? 0),
+          idEvento: item?.idEvento,
+          fecha: item?.fecha,
+          usosAplicados: Number(item?.usosAplicados ?? 0),
+          ingresoBajoPromocion: Number(item?.ingresoBajoPromocion ?? item?.ingresoTotal ?? 0)
         }))
       };
     }

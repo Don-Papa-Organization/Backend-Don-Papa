@@ -1,5 +1,6 @@
 :host {
   display: block;
+  font-weight: 400;
 }
 
 .floor-mesa {
@@ -19,17 +20,17 @@
 
   &--disponible:hover,
   &--disponible:focus-visible {
-    filter: drop-shadow(0 0 8px #8bc34a);
+    filter: drop-shadow(0 0 9px rgba(122, 182, 72, 0.92));
   }
 
   &--ocupada:hover,
   &--ocupada:focus-visible {
-    filter: drop-shadow(0 0 8px #ff5252);
+    filter: drop-shadow(0 0 9px rgba(220, 93, 86, 0.92));
   }
 
   &--otro:hover,
   &--otro:focus-visible {
-    filter: drop-shadow(0 0 8px #ffb300);
+    filter: drop-shadow(0 0 9px rgba(212, 153, 42, 0.92));
   }
 
   /* ── Surface ── */
@@ -37,12 +38,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid rgba(184, 134, 11, 0.4);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
     box-shadow:
       0 6px 16px rgba(0, 0, 0, 0.12),
       0 2px 4px rgba(0, 0, 0, 0.08);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    background-color: #8b5e3c;
+    background-color: #7f5c40;
 
     /* Forma según zona */
     &--vip {
@@ -81,25 +82,28 @@
 
   /* Colores de estado */
   &--disponible &__surface {
-    background-color: #8bc34a;
+    background-color: #76af46;
+    border-color: rgba(169, 221, 95, 0.7);
   }
 
   &--ocupada &__surface {
-    background-color: #ff5252;
+    background-color: #d45a54;
+    border-color: rgba(255, 175, 175, 0.72);
   }
 
   &--otro &__surface {
-    background-color: #ffb300;
+    background-color: #ce9430;
+    border-color: rgba(255, 214, 138, 0.74);
   }
 
   /* ── Label ── */
   &__label {
     font-family: 'DM Sans', 'Lora', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
+    font-size: 13px;
+    font-weight: 400;
+    color: #2b1d13;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     text-align: center;
     pointer-events: none;
     max-width: 64px;
@@ -107,6 +111,20 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     padding: 0 4px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+
+  &--disponible &__label {
+
+    color: #0c0e0a;
+  }
+
+  &--ocupada &__label {
+    color: #3b1614;
+  }
+
+  &--otro &__label {
+    color: #3d2b10;
   }
 
   /* ── Tooltip ── */
@@ -119,6 +137,7 @@
     border: 1px solid rgba(184, 134, 11, 0.3);
     color: white;
     font-size: 10px;
+    font-weight: 400;
     padding: 8px 12px;
     border-radius: 4px;
     white-space: nowrap;
@@ -152,6 +171,7 @@
     color: #f3f4f6;
     border-radius: 4px;
     font-size: 9px;
+    font-weight: 400;
     line-height: 1;
     padding: 4px 6px;
     cursor: pointer;
@@ -169,7 +189,7 @@
     background: #6366F1;
     color: #fff;
     font-size: 8px;
-    font-weight: 700;
+    font-weight: 400;
     width: 16px;
     height: 16px;
     border-radius: 50%;
@@ -193,6 +213,7 @@
     color: #A5B4FC;
     border-radius: 4px;
     font-size: 9px;
+    font-weight: 400;
     line-height: 1;
     padding: 4px 6px;
     cursor: pointer;

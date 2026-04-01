@@ -53,7 +53,7 @@
       background: var(--dp-color-common-029);
       color: var(--dp-color-common-006);
       border-color: var(--dp-color-common-029);
-      font-weight: 600;
+      font-weight: 100;
     }
   }
 }
@@ -91,7 +91,7 @@
     &.active {
       background: var(--dp-color-common-029);
       color: var(--dp-color-common-006);
-      font-weight: 600;
+      font-weight: 100;
     }
   }
 }
@@ -126,7 +126,7 @@
 
   h3 {
     font-size: 1.25rem;
-    font-weight: 600;
+    font-weight: 100;
     color: var(--dp-color-common-045);
     margin: 0 0 1rem 0;
   }
@@ -159,7 +159,7 @@
 
       .metric-value {
         font-size: 1.75rem;
-        font-weight: 700;
+        font-weight: 200;
         color: var(--dp-color-common-029);
 
         &.danger {
