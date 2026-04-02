@@ -124,7 +124,10 @@
     }
 
     &--barra {
-      gap: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
       align-items: center;
     }
 
