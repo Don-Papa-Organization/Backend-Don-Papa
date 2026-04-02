@@ -1,4 +1,4 @@
-// Sección de contraseña
+﻿// SecciÃ³n de contraseÃ±a
 .contrasenaSection {
     display: flex;
     flex-direction: column;
@@ -6,7 +6,7 @@
     gap: 7px;
 
     p {
-        color: #ffffffc7;
+        color: var(--dp-color-hardcoded-068);
         font-size: 11px;
         width: 270px;
     }
@@ -30,18 +30,20 @@
     gap: 10px;
     
     .p{
-        color:#ffffff;
+        color:var(--dp-color-common-045);
     }
 }
 
 // Enlaces
 .link {
     font-size: 14px;
-    color: #D4AF37;
+    color: var(--dp-color-common-029);
     text-decoration: none;
 
     &:hover {
         text-decoration: underline;
     }
 }
+
+
 

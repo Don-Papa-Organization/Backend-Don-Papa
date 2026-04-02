@@ -66,7 +66,7 @@
     &:hover:not(.no-background) {
       filter: none;
       transform: translateY(-1px);
-      background-color: #c9a227 !important;
+      background-color: var(--dp-color-hardcoded-043) !important;
       box-shadow: 0 10px 20px rgba($color-black, 0.4), 0 0 14px rgba($color-gold, 0.32);
     }
 

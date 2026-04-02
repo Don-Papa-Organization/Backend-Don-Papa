@@ -1,0 +1,384 @@
+@use 'sass:color';
+@use 'sass:map';
+
+// Diccionario principal de temas con paletas semanticas propias.
+$dp-theme-dictionary: (
+  base: (
+    palette: (
+      surface-900: #1a120b,
+      surface-800: #2b1d13,
+      surface-700: #3a281b,
+      surface-500: #6d5a4a,
+      text-100: #ffffff,
+      text-300: #d8d0c8,
+      accent-500: #d4af37,
+      accent-600: #c29b2a,
+      success-500: #22c55e,
+      info-500: #3b82f6,
+      warning-500: #f59e0b,
+      danger-500: #ef4444
+    )
+  ),
+  claro: (
+    palette: (
+      surface-900: #f7f4ef,
+      surface-800: #efe7dc,
+      surface-700: #e4d8c7,
+      surface-500: #b7a792,
+      text-100: #2a221a,
+      text-300: #5e5549,
+      accent-500: #b88a2e,
+      accent-600: #9f7421,
+      success-500: #2e9b61,
+      info-500: #3f7ed8,
+      warning-500: #d08a2a,
+      danger-500: #c55555
+    )
+  ),
+  obscuro: (
+    palette: (
+      surface-900: #0f1116,
+      surface-800: #171c24,
+      surface-700: #212835,
+      surface-500: #465067,
+      text-100: #f5f7fb,
+      text-300: #a8b4cc,
+      accent-500: #7f97ff,
+      accent-600: #5f79e8,
+      success-500: #2fbf7a,
+      info-500: #56a1ff,
+      warning-500: #e8a84a,
+      danger-500: #ef5f73
+    )
+  ),
+  sepia: (
+    palette: (
+      surface-900: #2b1f18,
+      surface-800: #3a2b22,
+      surface-700: #4c382c,
+      surface-500: #7d6654,
+      text-100: #f8efe3,
+      text-300: #cdb8a3,
+      accent-500: #b98b4d,
+      accent-600: #9d6f35,
+      success-500: #6b9a6c,
+      info-500: #6f8eb3,
+      warning-500: #c18b4a,
+      danger-500: #ba6a59
+    )
+  )
+);
+
+// Paleta base actual del sistema separada por coleccion.
+$dp-color-base: (
+  common: (
+    5: #1a120b,
+    6: #1a1a1a,
+    8: #22c55e,
+    10: #2e7d32,
+    11: #3b82f6,
+    13: #4caf50,
+    19: #8b4513,
+    20: #999,
+    21: #999999,
+    23: #c62828,
+    26: #cccccc,
+    28: #d4a574,
+    29: #d4af37,
+    30: #ddd,
+    31: #ef4444,
+    32: #f44336,
+    34: #f5f5f5,
+    35: #f6d86a,
+    40: #ff9800,
+    43: #ffebee,
+    44: #fff,
+    45: #ffffff,
+    46: rgba(0, 0, 0, 0.08),
+    47: rgba(0, 0, 0, 0.1),
+    48: rgba(0, 0, 0, 0.15),
+    49: rgba(0, 0, 0, 0.18),
+    51: rgba(0, 0, 0, 0.3),
+    52: rgba(0, 0, 0, 0.35),
+    55: rgba(0, 0, 0, 0.45),
+    57: rgba(0, 0, 0, 0.5),
+    58: rgba(0, 0, 0, 0.6),
+    67: rgba(16, 185, 129, 0.45),
+    74: rgba(212, 175, 55, 0.1),
+    75: rgba(212, 175, 55, 0.15),
+    76: rgba(212, 175, 55, 0.18),
+    77: rgba(212, 175, 55, 0.2),
+    78: rgba(212, 175, 55, 0.3),
+    80: rgba(212, 175, 55, 0.4),
+    81: rgba(212, 175, 55, 0.5),
+    99: rgba(239, 68, 68, 0.1),
+    100: rgba(239, 68, 68, 0.12),
+    102: rgba(239, 68, 68, 0.4),
+    103: rgba(239, 68, 68, 0.45),
+    106: rgba(251, 191, 36, 0.45),
+    112: rgba(255, 255, 255, 0.02),
+    113: rgba(255, 255, 255, 0.03),
+    114: rgba(255, 255, 255, 0.05),
+    117: rgba(255, 255, 255, 0.1),
+    123: rgba(255, 255, 255, 0.3),
+    125: rgba(255, 255, 255, 0.4),
+    128: rgba(255, 255, 255, 0.6),
+    130: rgba(255, 255, 255, 0.7)
+  ),
+  admin: (
+    14: #555,
+    16: #757575,
+    22: #b8933f,
+    25: #c9a347,
+    27: #d0d0d0,
+    73: rgba(212, 175, 55, 0.05),
+    105: rgba(244, 67, 54, 0.3),
+    127: rgba(255, 255, 255, 0.5)
+  ),
+  employee: (
+    4: #10b981,
+    7: #1f1409,
+    9: #2b1d13,
+    12: #4ade80,
+    15: #60a5fa,
+    33: #f4f4f5,
+    36: #f87171,
+    66: rgba(16, 185, 129, .28),
+    69: rgba(184, 134, 11, 0.8),
+    70: rgba(212, 175, 55, .25),
+    71: rgba(212, 175, 55, .28),
+    72: rgba(212, 175, 55, .3),
+    97: rgba(239, 68, 68, .28),
+    119: rgba(255, 255, 255, 0.2),
+    134: rgba(43, 29, 19, 0.6),
+    135: rgba(43, 29, 19, 0.8)
+  ),
+  client: (
+    1: #090705,
+    2: #0d0a08,
+    3: #100c0a,
+    17: #78e08f,
+    18: #81ecec,
+    24: #c8ffd8,
+    37: #ff6464,
+    38: #ff6b6b,
+    39: #ff7675,
+    41: #ffbe76,
+    42: #ffd1d1,
+    50: rgba(0, 0, 0, 0.2),
+    53: rgba(0, 0, 0, 0.4),
+    54: rgba(0, 0, 0, 0.42),
+    56: rgba(0, 0, 0, 0.48),
+    59: rgba(0, 0, 0, 0.72),
+    60: rgba(0, 0, 0, 0.74),
+    61: rgba(0, 0, 0, 0.9),
+    62: rgba(10, 10, 10, 0.4),
+    63: rgba(103, 224, 132, 0.5),
+    64: rgba(12, 12, 12, 0.68),
+    65: rgba(12, 12, 16, 0.98),
+    68: rgba(18, 18, 22, 0.98),
+    79: rgba(212, 175, 55, 0.32),
+    82: rgba(212, 175, 55, 0.55),
+    83: rgba(212, 175, 55, 0.85),
+    84: rgba(218, 165, 32, 0.04),
+    85: rgba(218, 165, 32, 0.06),
+    86: rgba(218, 165, 32, 0.08),
+    87: rgba(218, 165, 32, 0.1),
+    88: rgba(218, 165, 32, 0.12),
+    89: rgba(218, 165, 32, 0.15),
+    90: rgba(218, 165, 32, 0.2),
+    91: rgba(218, 165, 32, 0.22),
+    92: rgba(218, 165, 32, 0.25),
+    93: rgba(218, 165, 32, 0.3),
+    94: rgba(218, 165, 32, 0.35),
+    95: rgba(218, 165, 32, 0.45),
+    96: rgba(218, 165, 32, 0.5),
+    98: rgba(239, 68, 68, 0.08),
+    101: rgba(239, 68, 68, 0.3),
+    104: rgba(24, 45, 29, 0.95),
+    107: rgba(255, 100, 100, 0.1),
+    108: rgba(255, 100, 100, 0.15),
+    109: rgba(255, 100, 100, 0.25),
+    110: rgba(255, 100, 100, 0.3),
+    111: rgba(255, 118, 118, 0.55),
+    115: rgba(255, 255, 255, 0.07),
+    116: rgba(255, 255, 255, 0.08),
+    118: rgba(255, 255, 255, 0.18),
+    120: rgba(255, 255, 255, 0.24),
+    121: rgba(255, 255, 255, 0.25),
+    122: rgba(255, 255, 255, 0.28),
+    124: rgba(255, 255, 255, 0.32),
+    126: rgba(255, 255, 255, 0.45),
+    129: rgba(255, 255, 255, 0.65),
+    131: rgba(255, 255, 255, 0.8),
+    132: rgba(255, 255, 255, 0.82),
+    133: rgba(255, 255, 255, 0.86),
+    136: rgba(6, 6, 8, 0.86),
+    137: rgba(7, 7, 10, 0.65),
+    138: rgba(8, 8, 8, 0.78),
+    139: rgba(8, 8, 8, 0.93),
+    140: rgba(84, 24, 24, 0.95)
+  )
+);
+
+// Overrides para colores de estado y acentos criticos por tema.
+$dp-theme-overrides: (
+  claro: (
+    common: (
+      008: #2f9f5b,
+      011: #3f7fe0,
+      023: #bf3e3e,
+      031: #d95353,
+      032: #e06666,
+      040: #d28a2d,
+      029: #c69f2a,
+      044: #ffffff,
+      045: #ffffff
+    )
+  ),
+  obscuro: (
+    common: (
+      008: #33c86b,
+      011: #5396ff,
+      023: #d74e4e,
+      031: #f05f5f,
+      032: #ff6f61,
+      040: #ffb347,
+      029: #e0bc4a,
+      044: #f7f7f7,
+      045: #ffffff
+    )
+  ),
+  sepia: (
+    common: (
+      008: #5c9a63,
+      011: #6a8db8,
+      023: #b05b4e,
+      031: #c86b5b,
+      032: #d77a69,
+      040: #c9924b,
+      029: #c9a25c,
+      044: #f8f2e8,
+      045: #fff8ef
+    )
+  )
+);
+
+@function dp-pad-id($id) {
+  @if $id < 10 {
+    @return '00#{$id}';
+  }
+
+  @if $id < 100 {
+    @return '0#{$id}';
+  }
+
+  @return '#{$id}';
+}
+
+@function dp-theme-palette-token($theme-name, $token) {
+  $theme-config: map.get($dp-theme-dictionary, $theme-name);
+  $palette: map.get($theme-config, palette);
+  @return map.get($palette, $token);
+}
+
+@function dp-override-color($theme-name, $collection, $id) {
+  $theme-overrides: map.get($dp-theme-overrides, $theme-name);
+
+  @if $theme-overrides == null {
+    @return null;
+  }
+
+  $collection-overrides: map.get($theme-overrides, $collection);
+
+  @if $collection-overrides == null {
+    @return null;
+  }
+
+  @return map.get($collection-overrides, $id);
+}
+
+@function dp-theme-from-base($theme-name, $base-value) {
+  @if $theme-name == base {
+    @return $base-value;
+  }
+
+  $alpha: color.channel($base-value, 'alpha');
+  $solid: color.change($base-value, $alpha: 1);
+  $hue: color.channel($solid, 'hue', $space: hsl);
+  $sat: color.channel($solid, 'saturation', $space: hsl);
+  $light: color.channel($solid, 'lightness', $space: hsl);
+  $mapped: null;
+
+  @if $sat < 8% {
+    @if $light >= 88% {
+      $mapped: dp-theme-palette-token($theme-name, text-100);
+    } @else if $light >= 64% {
+      $mapped: dp-theme-palette-token($theme-name, text-300);
+    } @else if $light >= 40% {
+      $mapped: dp-theme-palette-token($theme-name, surface-500);
+    } @else if $light >= 24% {
+      $mapped: dp-theme-palette-token($theme-name, surface-700);
+    } @else {
+      $mapped: dp-theme-palette-token($theme-name, surface-900);
+    }
+  } @else if ($hue >= 88deg and $hue <= 160deg) {
+    $mapped: dp-theme-palette-token($theme-name, success-500);
+  } @else if ($hue >= 185deg and $hue <= 250deg) {
+    $mapped: dp-theme-palette-token($theme-name, info-500);
+  } @else if ($hue >= 18deg and $hue <= 72deg) {
+    @if $light > 62% {
+      $mapped: dp-theme-palette-token($theme-name, accent-500);
+    } @else {
+      $mapped: dp-theme-palette-token($theme-name, warning-500);
+    }
+  } @else if ($hue <= 16deg or $hue >= 330deg) {
+    $mapped: dp-theme-palette-token($theme-name, danger-500);
+  } @else {
+    $mapped: dp-theme-palette-token($theme-name, accent-500);
+  }
+
+  @if $alpha < 1 {
+    @return color.change($mapped, $alpha: $alpha);
+  }
+
+  @return $mapped;
+}
+
+@function dp-theme-color($theme-name, $collection, $id, $base-value) {
+  $override: dp-override-color($theme-name, $collection, $id);
+
+  @if $override != null {
+    @return $override;
+  }
+
+  @return dp-theme-from-base($theme-name, $base-value);
+}
+
+@mixin dp-emit-theme($theme-name, $selector) {
+  #{$selector} {
+    --dp-sem-surface-primary: #{dp-theme-palette-token($theme-name, surface-900)};
+    --dp-sem-surface-secondary: #{dp-theme-palette-token($theme-name, surface-800)};
+    --dp-sem-surface-tertiary: #{dp-theme-palette-token($theme-name, surface-700)};
+    --dp-sem-border-subtle: #{color.change(dp-theme-palette-token($theme-name, surface-500), $alpha: 0.45)};
+    --dp-sem-text-primary: #{dp-theme-palette-token($theme-name, text-100)};
+    --dp-sem-text-secondary: #{dp-theme-palette-token($theme-name, text-300)};
+    --dp-sem-accent: #{dp-theme-palette-token($theme-name, accent-500)};
+    --dp-sem-accent-strong: #{dp-theme-palette-token($theme-name, accent-600)};
+    --dp-sem-success: #{dp-theme-palette-token($theme-name, success-500)};
+    --dp-sem-info: #{dp-theme-palette-token($theme-name, info-500)};
+    --dp-sem-warning: #{dp-theme-palette-token($theme-name, warning-500)};
+    --dp-sem-danger: #{dp-theme-palette-token($theme-name, danger-500)};
+
+    @each $collection, $collection-map in $dp-color-base {
+      @each $id, $base-value in $collection-map {
+        --dp-color-#{$collection}-#{dp-pad-id($id)}: #{dp-theme-color($theme-name, $collection, $id, $base-value)};
+      }
+    }
+  }
+}
+
+@include dp-emit-theme(base, ':root, :root[data-theme="base"]');
+@include dp-emit-theme(claro, ':root[data-theme="claro"]');
+@include dp-emit-theme(obscuro, ':root[data-theme="obscuro"]');
+@include dp-emit-theme(sepia, ':root[data-theme="sepia"]');

@@ -15,7 +15,7 @@
 .tipo-titulo {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #333;
+  color: var(--dp-color-sem-title-neutral);
   border-bottom: 3px solid $color-gold;
   padding-bottom: 0.75rem;
   margin: 0;
@@ -39,9 +39,9 @@
 
 .mesa-card {
   aspect-ratio: 1;
-  border: 2px solid #ddd;
+  border: 2px solid var(--dp-color-sem-surface-border-neutral);
   border-radius: 12px;
-  background: white;
+  background: var(--dp-color-sem-surface-bg-white);
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -87,49 +87,49 @@
 
 /* ESTADO: DISPONIBLE - Verde */
 .estado-disponible {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-  border-color: #4caf50;
-  color: #1b5e20;
+  background: linear-gradient(135deg, var(--dp-color-hardcoded-053) 0%, var(--dp-color-hardcoded-042) 100%);
+  border-color: var(--dp-color-common-013);
+  color: var(--dp-color-hardcoded-011);
 
   .mesa-estado {
-    color: #2e7d32;
+    color: var(--dp-color-hardcoded-024);
   }
 
   &:hover {
-    border-color: #388e3c;
-    background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+    border-color: var(--dp-color-hardcoded-024);
+    background: linear-gradient(135deg, var(--dp-color-hardcoded-042) 0%, var(--dp-color-hardcoded-037) 100%);
   }
 }
 
 /* ESTADO: OCUPADA - Gris */
 .estado-ocupada {
-  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-  border-color: #999;
-  color: #666;
+  background: linear-gradient(135deg, var(--dp-color-hardcoded-054) 0%, var(--dp-color-hardcoded-050) 100%);
+  border-color: var(--dp-color-hardcoded-030);
+  color: var(--dp-color-hardcoded-030);
 
   .mesa-estado {
-    color: #666;
+    color: var(--dp-color-hardcoded-030);
   }
 }
 
 /* ESTADO: RESERVADA - Rojo */
 .estado-reservada {
-  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-  border-color: #ef4444;
-  color: #c62828;
+  background: linear-gradient(135deg, var(--dp-color-hardcoded-043) 0%, var(--dp-color-hardcoded-063) 100%);
+  border-color: var(--dp-color-common-031);
+  color: var(--dp-color-common-023);
 
   .mesa-estado {
-    color: #c62828;
+    color: var(--dp-color-common-023);
   }
 }
 
 /* ESTADO: FUERA DE SERVICIO - Naranja */
 .estado-fuera-servicio {
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-  border-color: #ff9800;
-  color: #e65100;
+  background: linear-gradient(135deg, var(--dp-color-hardcoded-066) 0%, var(--dp-color-hardcoded-065) 100%);
+  border-color: var(--dp-color-common-040);
+  color: var(--dp-color-hardcoded-051);
 
   .mesa-estado {
-    color: #e65100;
+    color: var(--dp-color-hardcoded-051);
   }
 }

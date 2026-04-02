@@ -37,11 +37,11 @@
       opacity: .92;
     }
 
-    &.mesa-img--salon { background: linear-gradient(135deg, #2B1D13, #1A120B); }
-    &.mesa-img--barra { background: linear-gradient(135deg, #241a10, #1A120B); }
-    &.mesa-img--vip   { background: linear-gradient(135deg, #231519, #1A120B); }
-    &.mesa-img--varios { background: linear-gradient(135deg, #374151, #1f2937); }
-    &.mesa-img--otro  { background: linear-gradient(135deg, #2B1D13, #1A120B); }
+    &.mesa-img--salon { background: linear-gradient(135deg, var(--dp-color-hardcoded-021), var(--dp-color-common-005)); }
+    &.mesa-img--barra { background: linear-gradient(135deg, var(--dp-color-hardcoded-017), var(--dp-color-common-005)); }
+    &.mesa-img--vip   { background: linear-gradient(135deg, var(--dp-color-hardcoded-016), var(--dp-color-common-005)); }
+    &.mesa-img--varios { background: linear-gradient(135deg, var(--dp-color-hardcoded-023), var(--dp-color-hardcoded-013)); }
+    &.mesa-img--otro  { background: linear-gradient(135deg, var(--dp-color-hardcoded-021), var(--dp-color-common-005)); }
   }
 
   &__content {
@@ -65,7 +65,7 @@
   }
 
   &__eyebrow {
-    color: #999999;
+    color: var(--dp-color-common-021);
     font-size: .72rem;
     text-transform: uppercase;
     letter-spacing: .08em;
@@ -84,7 +84,7 @@
     text-transform: uppercase;
     border-radius: 4px;
     padding: 2px 6px;
-    color: #FBBF24;
+    color: var(--dp-color-common-035);
     background: rgba(251, 191, 36, .12);
 
     &.state--ok {

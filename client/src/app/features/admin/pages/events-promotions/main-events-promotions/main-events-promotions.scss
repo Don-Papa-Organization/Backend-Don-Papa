@@ -1,11 +1,11 @@
-.events-promotions-page {
+﻿.events-promotions-page {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
 	width: 100%;
 	padding: 1.5rem;
-	color: #ffffff;
-	// ⚠️ NO agregar background-color aquí - el fondo lo gestiona el layout padre
+	color: var(--dp-color-common-045);
+	// âš ï¸ NO agregar background-color aquÃ­ - el fondo lo gestiona el layout padre
 }
 
 .events-promotions-header {
@@ -13,12 +13,12 @@
 	justify-content: space-between;
 	align-items: center;
 	padding-bottom: 1rem;
-	border-bottom: 1px solid #D4AF37;
+	border-bottom: 1px solid var(--dp-color-common-029);
 
 	h1 {
 		font-size: 2rem;
 		font-weight: 100;
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 		margin: 0;
 	}
 
@@ -31,7 +31,7 @@
 
 .modal-confirmacion {
 	padding: 1.5rem;
-	color: #ffffff;
+	color: var(--dp-color-common-045);
 
 	p {
 		margin-bottom: 1rem;
@@ -40,7 +40,7 @@
 	}
 
 	.warning-text {
-		color: #ef4444;
+		color: var(--dp-color-common-031);
 		font-weight: 100;
 		font-style: italic;
 	}
@@ -55,7 +55,7 @@
 
 .modal-productos {
 	p {
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 		margin-bottom: 1rem;
 	}
 
@@ -66,7 +66,7 @@
 
 .modal-dias {
 	p {
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 		margin-bottom: 1rem;
 	}
 
@@ -83,6 +83,6 @@
 
 	p {
 		font-size: 1.2rem;
-		color: #999;
+		color: var(--dp-color-common-020);
 	}
 }

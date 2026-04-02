@@ -1,10 +1,10 @@
-.orders-page {
+﻿.orders-page {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
 	width: 100%;
 	padding: 1.5rem;
-	color: #ffffff;
+	color: var(--dp-color-common-045);
 	min-width: 785px;
 	height: 100%;
 }
@@ -14,12 +14,12 @@
 	justify-content: space-between;
 	align-items: center;
 	padding-bottom: 1rem;
-	border-bottom: 1px solid #D4AF37;
+	border-bottom: 1px solid var(--dp-color-common-029);
 
 	h1 {
 		font-size: 2rem;
 		font-weight: 100;
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 		margin: 0;
 	}
 
@@ -54,7 +54,7 @@
 	h2 {
 		font-size: 1.4rem;
 		font-weight: 100;
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 		margin: 0;
 	}
 }
@@ -67,7 +67,7 @@
 
 	p {
 		font-size: 1.2rem;
-		color: #999;
+		color: var(--dp-color-common-020);
 	}
 }
 
@@ -79,16 +79,16 @@
 
 	p {
 		margin: 0;
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 
 		&.advertencia {
 			font-size: 1rem;
-			color: #999;
+			color: var(--dp-color-common-020);
 		}
 	}
 
 	.entity-highlight {
-		color: #D4AF37;
+		color: var(--dp-color-common-029);
 	}
 }
 
@@ -98,3 +98,4 @@
 	justify-content: flex-start;
 	margin-top: 1rem;
 }
+

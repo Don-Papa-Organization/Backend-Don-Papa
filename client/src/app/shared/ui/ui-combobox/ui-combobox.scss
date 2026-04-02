@@ -194,7 +194,7 @@
   .combobox-dropdown {
     border-color: rgba($color-gold, 0.7);
     box-shadow: 0 14px 24px rgba($color-black, 0.42), 0 0 12px rgba($color-gold, 0.18);
-    background: linear-gradient(180deg, #1a1510 0%, #120e0b 100%);
+    background: linear-gradient(180deg, var(--dp-color-hardcoded-010) 0%, var(--dp-color-hardcoded-007) 100%);
   }
 
   .combobox-option:hover {

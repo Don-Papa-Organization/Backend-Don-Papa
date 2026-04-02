@@ -1,6 +1,5 @@
 :host {
   display: block;
-  font-weight: 400;
 }
 
 .floor-mesa {
@@ -20,32 +19,29 @@
 
   &--disponible:hover,
   &--disponible:focus-visible {
-    filter: drop-shadow(0 0 9px rgba(122, 182, 72, 0.92));
+    filter: drop-shadow(0 0 8px var(--disponible));
   }
 
   &--ocupada:hover,
   &--ocupada:focus-visible {
-    filter: drop-shadow(0 0 9px rgba(220, 93, 86, 0.92));
+    filter: drop-shadow(0 0 8px var(--ocupada));
   }
 
   &--otro:hover,
   &--otro:focus-visible {
-    filter: drop-shadow(0 0 9px rgba(212, 153, 42, 0.92));
+    filter: drop-shadow(0 0 8px var(--reservada));
   }
 
-  /* ── Surface ── */
   &__surface {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
-    box-shadow:
-      0 6px 16px rgba(0, 0, 0, 0.12),
-      0 2px 4px rgba(0, 0, 0, 0.08);
+    border: 1.5px solid var(--gold-dim);
+    box-shadow: var(--shadow-table);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    background-color: #7f5c40;
+    background-color: var(--table-wood);
 
-    /* Forma según zona */
     &--vip {
       width: 70px;
       height: 70px;
@@ -59,51 +55,43 @@
     }
 
     &--barra {
-      width: 65px;
-      height: 65px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      border-width: 3px;
+      border-width: 2.5px;
     }
 
     &--varios {
-      width: 72px;
-      height: 58px;
-      border-radius: 10px;
-      border-width: 2px;
+      width: 75px;
+      height: 75px;
+      border-radius: 8px;
     }
   }
 
   &:hover &__surface,
   &:focus-visible &__surface {
-    box-shadow:
-      0 8px 24px rgba(0, 0, 0, 0.18),
-      0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18), 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  /* Colores de estado */
   &--disponible &__surface {
-    background-color: #76af46;
-    border-color: rgba(169, 221, 95, 0.7);
+    background-color: var(--disponible);
   }
 
   &--ocupada &__surface {
-    background-color: #d45a54;
-    border-color: rgba(255, 175, 175, 0.72);
+    background-color: var(--ocupada);
   }
 
   &--otro &__surface {
-    background-color: #ce9430;
-    border-color: rgba(255, 214, 138, 0.74);
+    background-color: var(--reservada);
   }
 
-  /* ── Label ── */
   &__label {
-    font-family: 'DM Sans', 'Lora', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    color: #2b1d13;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
     text-transform: uppercase;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.5px;
     text-align: center;
     pointer-events: none;
     max-width: 64px;
@@ -111,34 +99,18 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     padding: 0 4px;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.18);
   }
 
-  &--disponible &__label {
-
-    color: #0c0e0a;
-  }
-
-  &--ocupada &__label {
-    color: #3b1614;
-  }
-
-  &--otro &__label {
-    color: #3d2b10;
-  }
-
-  /* ── Tooltip ── */
   &__tooltip {
     position: absolute;
-    bottom: calc(100% + 2px);
+    bottom: calc(100% + 10px);
     left: 50%;
     transform: translateX(-50%) scale(0.85);
     background: rgba(15, 25, 35, 0.95);
     border: 1px solid rgba(184, 134, 11, 0.3);
     color: white;
-    font-size: 10px;
-    font-weight: 400;
-    padding: 8px 12px;
+    font-size: 9px;
+    padding: 4px 10px;
     border-radius: 4px;
     white-space: nowrap;
     opacity: 0;
@@ -155,7 +127,7 @@
   }
 
   &__tooltip-time {
-    color: #ffb300;
+    color: var(--reservada);
     font-size: 9px;
   }
 
@@ -168,28 +140,22 @@
     margin-top: 4px;
     border: 1px solid rgba(184, 134, 11, 0.5);
     background: rgba(11, 17, 22, 0.9);
-    color: #f3f4f6;
+    color: var(--text-ui);
     border-radius: 4px;
     font-size: 9px;
-    font-weight: 400;
     line-height: 1;
     padding: 4px 6px;
     cursor: pointer;
-  }
-
-  /* ── Reserva badge (esquina superior derecha de la surface) ── */
-  &__surface {
-    position: relative;
   }
 
   &__reserva-badge {
     position: absolute;
     top: -6px;
     right: -6px;
-    background: #6366F1;
-    color: #fff;
+    background: var(--gold);
+    color: var(--text-ui);
     font-size: 8px;
-    font-weight: 400;
+    font-weight: 700;
     width: 16px;
     height: 16px;
     border-radius: 50%;
@@ -201,7 +167,7 @@
   }
 
   &__tooltip-reserva {
-    color: #A5B4FC;
+    color: var(--reservada);
     font-size: 9px;
   }
 
@@ -210,10 +176,9 @@
     margin-top: 4px;
     border: 1px solid rgba(99, 102, 241, 0.6);
     background: rgba(99, 102, 241, 0.15);
-    color: #A5B4FC;
+    color: var(--text-ui);
     border-radius: 4px;
     font-size: 9px;
-    font-weight: 400;
     line-height: 1;
     padding: 4px 6px;
     cursor: pointer;
@@ -221,12 +186,11 @@
 
     &:hover {
       background: rgba(99, 102, 241, 0.3);
-      color: #fff;
+      color: var(--dp-color-common-045);
     }
   }
 }
 
-/* Hacer que el tooltip sea interactivo al hover para poder hacer click en botones */
 .floor-mesa:hover .floor-mesa__tooltip,
 .floor-mesa:focus-visible .floor-mesa__tooltip {
   pointer-events: auto;

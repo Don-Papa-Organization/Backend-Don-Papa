@@ -11,8 +11,8 @@ class="ui-form-container"
   <!-- Formulario con content projection -->
   <form 
   #formRef="ngForm"
-  class="formulario" 
-  [class.overflow-columns]="hasOverflow"
+  class="formulario"
+  [class.formulario--auto-grid]="useAutoGrid"
   (ngSubmit)="onSubmit(formRef)"
   >
 

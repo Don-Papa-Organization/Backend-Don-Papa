@@ -1,6 +1,6 @@
-.modal-productos {
+﻿.modal-productos {
 	p {
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 		margin-bottom: 1rem;
 	}
 
@@ -29,7 +29,7 @@
 }
 
 .warning-text {
-	color: #ef4444;
+	color: var(--dp-color-common-031);
 	font-weight: 100;
 	font-style: italic;
 	margin: 1rem 0;
@@ -43,16 +43,16 @@
 
 	p {
 		margin: 0;
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 
 		&.advertencia {
 			font-size: 1rem;
-			color: #999;
+			color: var(--dp-color-common-020);
 		}
 	}
 
 	.entity-highlight {
-		color: #D4AF37;
+		color: var(--dp-color-common-029);
 	}
 }
 
@@ -62,3 +62,4 @@
 	justify-content: flex-start;
 	margin-top: 1rem;
 }
+

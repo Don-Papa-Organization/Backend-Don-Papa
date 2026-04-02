@@ -24,8 +24,8 @@
 
 .filtros-activos-badge {
   font-size: 0.75rem;
-  color: #D4AF37;
-  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: var(--dp-color-common-029);
+  border: 1px solid var(--dp-color-common-080);
   padding: 0.2rem 0.6rem;
   border-radius: 12px;
   white-space: nowrap;
@@ -44,5 +44,5 @@
   justify-content: flex-end;
   margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--dp-color-common-117);
 }

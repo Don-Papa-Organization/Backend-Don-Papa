@@ -10,7 +10,7 @@
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
-  background-color: black; 
+  background-color: var(--dp-color-hardcoded-006); 
 }
 
 .payment-summary__item {
@@ -60,7 +60,7 @@
   }
 
   .payment-summary__value--total {
-    background: linear-gradient(180deg, #f4de87, #d4af37 58%, #b8860b);
+    background: linear-gradient(180deg, #f4de87, #d4af37 58%, #D4AF37);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

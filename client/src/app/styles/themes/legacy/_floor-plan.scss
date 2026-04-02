@@ -1,18 +1,18 @@
 @use './variables' as *;
 
 $floor-zone-salon-border: $floor-border;
-$floor-zone-barra-border: rgba(26, 18, 15, 0.2);
+$floor-zone-barra-border: rgba($floor-label-color, 0.2);
 $floor-zone-vip-border: $floor-vip-border;
 $floor-zone-vip-badge-bg: rgba(94, 25, 20, 0.8);
 $floor-zone-salon-badge-bg: rgba(139, 94, 60, 0.8);
 $floor-zone-barra-badge-bg: rgba(26, 18, 15, 0.8);
-$floor-zone-varios-border: rgba(26, 18, 15, 0.2);
-$floor-zone-varios-badge-bg: rgba(26, 18, 15, 0.8);
+$floor-zone-varios-border: rgba(74, 85, 104, 0.35);
+$floor-zone-varios-badge-bg: rgba(74, 85, 104, 0.85);
 
 @mixin floor-wrap {
   border: 1px solid $floor-border;
   border-radius: $radius-2xl;
-  background-color: var(--bp-bg);
+  background-color: $floor-bg;
   background-image:
     linear-gradient($floor-grid-line 1px, transparent 1px),
     linear-gradient(90deg, $floor-grid-line 1px, transparent 1px);

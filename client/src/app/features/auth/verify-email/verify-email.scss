@@ -1,8 +1,8 @@
-// Contenedor principal
+﻿// Contenedor principal
 .login-page {
   width: 370px;
   height: fit-content;
-  background-color: #1A120B;
+  background-color: var(--dp-color-common-005);
   margin: 0 auto;
   margin-top: 50vh;
   transform: translateY(-50%);
@@ -13,7 +13,7 @@
   gap: 16px;
   padding: 10px;
   border-radius: 7px;
-  border: 1px solid #D4AF37;
+  border: 1px solid var(--dp-color-common-029);
 
   h2 {
     text-align: center;
@@ -45,14 +45,15 @@
 
 // Mensajes de estado
 .loading {
-  color: #ffffff;
+  color: var(--dp-color-common-045);
   font-size: 0.95rem;
   text-align: center;
 }
 
 
 .success {
-  color: #2e7d32;
+  color: var(--dp-color-common-010);
   font-size: 0.9rem;
   text-align: center;
 }
+

@@ -1,7 +1,7 @@
-.modal-dias,
+﻿.modal-dias,
 .modal-promociones-dia {
     p {
-        color: #ffffff;
+        color: var(--dp-color-common-045);
         margin-bottom: 1rem;
     }
 
@@ -22,7 +22,7 @@
 }
 
 .warning-text {
-    color: #ef4444;
+    color: var(--dp-color-common-031);
     font-weight: 100;
     font-style: italic;
     margin: 1rem 0;

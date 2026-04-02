@@ -162,9 +162,9 @@
   letter-spacing: 0.05em;
 
   &.mesa-barra {
-    background: rgba(#8B4513, 0.15);
-    color: rgba(#D4A574, 0.9);
-    border: 1px solid rgba(#8B4513, 0.3);
+    background: var(--dp-color-sem-mesa-barra-bg);
+    color: var(--dp-color-sem-mesa-barra-text);
+    border: 1px solid var(--dp-color-sem-mesa-barra-border);
   }
 
   &.mesa-vip {

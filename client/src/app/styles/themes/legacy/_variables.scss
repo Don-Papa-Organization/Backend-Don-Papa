@@ -1,14 +1,24 @@
 @use 'sass:color';
 
-$color-gold: #D4AF37;
-$color-white: #FFFFFF;
-$color-black: #000000;
-$color-bg-primary: #1A120B;
-$color-bg-secondary: #2B1D13;
-$color-danger: #EF4444;
-$color-success: #8BC34A;
-$color-info: #3B82F6;
-$color-gray: #5f5f5f;
+$color-gold_: #D4AF37;
+$color-white_: #FFFFFF;
+$color-black_: #000000;
+$color-bg-primary_: #1A120B;
+$color-bg-secondary_: #2B1D13;
+$color-danger_: #EF4444;
+$color-success_: #2ecc71;
+$color-info_: #3B82F6;
+$color-gray_: #5f5f5f;
+
+$color-gold: #d0a578;
+$color-white: #fffdf7;
+$color-black: #101f37;
+$color-bg-primary: #162b4a;
+$color-bg-secondary: #f5dfa8;
+$color-danger: #9e6f37;
+$color-success: #959e7f;
+$color-info: #396fc0;
+$color-gray: #694824;
 
 
 // Compatibilidad con estilos existentes.
@@ -34,11 +44,11 @@ $color-white-08: rgba($color-white, 0.08);
 $color-white-05: rgba($color-white, 0.05);
 $color-white-02: rgba($color-white, 0.02);
 
-$floor-bg: #E7D4A0;
-$floor-grid-line: rgba(139, 94, 60, 0.05);
-$floor-border: rgba(139, 94, 60, 0.3);
-$floor-label-color: rgba(30, 20, 15, 0.4);
-$floor-vip-border: rgba(94, 25, 20, 0.3);
+$floor-bg: #f2d895;
+$floor-grid-line: rgba(157, 110, 55, 0.08);
+$floor-border: rgba(157, 110, 55, 0.28);
+$floor-label-color: #162b4a;
+$floor-vip-border: rgba(157, 110, 55, 0.35);
 
 $space-page: 1.5rem;
 $space-section: 1rem;

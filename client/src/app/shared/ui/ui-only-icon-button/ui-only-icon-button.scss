@@ -1,6 +1,6 @@
 .icon-button {
 	text-decoration: none;
-	color: #ffffff;
+	color: var(--dp-color-common-045);
 	width: fit-content;
 	display: inline-flex;
 	align-items: center;
@@ -8,10 +8,10 @@
 	gap: 0.5rem;
 	
 	&.text {
-		background-color: #D4AF37;
+		background-color: var(--dp-color-common-029);
 		padding: 2px 4px;
 		border-radius: 5px;
-		color: #000;
+		color: var(--dp-color-hardcoded-001);
 		.icon-img {
 			width: 40px;
 			height: 40px;
@@ -42,7 +42,7 @@
 	}
 
 	&.bordered {
-		border-bottom: 2px solid #D4AF37;
+		border-bottom: 2px solid var(--dp-color-common-029);
 	}
 
 	&.full-width {
@@ -50,9 +50,9 @@
 	}
 
 	&.background_color{
-		background-color: #D4AF37;
+		background-color: var(--dp-color-common-029);
 		border-radius: 4px;
-		border: 1px solid #D4AF37;
+		border: 1px solid var(--dp-color-common-029);
 	}
 	
 	

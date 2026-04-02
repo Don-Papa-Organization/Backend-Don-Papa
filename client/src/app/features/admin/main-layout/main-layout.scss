@@ -8,6 +8,8 @@
   --sidebar-expanded-width: 16rem;
   --sidebar-collapsed-width: 5rem;
   --sidebar-current-width: var(--sidebar-expanded-width);
+  --modal-top-offset: 70px;
+  --modal-left-offset: var(--sidebar-current-width);
 }
 
 .layout.sidebar-collapsed {

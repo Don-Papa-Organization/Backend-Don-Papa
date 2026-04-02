@@ -10,25 +10,25 @@
   &--success {
     background: rgba(16, 185, 129, 0.12);
     border-color: rgba(16, 185, 129, 0.45);
-    color: #10B981;
+    color: var(--dp-color-common-008);
   }
 
   &--error {
     background: rgba(239, 68, 68, 0.12);
     border-color: rgba(239, 68, 68, 0.45);
-    color: #EF4444;
+    color: var(--dp-color-common-031);
   }
 
   &--warning {
     background: rgba(251, 191, 36, 0.12);
     border-color: rgba(251, 191, 36, 0.45);
-    color: #FBBF24;
+    color: var(--dp-color-common-040);
   }
 
   &--info {
     background: rgba(212, 175, 55, 0.12);
     border-color: rgba(212, 175, 55, 0.45);
-    color: #D4AF37;
+    color: var(--dp-color-common-029);
   }
 
   &__text {

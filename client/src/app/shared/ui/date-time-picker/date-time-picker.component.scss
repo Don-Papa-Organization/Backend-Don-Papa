@@ -23,7 +23,7 @@
   label {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #333;
+    color: var(--dp-color-hardcoded-022);
     display: block;
   }
 }
@@ -37,7 +37,7 @@
 .picker-input {
   flex: 1;
   padding: 0.75rem;
-  border: 2px solid #ddd;
+  border: 2px solid var(--dp-color-common-030);
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s ease;
@@ -57,8 +57,8 @@
   width: 44px;
   height: 44px;
   min-width: 44px;
-  border: 2px solid #ddd;
-  background: white;
+  border: 2px solid var(--dp-color-common-030);
+  background: var(--dp-color-common-044);
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.8rem;
@@ -68,9 +68,9 @@
   justify-content: center;
 
   &:hover {
-    border-color: #d4af37;
-    background: #fff9e6;
-    color: #d4af37;
+    border-color: var(--dp-color-common-029);
+    background: var(--dp-color-hardcoded-067);
+    color: var(--dp-color-common-029);
   }
 
   &:active {

@@ -1,8 +1,8 @@
 .metric-card {
   padding: 16px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, var(--dp-color-sem-metric-gradient-start) 0%, var(--dp-color-sem-metric-gradient-end) 100%);
   border-radius: 8px;
-  border-left: 4px solid #1976d2;
+  border-left: 4px solid var(--dp-color-sem-metric-accent-border);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
   .metric-header {
@@ -14,7 +14,7 @@
     h3 {
       font-size: 12px;
       font-weight: 100;
-      color: #666;
+      color: var(--dp-color-sem-text-secondary);
       margin: 0;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -28,19 +28,19 @@
   .metric-value {
     font-size: 24px;
     font-weight: 100;
-    color: #212121;
+    color: var(--dp-color-hardcoded-014);
     margin: 8px 0;
   }
 
   .metric-subtitle {
     font-size: 12px;
-    color: #999;
+    color: var(--dp-color-sem-text-secondary);
     margin: 4px 0 0 0;
   }
 
   .skeleton-value {
     height: 28px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(90deg, var(--dp-color-sem-skeleton-track) 25%, var(--dp-color-sem-skeleton-wave) 50%, var(--dp-color-sem-skeleton-track) 75%);
     background-size: 200% 100%;
     animation: loading 1.5s infinite;
     border-radius: 4px;

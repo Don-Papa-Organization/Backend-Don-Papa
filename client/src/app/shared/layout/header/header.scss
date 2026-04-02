@@ -1,17 +1,17 @@
-header {
+﻿header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     width: 100%;
     height: 70px;
-    border-bottom: 2px solid #D4AF37;
+    border-bottom: 2px solid var(--dp-color-common-029);
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
     padding-right: 25px;
-    background-color: #1A120B;
+    background-color: var(--dp-color-common-005);
     gap: 17px;
     z-index: 999;
 }
@@ -75,24 +75,24 @@ header.header--employee ::ng-deep .header-nav__item {
     align-items: center;
     gap: 0.4rem;
     text-decoration: none;
-    color: #ffffff;
+    color: var(--dp-color-common-045);
     font-size: 0.85rem;
     padding: 0.35rem 0.6rem;
-    border: 1px solid rgba(212, 175, 55, 0.25);
+    border: 1px solid var(--dp-color-hardcoded-255);
     border-radius: 8px;
     transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
 header.header--employee ::ng-deep .header-nav__item:hover {
-    border-color: #D4AF37;
-    background-color: rgba(212, 175, 55, 0.1);
-    color: #D4AF37;
+    border-color: var(--dp-color-common-029);
+    background-color: var(--dp-color-common-074);
+    color: var(--dp-color-common-029);
 }
 
 header.header--employee ::ng-deep .header-nav__item.active {
-    border-color: #D4AF37;
-    background-color: rgba(212, 175, 55, 0.18);
-    color: #D4AF37;
+    border-color: var(--dp-color-common-029);
+    background-color: var(--dp-color-common-076);
+    color: var(--dp-color-common-029);
 }
 
 header.header--employee ::ng-deep .header-nav__item img {
@@ -122,3 +122,4 @@ header.header--admin {
         padding: 0.35rem;
     }
 }
+

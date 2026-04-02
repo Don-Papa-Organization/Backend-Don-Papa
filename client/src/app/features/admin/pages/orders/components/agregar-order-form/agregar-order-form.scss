@@ -1,11 +1,11 @@
-.seccion-productos {
+﻿.seccion-productos {
 	
 
 	h3 {
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 		margin-bottom: 1rem;
 		font-size: 1.1rem;
-		border-bottom: 2px solid #D4AF37;
+		border-bottom: 2px solid var(--dp-color-common-029);
 		padding-bottom: 0.5rem;
 		font-weight: 100;
 	}
@@ -29,16 +29,16 @@
 .seccion-productos-agregados {
 
 	h3 {
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 		margin-bottom: 1rem;
 		font-size: 1.1rem;
-		border-bottom: 2px solid #D4AF37;
+		border-bottom: 2px solid var(--dp-color-common-029);
 		padding-bottom: 0.5rem;
 		font-weight: 100;
 	}
 
 	.tabla-contenedor {
-		background-color: #1a1a1a;
+		background-color: var(--dp-color-common-006);
 		border-radius: 8px;
 		overflow: hidden;
 		margin-bottom: 1rem;
@@ -49,11 +49,11 @@
 	}
 
 	.sin-productos {
-		color: #cccccc;
+		color: var(--dp-color-common-026);
 		font-style: italic;
 		text-align: center;
 		padding: 2rem 1rem;
-		background-color: #1a1a1a;
+		background-color: var(--dp-color-common-006);
 		border-radius: 8px;
 	}
 }
@@ -62,10 +62,10 @@
 	margin-bottom: 1rem;
 
 	h3 {
-		color: #ffffff;
+		color: var(--dp-color-common-045);
 		margin-bottom: 1rem;
 		font-size: 1.1rem;
-		border-bottom: 2px solid #D4AF37;
+		border-bottom: 2px solid var(--dp-color-common-029);
 		padding-bottom: 0.5rem;
 		font-weight: 100;
 	}
@@ -85,3 +85,4 @@
 app-ui-helper-text {
 	margin: 0;
 }
+

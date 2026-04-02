@@ -73,7 +73,7 @@
 .rating {
     margin: 0;
     font-size: 0.8rem;
-    color: #f6d86a;
+    color: var(--dp-color-common-035);
 }
 
 .price-block {
@@ -138,18 +138,18 @@
     }
 
     &--promo {
-        background: #f8d15e;
-        color: #1a120b;
+        background: var(--dp-color-hardcoded-044);
+        color: var(--dp-color-common-005);
     }
 
     &--new {
-        background: #2ecc71;
-        color: #0b2212;
+        background: var(--dp-color-hardcoded-020);
+        color: var(--dp-color-hardcoded-003);
     }
 
     &--featured {
-        background: #f59e0b;
-        color: #311d05;
+        background: var(--dp-color-hardcoded-051);
+        color: var(--dp-color-hardcoded-021);
     }
 
     &--out-of-stock {

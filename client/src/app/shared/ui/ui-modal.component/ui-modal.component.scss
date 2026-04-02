@@ -2,16 +2,17 @@
 
 .modal-backdrop {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100vh;
+  top: var(--modal-top-offset, 0px);
+  right: var(--modal-right-offset, 0px);
+  bottom: var(--modal-bottom-offset, 0px);
+  left: var(--modal-left-offset, 0px);
   padding: 1rem;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1100;
 }
 
 .modal-container {

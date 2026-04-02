@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, AfterViewInit, OnDestroy, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, Output, ViewChild, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -15,69 +15,79 @@ export class UiForm implements AfterViewInit, OnDestroy {
   @Input() showFooter: boolean = true;
   @Input() fullWidth: boolean = false;
   @Input() visualTheme: 'default' | 'client-premium' = 'default';
+  @Input() autoGridThreshold: number = 5;
 
-  @ViewChild('formRef', { static: false, read: ElementRef }) formElement?: ElementRef;
+  @ViewChild('formRef', { static: false, read: ElementRef }) formElement?: ElementRef<HTMLFormElement>;
   @ViewChild('formRef', { static: false, read: NgForm }) ngForm?: NgForm;
 
-  hasOverflow = false;
-  private resizeObserver?: ResizeObserver;
-
-  @Output() formSubmit = new EventEmitter<NgForm>();
+  useAutoGrid = false;
+  private mutationObserver?: MutationObserver;
 
   constructor(private cdr: ChangeDetectorRef) {}
 
+  @Output() formSubmit = new EventEmitter<NgForm>();
+
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.checkOverflow();
-      
-      this.resizeObserver = new ResizeObserver(() => {
-        this.checkOverflow();
-      });
-      if (this.formElement?.nativeElement) {
-        this.resizeObserver.observe(this.formElement.nativeElement);
+    queueMicrotask(() => {
+      this.updateAutoGridState();
+
+      const form = this.formElement?.nativeElement;
+      if (!form) {
+        return;
       }
-    }, 0);
+
+      this.mutationObserver = new MutationObserver(() => {
+        this.updateAutoGridState();
+      });
+
+      this.mutationObserver.observe(form, {
+        childList: true,
+        subtree: false,
+        attributes: true,
+      });
+    });
   }
 
   ngOnDestroy(): void {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
-    }
-  }
-
-  private checkOverflow(): void {
-    const form = this.formElement?.nativeElement;
-    
-    if (form && this.maxHeight !== 'fit-content' && this.maxHeight !== '100vh') {
-      const heightValue = this.parseHeightToPx(this.maxHeight);
-      const scrollH = form.scrollHeight;
-      const hasOverflowNow = scrollH > heightValue;
-      
-      if (hasOverflowNow !== this.hasOverflow) {
-        this.hasOverflow = hasOverflowNow;
-        this.cdr.detectChanges();
-        
-        // Desuscribirse del ResizeObserver después de detectar cambio para evitar loop
-        if (this.resizeObserver) {
-          this.resizeObserver.disconnect();
-        }
-      }
-    }
-  }
-
-  private parseHeightToPx(height: string): number {
-    if (height.endsWith('vh')) {
-      const vh = parseFloat(height) * (window.innerHeight / 100);
-      return vh;
-    } else if (height.endsWith('px')) {
-      return parseFloat(height);
-    }
-    return Infinity;
+    this.mutationObserver?.disconnect();
   }
 
   onSubmit(form: NgForm): void {
     if (form.valid) {
       this.formSubmit.emit(form);
+    }
+  }
+
+  private updateAutoGridState(): void {
+    const form = this.formElement?.nativeElement;
+    if (!form) {
+      return;
+    }
+
+    const componentSelector = [
+      'ui-input',
+      'app-ui-combobox',
+      'app-ui-checkbox',
+      'app-ui-image-upload',
+      'app-ui-tabla',
+      'app-ui-helper-text',
+      'ui-button',
+      'app-ui-date-time-picker'
+    ].join(', ');
+
+    const allComponents = Array.from(form.querySelectorAll(componentSelector)).filter((element) => {
+      if (!(element instanceof HTMLElement)) {
+        return false;
+      }
+
+      return !element.closest('[footer], .form-footer');
+    });
+
+    const shouldUseGrid = allComponents.length >= this.autoGridThreshold;
+
+    if (shouldUseGrid !== this.useAutoGrid) {
+      this.useAutoGrid = shouldUseGrid;
+      this.cdr.detectChanges();
     }
   }
 }

@@ -54,9 +54,9 @@
     white-space: nowrap;
 
     &.status-pendiente {
-      background: rgba(#3b82f6, 0.15);
-      color: #3b82f6;
-      border: 1px solid rgba(#3b82f6, 0.3);
+      background: var(--dp-color-sem-badge-info-bg);
+      color: var(--dp-color-common-011);
+      border: 1px solid var(--dp-color-sem-badge-info-border);
     }
 
     &.status-entregado {

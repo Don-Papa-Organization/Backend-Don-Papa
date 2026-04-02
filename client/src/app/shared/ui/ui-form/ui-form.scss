@@ -1,22 +1,24 @@
 // Contenedor principal del formulario
 .ui-form-container {
-    width: fit-content;
+    width: 100%;
     max-width: min(90vw, 800px);
     min-width: min(350px, 90vw);
     box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
     
-    background-color: #1A120B;
+    background-color: var(--dp-color-sem-surface-bg-primary);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
-    border: 2px solid #D4AF37;
+    align-items: stretch;
+    border: 2px solid var(--dp-color-sem-accent-gold-border);
     border-radius: 7px;
     padding: 0 10px;
         
     // Título del formulario
     .form-title {
-        color: #ffffff;
+        color: var(--dp-color-sem-text-primary);
         font-size: 33px;
         font-weight: 100;
         text-align: center;
@@ -26,7 +28,7 @@
 
     // Subtítulo (opcional)
     .form-subtitle {
-        color: #b0b0b0;
+        color: var(--dp-color-sem-text-tertiary);
         font-size: 1rem;
         margin-bottom: 20px;
         text-align: center;
@@ -36,57 +38,43 @@
     .formulario {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        align-items: stretch;
         gap: 16px;
         padding: 10px;
         width: 100%;
-        
-        overflow-y: auto;
-        overflow-x: hidden;
         box-sizing: border-box;
 
-        // Cuando el contenido excede la altura máxima, distribuir en columnas
-        &.overflow-columns {
+        &.formulario--auto-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
             align-items: start;
             align-content: start;
-            gap: 16px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            width: 100%;
-            padding: 10px;
-            max-height: 60vh;
-            height: auto;
-            box-sizing: border-box;
+            column-gap: 24px;
+            row-gap: 16px;
 
-            // Evitar que los elementos se corten a mitad de la columna
-            & > *:not(.form-footer) {
-                grid-column: span 1;
-                min-width: 0;
-                max-width: 100%;
-                box-sizing: border-box;
+            @media (max-width: 1100px) {
+                grid-template-columns: 1fr;
             }
 
-            // El footer ocupa ambas columnas
-            .form-footer {
+            & > * {
+                min-width: 0;
+            }
+
+            & > [footer],
+            & > .form-footer,
+            & > .form-errors,
+            & > .form-actions,
+            & > .acciones-mixto,
+            & > .acciones-eliminacion,
+            & > .acciones-preview {
                 grid-column: 1 / -1;
             }
 
-            // En pantallas pequeñas, volver a una sola columna
-            @media (max-width: 1100px) {
-                grid-template-columns: 1fr;
-                
-                & > *:not(.form-footer) {
-                    grid-column: 1;
-                }
-
-                .form-footer {
-                    grid-column: 1;
-                }
+            .form-footer {
+                grid-column: 1 / -1;
             }
         }
+
     }
 }
 
@@ -97,6 +85,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 .ui-form-container.full-width {
@@ -112,7 +101,7 @@
     box-shadow: 0 20px 34px rgba(0, 0, 0, 0.35), 0 0 20px rgba(212, 175, 55, 0.16);
 
     .form-title {
-        color: #ffffff;
+        color: var(--dp-color-sem-text-primary);
         font-size: clamp(2rem, 4vw, 2.35rem);
         letter-spacing: 0.02em;
         text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);

@@ -1,4 +1,4 @@
-// Sección de contraseña
+﻿// SecciÃ³n de contraseÃ±a
 .contrasenaSection {
     display: flex;
     flex-direction: column;
@@ -25,7 +25,7 @@
 // Enlaces
 .link {
     font-size: 14px;
-    color: #D4AF37;
+    color: var(--dp-color-common-029);
     text-decoration: none;
 
     &:hover {
@@ -36,4 +36,5 @@
 .link_iniciar_sesion {
     color: white;
 }
+
 

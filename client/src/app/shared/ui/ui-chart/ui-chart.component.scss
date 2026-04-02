@@ -1,7 +1,7 @@
 .chart-container {
   padding: 20px;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: var(--dp-color-sem-card-neutral-bg);
   min-height: 300px;
   display: flex;
   align-items: center;
@@ -12,12 +12,12 @@
 .chart-error,
 .chart-empty {
   text-align: center;
-  color: #666;
+  color: var(--dp-color-sem-text-secondary);
   font-size: 14px;
 }
 
 .chart-error {
-  color: #d32f2f;
+  color: var(--dp-color-sem-text-danger);
 }
 
 .chart-content {

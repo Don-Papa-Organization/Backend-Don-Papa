@@ -21,23 +21,23 @@
 .crumb-button {
   background: none;
   border: none;
-  color: #FFFFFF;  // blanco
+  color: var(--dp-color-common-045);  // blanco
   font-size: 20px;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .crumb-button:hover {
-  color: #D4AF37; // dorado en hover
+  color: var(--dp-color-common-029); // dorado en hover
 }
 
 .crumb-current {
-  color: #FFFFFF; // blanco
+  color: var(--dp-color-common-045); // blanco
   font-size: 20px;
   cursor: default;
 }
 
 .crumb-separator {
-  color: #D4AF37; // separador dorado
+  color: var(--dp-color-common-029); // separador dorado
   font-size: 20px;
 }
