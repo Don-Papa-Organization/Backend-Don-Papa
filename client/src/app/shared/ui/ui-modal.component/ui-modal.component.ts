@@ -10,7 +10,7 @@ export class UiModalComponent {
   @Input() titulo: string = '';
   @Input() mostrar: boolean = false;
   @Input() width: string = 'auto';
-  @Input() maxWidth: string = '80%';
+  @Input() maxWidth: string = 'min(90vw, 960px)';
   @Input() maxHeight: string = '85vh';
   @Input() padding: string = '20px';
   @Input() tone: 'default' | 'primary-surface' | 'client-premium' = 'default';

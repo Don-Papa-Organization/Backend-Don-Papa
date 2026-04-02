@@ -2,6 +2,7 @@
 
 /* template.component.css */
 .input-container {
+  width: 100%;
   max-width: fit-content;
   max-height: 60px;
   height: 60px;
@@ -35,7 +36,7 @@
   /* Ajustado para igualar altura del input */
   height: 50px;
   position: relative;
-  width: 300px;
+  width: min(100%, 300px);
 }
 
 .combobox-search-wrapper {
@@ -205,5 +206,15 @@
     background-color: rgba($color-gold, 0.48);
     color: $color-black;
     font-weight: 600;
+  }
+}
+
+@media (max-width: 768px) {
+  .input-container {
+    max-width: 100%;
+  }
+
+  .combobox-container {
+    width: 100%;
   }
 }

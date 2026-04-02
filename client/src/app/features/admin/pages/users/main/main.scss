@@ -1,5 +1,5 @@
 ﻿.users-page {
-  min-width: 785px;
+  min-width: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -103,5 +103,51 @@
   p {
     font-size: 1.2rem;
     color: var(--dp-color-common-020);
+  }
+}
+
+@media (max-width: 768px) {
+  .users-page {
+    padding: 1rem;
+  }
+
+  .users-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    .acciones-header {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+
+  .detalle-usuario,
+  .detalle-cliente,
+  .contenido-eliminacion {
+    padding: 0.75rem;
+  }
+
+  .acciones-eliminacion {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 768px) {
+  .users-page {
+    padding: 1rem;
+  }
+
+  .users-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
   }
 }

@@ -40,11 +40,13 @@
 	.tabla-contenedor {
 		background-color: var(--dp-color-common-006);
 		border-radius: 8px;
-		overflow: hidden;
+		overflow-x: auto;
+		overflow-y: hidden;
 		margin-bottom: 1rem;
 
 		app-ui-tabla {
-			width: fit-content;
+			width: 100%;
+			min-width: 640px;
 		}
 	}
 
@@ -84,5 +86,15 @@
 
 app-ui-helper-text {
 	margin: 0;
+}
+
+@media (max-width: 768px) {
+	.seccion-productos-agregados {
+		.tabla-contenedor {
+			app-ui-tabla {
+				min-width: 520px;
+			}
+		}
+	}
 }
 

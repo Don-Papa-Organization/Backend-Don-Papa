@@ -7,11 +7,12 @@ import { takeUntil } from 'rxjs/operators';
 import { EventsPromotionsApi } from '../../../../../../services/apis/events&Promotions.api';
 import { EventoDetalleDto } from '../../../../../../domain/events&Promotions/dtos/response/get-event-detail.response.dto';
 import { SharedModule } from '../../../../../../shared/shared-module';
+import { LayoutModule } from '../../../../../../shared/layout/layout-module';
 
 @Component({
   selector: 'app-events-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, SharedModule],
+  imports: [CommonModule, FormsModule, RouterModule, SharedModule, LayoutModule],
   templateUrl: './events-detail.page.html',
   styleUrl: './events-detail.page.scss'
 })
@@ -20,6 +21,7 @@ export class EventsDetailPage implements OnInit, OnDestroy {
   
   isLoading = false;
   error: string | null = null;
+  mode: 'public' | 'client' = 'client';
 
   private destroy$ = new Subject<void>();
   private idEvento: number | null = null;
@@ -31,6 +33,7 @@ export class EventsDetailPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.mode = this.route.snapshot.data['marketplaceMode'] === 'public' ? 'public' : 'client';
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
@@ -98,7 +101,17 @@ export class EventsDetailPage implements OnInit, OnDestroy {
   }
 
   volver(): void {
-    this.router.navigate(['/client/eventos']);
+    this.router.navigate([this.mode === 'public' ? '/eventos' : '/client/eventos']);
+  }
+
+  irALogin(): void {
+    this.router.navigate(['/auth/login'], {
+      queryParams: { returnUrl: '/eventos' }
+    });
+  }
+
+  irARegistro(): void {
+    this.router.navigate(['/auth/register']);
   }
 
 

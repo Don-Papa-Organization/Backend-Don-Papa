@@ -6,7 +6,7 @@
 	width: 100%;
 	padding: 1.5rem;
 	color: var(--dp-color-common-045);
-	min-width: 785px;
+	min-width: 0;
 	height: 100%;
 }
 
@@ -84,7 +84,7 @@
 	flex-wrap: wrap;
 
 	ui-button {
-		white-space: nowrap;
+		white-space: normal;
 	}
 }
 

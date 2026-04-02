@@ -123,3 +123,26 @@ header.header--admin {
     }
 }
 
+@media (max-width: 768px) {
+    header {
+        height: 64px;
+        padding-right: 12px;
+        gap: 10px;
+    }
+
+    .headerIcons {
+        margin-left: 12px;
+        gap: 10px;
+
+        img {
+            width: 44px;
+            height: 44px;
+        }
+    }
+
+    header.header--employee {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+

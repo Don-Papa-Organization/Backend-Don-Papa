@@ -1,5 +1,5 @@
 ﻿.tables-reserves-page {
-  min-width: 785px;
+  min-width: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -93,5 +93,21 @@
   p {
     font-size: 1.2rem;
     color: var(--dp-color-common-020);
+  }
+}
+
+@media (max-width: 768px) {
+  .tables-reserves-page {
+    padding: 1rem;
+  }
+
+  .tables-reserves-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
   }
 }

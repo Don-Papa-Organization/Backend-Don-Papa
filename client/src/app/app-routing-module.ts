@@ -6,10 +6,6 @@ import { TipoUsuario } from './types/tipo.usuario';
 
 const routes: Routes = [
   {
-    path: "",
-    loadChildren: () => import('./features/features-module').then(m => m.FeaturesModule)
-  },
-  {
     path: "auth",
     loadChildren: () => import('./features/auth/auth-module').then(m => m.AuthModule)
   },
@@ -30,6 +26,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/employee/employee-module').then(m => m.EmployeeModule),
     canActivate: [authGuard, roleGuard],
     data: { roles: [TipoUsuario.empleado] }
+  },
+  {
+    path: "",
+    loadChildren: () => import('./features/features-module').then(m => m.FeaturesModule)
   }
 ];
 

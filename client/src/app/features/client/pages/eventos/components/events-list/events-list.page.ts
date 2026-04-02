@@ -1,17 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EventsPromotionsApi } from '../../../../../../services/apis/events&Promotions.api';
 import { UpcomingEventoDto } from '../../../../../../domain/events&Promotions/dtos/response/list-upcoming-events.response.dto';
 import { SharedModule } from '../../../../../../shared/shared-module';
+import { LayoutModule } from '../../../../../../shared/layout/layout-module';
 
 @Component({
   selector: 'app-events-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, SharedModule],
+  imports: [CommonModule, FormsModule, RouterModule, SharedModule, LayoutModule],
   templateUrl: './events-list.page.html',
   styleUrl: './events-list.page.scss'
 })
@@ -25,16 +26,29 @@ export class EventsListPage implements OnInit, OnDestroy {
   
   busqueda: string = '';
   eventosMap: Map<number, string> = new Map();
+  mode: 'public' | 'client' = 'client';
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private eventsApi: EventsPromotionsApi,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.mode = this.route.snapshot.data['marketplaceMode'] === 'public' ? 'public' : 'client';
     this.cargarEventos();
+  }
+
+  irALogin(): void {
+    this.router.navigate(['/auth/login'], {
+      queryParams: { returnUrl: '/eventos' }
+    });
+  }
+
+  irARegistro(): void {
+    this.router.navigate(['/auth/register']);
   }
 
   cargarEventos(): void {
@@ -94,7 +108,9 @@ export class EventsListPage implements OnInit, OnDestroy {
       this.error = 'No se puede acceder al detalle de este evento.';
       return;
     }
-    this.router.navigate(['/client/eventos', idEvento]);
+
+    const basePath = this.mode === 'public' ? '/eventos' : '/client/eventos';
+    this.router.navigate([basePath, idEvento]);
   }
 
   formatearFecha(fecha: string): string {

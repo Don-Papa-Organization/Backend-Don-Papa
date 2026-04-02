@@ -16,6 +16,28 @@
           class="form-input">
       </div>
 
+      <div class="form-group form-group--estado">
+        <label for="estadoMesa">Filtrar por estado</label>
+        <select id="estadoMesa" [(ngModel)]="estadoSeleccionado" class="form-select" (change)="filtrarMesasPorEstado()">
+          <option value="">Todos</option>
+          <option *ngFor="let estado of estadosMesa" [value]="estado">{{ estado }}</option>
+        </select>
+      </div>
+
+      <div class="form-group form-group--mesa-id">
+        <label for="tableSearchId">Buscar mesa por ID</label>
+        <div class="mesa-id-input">
+          <input
+            type="number"
+            id="tableSearchId"
+            [(ngModel)]="tableSearchId"
+            min="1"
+            class="form-input"
+            placeholder="Ej: 4">
+          <button type="button" (click)="buscarMesaPorId()" class="btn-secondary">Ver</button>
+        </div>
+      </div>
+
       <div class="form-group">
         <label for="hora">Hora:</label>
         <select id="hora" [(ngModel)]="hora" class="form-select">
@@ -43,6 +65,26 @@
         </button>
         <button (click)="limpiarFormulario()" class="btn-secondary">Limpiar</button>
       </div>
+    </div>
+  </div>
+
+  <div *ngIf="loadingDetalle" class="loading-state loading-state--compact">
+    <p>Cargando detalle de mesa...</p>
+  </div>
+
+  <div *ngIf="errorDetalle && !loadingDetalle" class="error-state error-state--compact">
+    <p class="error-message">{{ errorDetalle }}</p>
+  </div>
+
+  <div *ngIf="mesaDetalle && !loadingDetalle" class="results-section mesa-detail-section">
+    <div class="results-header">
+      <h2>Detalle de mesa</h2>
+    </div>
+    <div class="mesa-detail-card">
+      <p><strong>ID:</strong> {{ mesaDetalle.idMesa }}</p>
+      <p><strong>Numero:</strong> {{ mesaDetalle.numero }}</p>
+      <p><strong>Tipo:</strong> {{ mesaDetalle.tipo }}</p>
+      <p><strong>Estado:</strong> {{ mesaDetalle.estado }}</p>
     </div>
   </div>
 
@@ -86,12 +128,42 @@
         </div>
 
         <div class="mesa-action">
-          <button (click)="seleccionarMesa(mesa)" class="btn-select">
+          <button *ngIf="!isPublicMode" (click)="seleccionarMesa(mesa)" class="btn-select">
             {{ isAuthenticated ? 'ðŸ“Œ Reservar' : 'ðŸ” Reservar' }}
           </button>
-          <p *ngIf="!isAuthenticated" class="login-hint">Se requiere login</p>
+          <p *ngIf="isPublicMode" class="login-hint">Consulta publica habilitada</p>
+          <p *ngIf="!isPublicMode && !isAuthenticated" class="login-hint">Se requiere login</p>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="results-section" *ngIf="!loadingMesas">
+    <div class="results-header">
+      <h2>Listado de mesas</h2>
+      <p class="result-info">Total: {{ mesasListado.length }}</p>
+    </div>
+
+    <div *ngIf="errorMesas" class="error-state error-state--compact">
+      <p class="error-message">{{ errorMesas }}</p>
+    </div>
+
+    <div class="mesas-results-grid" *ngIf="!errorMesas && mesasListado.length">
+      <div *ngFor="let mesa of mesasListado" class="mesa-result-card">
+        <div class="mesa-info">
+          <h3>Mesa #{{ mesa.numero }}</h3>
+          <p class="mesa-type">{{ mesa.tipo }}</p>
+          <p class="mesa-estado">
+            <span class="status-badge" [ngStyle]="{'border-color': obtenerColorEstado(mesa.estado), 'color': obtenerColorEstado(mesa.estado)}">
+              {{ obtenerLabelEstado(mesa.estado) }}
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state empty-state--compact" *ngIf="!errorMesas && !mesasListado.length">
+      <p class="empty-message">No hay mesas para mostrar.</p>
     </div>
   </div>
 </div>

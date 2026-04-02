@@ -20,11 +20,7 @@ import { UiReservationModalComponent } from '../../../../../../shared/ui/reserva
   styleUrl: './catalog-mesas.page.scss'
 })
 export class CatalogMesasPage implements OnInit, OnDestroy {
-  vistaActiva: 'mapa' | 'cards' = 'cards';
-  viewTabs = [
-    { id: 'cards', label: 'Ver Cards' },
-    { id: 'mapa', label: 'Ver Mapa' }
-  ];
+  vistaActiva: 'mapa' | 'cards' = 'mapa';
 
   zonaFiltro: string = 'todas';
   filtrosZona = [
@@ -94,7 +90,12 @@ export class CatalogMesasPage implements OnInit, OnDestroy {
   }
 
   aplicarFiltro(): void {
-    if (!this.fechaFiltro || !this.horaFiltro) return;
+    if (!this.fechaFiltro) return;
+
+    if (!this.horaFiltro) {
+      this.cargarMesas();
+      return;
+    }
 
     this.isLoading = true;
     this.tablesApi.checkAvailability({
@@ -124,6 +125,18 @@ export class CatalogMesasPage implements OnInit, OnDestroy {
 
   onVistaChange(tabId: string): void {
     this.vistaActiva = tabId === 'cards' ? 'cards' : 'mapa';
+  }
+
+  obtenerDetalleEstado(mesa: Mesa): string {
+    if (mesa.estado === 'Reservada') {
+      return this.horaFiltro ? `Reservada para ${this.horaFiltro}` : 'Reservada todo el día';
+    }
+
+    if (mesa.estado === 'Disponible') {
+      return this.horaFiltro ? `Disponible para ${this.horaFiltro}` : 'Disponible todo el día';
+    }
+
+    return this.obtenerLabelEstado(mesa.estado);
   }
 
   cargarMesas(): void {

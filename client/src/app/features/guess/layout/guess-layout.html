@@ -1,0 +1,24 @@
+<app-header [mode]="'client'" [icono]="false" titulo="">
+
+  <ui-button
+    texto="Iniciar sesion"
+    [noBackgroundColor]="true"
+    borderRadius="16px"
+    (accion)="irALogin()"
+  ></ui-button>
+
+  <ui-button
+    texto="Registrar"
+    [noBackgroundColor]="true"
+    borderRadius="16px"
+    (accion)="irARegistro()"
+  ></ui-button>
+</app-header>
+
+<div class="layout">
+  <div class="main-content">
+    <div class="main-content-body">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

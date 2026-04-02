@@ -42,9 +42,20 @@
 .main-content-body{
   flex: 1 1 auto;
   width: 100%;
+  min-width: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   
+}
+
+@media (max-width: 768px) {
+  .layout {
+    --sidebar-current-width: var(--sidebar-collapsed-width);
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
 }
 
