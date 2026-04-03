@@ -42,8 +42,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
       - DB_NAME=don_papa
       - NODE_ENV=development
-      - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
-      - JWT_REFRESH_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
     networks:
       - backend-network
 
@@ -82,8 +82,8 @@ services:
       - SPRING_PROFILES_ACTIVE=development
       - JPA_SHOW_SQL=true
       - HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
-      - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
-      - JWT_REFRESH_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
     networks:
       - backend-network
 
@@ -129,14 +129,18 @@ services:
       - DB_USER=root
       - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
       - DB_NAME=don_papa
-      - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
-      - JWT_REFRESH_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
       - EMAIL_SERVICE_URL=http://email-service:4007
       - INVENTORY_SERVICE_URL=http://inventory-service-app:4001/api
       - USER_SERVICE_URL=http://user-service-app:4002/api/clientes
       - RESERVATION_SERVICE_URL=http://reservation-service-app:4004/api
       - EVENT_SERVICE_URL=http://event-service-app:4005/api
       - RECEIPTS_DIR=recibos
+      - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN:?MP_ACCESS_TOKEN no definida}
+      - MP_SUCCESS_URL=http://localhost:4200/client/pedidos/pagos/registrar/success
+      - MP_FAILURE_URL=http://localhost:4200/client/pedidos/pagos/registrar/failure
+      - MP_PENDING_URL=http://localhost:4200/client/pedidos/pagos/registrar/pending
     volumes:
       - order_receipts:/home/app/recibos
     networks:
@@ -174,7 +178,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
       - DB_NAME=don_papa
       - NODE_ENV=development
-      - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
       - USER_SERVICE_URL=http://user-service-app:4002/api/clientes
     networks:
       - backend-network
@@ -256,8 +260,8 @@ services:
       - DB_USER=root
       - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
       - DB_NAME=don_papa
-      - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
-      - JWT_REFRESH_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
       - ORDER_SERVICE_URL=http://order-service-app:4003/api
       - INVENTORY_SERVICE_URL=http://inventory-service-app:4001/api
       - USER_SERVICE_URL=http://user-service-app:4002/api
@@ -266,6 +270,8 @@ services:
       - INTERNAL_SERVICE_KEY=una_llave_secreta_compartida
       - HTTP_TIMEOUT=10000
       - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:4000
+      - RUN_ANALYTICS_SEEDS=true
+      - RUN_BITACORA_SEEDS=true
     networks:
       - backend-network
 
@@ -292,9 +298,9 @@ services:
       - "4008:4008"
     environment:
       - PORT=4008
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_API_KEY=${GOOGLE_API_KEY:?GOOGLE_API_KEY no definida}
       - GEMINI_MODEL_ID=gemini-2.5-flash
-      - JWT_SECRET=tu_super_secreto_jwt_development_very_secure_key_12345
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
       - GATEWAY_URL=http://gateway:4000
       - RATE_LIMIT_RPM=12
       - RATE_LIMIT_RPD=1200
@@ -316,3 +322,4 @@ volumes:
 networks:
   backend-network:
     driver: bridge
+

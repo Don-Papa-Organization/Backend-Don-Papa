@@ -1,0 +1,3 @@
+[submodule "ms8-agent-service/agente"]
+	path = ms8-agent-service/agente
+	url = https://github.com/Don-Papa-Organization/ms8-agent-service.git
