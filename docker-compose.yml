@@ -4,17 +4,9 @@ services:
     build: ./Gateway
     ports:
       - "4000:4000"
-    depends_on:
-      - email-service
-      - inventory-service-app
-      - user-service-app
-      - order-service-app
-      - event-service-app
-      - reservation-service-app
-      - report-service-app
-      - agent-service
     networks:
       - backend-network
+    restart: on-failure
 
   email-service:
     build: ./ms7-email-service
@@ -42,8 +34,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
       - DB_NAME=don_papa
       - NODE_ENV=development
-      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
-      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
     networks:
       - backend-network
 
@@ -82,8 +74,8 @@ services:
       - SPRING_PROFILES_ACTIVE=development
       - JPA_SHOW_SQL=true
       - HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
-      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
-      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
     networks:
       - backend-network
 
@@ -129,15 +121,15 @@ services:
       - DB_USER=root
       - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
       - DB_NAME=don_papa
-      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
-      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
       - EMAIL_SERVICE_URL=http://email-service:4007
       - INVENTORY_SERVICE_URL=http://inventory-service-app:4001/api
       - USER_SERVICE_URL=http://user-service-app:4002/api/clientes
       - RESERVATION_SERVICE_URL=http://reservation-service-app:4004/api
       - EVENT_SERVICE_URL=http://event-service-app:4005/api
       - RECEIPTS_DIR=recibos
-      - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN:?MP_ACCESS_TOKEN no definida}
+      - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN:-APP_USR-8794402129728771-032316-fcea35e0b6f16283cad9dbcd96437aba-3288465600}
       - MP_SUCCESS_URL=http://localhost:4200/client/pedidos/pagos/registrar/success
       - MP_FAILURE_URL=http://localhost:4200/client/pedidos/pagos/registrar/failure
       - MP_PENDING_URL=http://localhost:4200/client/pedidos/pagos/registrar/pending
@@ -178,7 +170,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
       - DB_NAME=don_papa
       - NODE_ENV=development
-      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
       - USER_SERVICE_URL=http://user-service-app:4002/api/clientes
     networks:
       - backend-network
@@ -260,8 +252,8 @@ services:
       - DB_USER=root
       - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
       - DB_NAME=don_papa
-      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
-      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
       - ORDER_SERVICE_URL=http://order-service-app:4003/api
       - INVENTORY_SERVICE_URL=http://inventory-service-app:4001/api
       - USER_SERVICE_URL=http://user-service-app:4002/api
@@ -293,14 +285,14 @@ services:
 
   # MICROSERVICIO 8 - AGENTE IA
   agent-service:
-    build: ./ms8-agent-service/agente
+    build: ./ms8-agent-service/agente/agente
     ports:
       - "4008:4008"
     environment:
       - PORT=4008
-      - GEMINI_API_KEY=${GOOGLE_API_KEY:?GOOGLE_API_KEY no definida}
+      - GEMINI_API_KEY=${GOOGLE_API_KEY:-AIzaSyAlUqoUfHWhjqa3JQgsCqJjxn-PFtvm3Qs}
       - GEMINI_MODEL_ID=gemini-2.5-flash
-      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET no definida}
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
       - GATEWAY_URL=http://gateway:4000
       - RATE_LIMIT_RPM=12
       - RATE_LIMIT_RPD=1200
