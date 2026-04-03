@@ -1,0 +1,298 @@
+services:
+  # GATEWAY
+  gateway:
+    build: ./Gateway
+    networks:
+      - backend-network
+    restart: on-failure
+
+  email-service:
+    build: ./ms7-email-service
+    environment:
+      - PORT=4007
+    networks:
+      - backend-network
+
+  # MICROSERVICIO 1 - INVENTARIO
+  inventory-service-app:
+    build: ./ms1-inventory-service/SistemaDeInventario
+    depends_on:
+      - inventory-mysql
+    volumes:
+      - ./storage/inventory-images:/home/app/src/images
+    environment:
+      - PORT=4001
+      - DB_HOST=inventory-mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
+      - DB_NAME=don_papa
+      - NODE_ENV=development
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+    networks:
+      - backend-network
+
+  inventory-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: ${DB_NAME_INVENTORY:-don_papa}
+    volumes:
+      - inventory_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - backend-network
+
+  # MICROSERVICIO 2 - USUARIOS
+  user-service-app:
+    build: ./ms2-user-service/UsuariosYEmpleados
+    depends_on:
+      user-mysql:
+        condition: service_healthy
+    environment:
+      - SERVER_PORT=4002
+      - PORT=4002
+      - DB_HOST=user-mysql
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
+      - DB_NAME=don_papa
+      - SPRING_PROFILES_ACTIVE=development
+      - JPA_SHOW_SQL=true
+      - HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+    networks:
+      - backend-network
+
+  user-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: ${DB_NAME_USERS:-don_papa}
+    volumes:
+      - users_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - backend-network
+
+  # MICROSERVICIO 3 - PEDIDOS
+  order-service-app:
+    build: ./ms3-order-service/Pedidos
+    depends_on:
+      order-mysql:
+        condition: service_healthy
+      inventory-service-app:
+        condition: service_started
+      user-service-app:
+        condition: service_started
+      reservation-service-app:
+        condition: service_started
+      event-service-app:
+        condition: service_started
+      email-service:
+        condition: service_started
+    environment:
+      - PORT=4003
+      - NODE_ENV=development
+      - DB_HOST=order-mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
+      - DB_NAME=don_papa
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - EMAIL_SERVICE_URL=http://email-service:4007
+      - INVENTORY_SERVICE_URL=http://inventory-service-app:4001/api
+      - USER_SERVICE_URL=http://user-service-app:4002/api/clientes
+      - RESERVATION_SERVICE_URL=http://reservation-service-app:4004/api
+      - EVENT_SERVICE_URL=http://event-service-app:4005/api
+      - RECEIPTS_DIR=recibos
+      - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN:-APP_USR-8794402129728771-032316-fcea35e0b6f16283cad9dbcd96437aba-3288465600}
+      - MP_SUCCESS_URL=http://localhost:4200/client/pedidos/pagos/registrar/success
+      - MP_FAILURE_URL=http://localhost:4200/client/pedidos/pagos/registrar/failure
+      - MP_PENDING_URL=http://localhost:4200/client/pedidos/pagos/registrar/pending
+    volumes:
+      - order_receipts:/home/app/recibos
+    networks:
+      - backend-network
+
+  order-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: don_papa
+    volumes:
+      - order_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - backend-network
+
+  # MICROSERVICIO 4 - RESERVAS Y MESAS
+  reservation-service-app:
+    build: ./ms4-reservation-service/ReservasYMesas
+    depends_on:
+      reservation-mysql:
+        condition: service_healthy
+    environment:
+      - PORT=4004
+      - DB_HOST=reservation-mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
+      - DB_NAME=don_papa
+      - NODE_ENV=development
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - USER_SERVICE_URL=http://user-service-app:4002/api/clientes
+    networks:
+      - backend-network
+
+  reservation-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: ${DB_NAME_RESERVATIONS:-don_papa}
+    volumes:
+      - reservation_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - backend-network
+
+  # MICROSERVICIO 5 - EVENTOS
+  event-service-app:
+    build: ./ms5-event-service/EventosYPromociones
+    depends_on:
+      event-mysql:
+        condition: service_healthy
+    environment:
+      - PORT=4005
+      - DB_HOST=event-mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
+      - DB_NAME=don_papa
+      - NODE_ENV=development
+    networks:
+      - backend-network
+
+  event-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: ${DB_NAME_EVENTS:-don_papa}
+    volumes:
+      - events_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - backend-network
+
+  # MICROSERVICIO 6 - REPORTES
+  report-service-app:
+    build: ./ms6-report-service/ReportesYVitacora
+    depends_on:
+      report-mysql:
+        condition: service_healthy
+      order-service-app:
+        condition: service_started
+      inventory-service-app:
+        condition: service_started
+      user-service-app:
+        condition: service_started
+      reservation-service-app:
+        condition: service_started
+      event-service-app:
+        condition: service_started
+    environment:
+      - PORT=4006
+      - NODE_ENV=development
+      - DB_HOST=report-mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD:-MiContraseñaSegura123!}
+      - DB_NAME=don_papa
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - ORDER_SERVICE_URL=http://order-service-app:4003/api
+      - INVENTORY_SERVICE_URL=http://inventory-service-app:4001/api
+      - USER_SERVICE_URL=http://user-service-app:4002/api
+      - RESERVATION_SERVICE_URL=http://reservation-service-app:4004/api
+      - EVENT_SERVICE_URL=http://event-service-app:4005/api
+      - INTERNAL_SERVICE_KEY=una_llave_secreta_compartida
+      - HTTP_TIMEOUT=10000
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:4000
+      - RUN_ANALYTICS_SEEDS=true
+      - RUN_BITACORA_SEEDS=true
+    networks:
+      - backend-network
+
+  report-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MiContraseñaSegura123!}
+      MYSQL_DATABASE: don_papa
+    volumes:
+      - report_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - backend-network
+
+  # MICROSERVICIO 8 - AGENTE IA
+  agent-service:
+    build: ./ms8-agent-service/agente/agente
+    environment:
+      - PORT=4008
+      - GEMINI_API_KEY=${GOOGLE_API_KEY:-AIzaSyAlUqoUfHWhjqa3JQgsCqJjxn-PFtvm3Qs}
+      - GEMINI_MODEL_ID=gemini-2.5-flash
+      - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
+      - GATEWAY_URL=http://gateway:4000
+      - RATE_LIMIT_RPM=12
+      - RATE_LIMIT_RPD=1200
+      - CACHE_TTL_SECONDS=300
+      - MAX_HISTORY_TURNS=5
+    networks:
+      - backend-network
+
+volumes:
+  inventory_mysql_data:
+  users_mysql_data:
+  order_mysql_data:
+  events_mysql_data:
+  reservation_mysql_data:
+  report_mysql_data:
+  order_receipts:
+
+
+networks:
+  backend-network:
+    driver: bridge
