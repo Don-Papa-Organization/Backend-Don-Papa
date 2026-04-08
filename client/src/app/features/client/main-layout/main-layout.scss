@@ -11,13 +11,15 @@
   border-radius: 8px;
   transition: color 0.2s ease, background-color 0.2s ease;
   border: 1px solid rgba($color-gold, 0.2);
+  cursor: default;
+  user-select: none;
 }
 
 .brand-link:hover {
-  color: $color-gold;
-  background: rgba($color-gold, 0.16);
-  border-color: rgba($color-gold, 0.45);
-  box-shadow: 0 0 12px rgba($color-gold, 0.22);
+  color: $color-white;
+  background: transparent;
+  border-color: rgba($color-gold, 0.2);
+  box-shadow: none;
 }
 
 :host {

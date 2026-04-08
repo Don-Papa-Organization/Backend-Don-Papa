@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Observable, Subject, interval } from 'rxjs';
 import { takeUntil, filter, tap } from 'rxjs/operators';
 
@@ -24,6 +24,8 @@ import { StatisticMetricItem } from '../components/statistics-metrics-grid/stati
 })
 export class MainStatistics implements OnInit, OnDestroy {
 	isLoading = false;
+	showDownloadMenu = false;
+	@ViewChild('downloadMenuContainer') downloadMenuContainer?: ElementRef<HTMLElement>;
 
 	filters: AnalyticsFilterDto = {
 		startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
@@ -304,7 +306,7 @@ export class MainStatistics implements OnInit, OnDestroy {
 		// Eliminar duplicados por ID de producto
 		const uniqueProducts = this.removeDuplicateProducts(topProducts);
 		const top5 = uniqueProducts.slice(0, 5);
-		this.top5Labels = top5.map(p => `Producto ${p.idProducto}`);
+		this.top5Labels = top5.map(p => this.resolveProductName(p));
 		this.top5Data = top5.map(p => Number(p.cantidadVendida ?? 0));
 	}
 	
@@ -323,7 +325,7 @@ export class MainStatistics implements OnInit, OnDestroy {
 		const uniqueProducts = this.removeDuplicateProducts(topProducts);
 		this.top3ProductsWithComparison = uniqueProducts.slice(0, 3).map(p => ({
 			id: p.idProducto,
-			name: `Producto ${p.idProducto}`,
+			name: this.resolveProductName(p),
 			sales: Number(p.ingresosGenerados ?? 0),
 			totalSales: totalSalesValue
 		}));
@@ -345,10 +347,18 @@ export class MainStatistics implements OnInit, OnDestroy {
 		// Top 10 productos
 		return products.slice(0, 10).map(p => ({
 			'ID Producto': p.idProducto,
-			'Nombre Producto': `Producto ${p.idProducto}`,
+			'Nombre Producto': this.resolveProductName(p),
 			'Unidades Vendidas': p.cantidadVendida,
 			'Ingresos': this.toCurrency(p.ingresosGenerados)
 		}));
+	}
+
+	private resolveProductName(product: TopProductDto): string {
+		const normalized = (product.nombreProducto || '').trim();
+		if (normalized) {
+			return normalized;
+		}
+		return 'N/A';
 	}
 
 	private buildDeadStockRows(deadStock: DeadStockDto[] | null): Array<Record<string, string | number>> {
@@ -366,7 +376,7 @@ export class MainStatistics implements OnInit, OnDestroy {
 		// Limitar a top 10
 		return promotions.detalles.slice(0, 10).map((promo: { idPromocion: number; usosAplicados: number }) => ({
 			'ID Promoción': promo.idPromocion,
-			'Nombre Promoción': `Promoción ${promo.idPromocion}`,
+			'Nombre Promoción': (promo as any).nombrePromocion || 'Promoción sin nombre',
 			'Uso': promo.usosAplicados
 		}));
 	}
@@ -417,10 +427,30 @@ export class MainStatistics implements OnInit, OnDestroy {
 		this.loadDashboard();
 	}
 
-	onDownloadPDF(): void {
-		this.statisticsFacade.downloadPDF(this.filters)
+	onDownloadRange(days: 7 | 30 | 90): void {
+		const endDate = new Date().toISOString().split('T')[0];
+		const startDate = new Date(new Date().setDate(new Date().getDate() - days)).toISOString().split('T')[0];
+		const filters = { ...this.filters, startDate, endDate };
+
+		this.filters = filters;
+		this.showDownloadMenu = false;
+		this.statisticsFacade.downloadPDF(filters)
 			.pipe(takeUntil(this.destroy$))
 			.subscribe();
+	}
+
+	toggleDownloadMenu(event?: MouseEvent): void {
+		event?.stopPropagation();
+		this.showDownloadMenu = !this.showDownloadMenu;
+	}
+
+	@HostListener('document:click', ['$event'])
+	onDocumentClick(event: MouseEvent): void {
+		if (!this.showDownloadMenu) return;
+		const target = event.target as Node;
+		if (!this.downloadMenuContainer?.nativeElement.contains(target)) {
+			this.showDownloadMenu = false;
+		}
 	}
 
 	onDownloadJSON(): void {

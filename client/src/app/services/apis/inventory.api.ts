@@ -140,16 +140,22 @@ export class InventoryApi {
 		if (!urlImagen) {
 			return "/img/default_product.png";
 		}
-		if (urlImagen.startsWith("http://") || urlImagen.startsWith("https://")) {
-			return urlImagen;
+
+		const normalizedUrl = urlImagen.replace(/\\/g, "/").trim();
+
+		if (normalizedUrl.startsWith("http://") || normalizedUrl.startsWith("https://")) {
+			return normalizedUrl;
 		}
-		if (urlImagen.startsWith("/img/") || urlImagen.startsWith("/images/")) {
-			return urlImagen;
+		if (normalizedUrl.startsWith("/img/") || normalizedUrl.startsWith("/images/")) {
+			return normalizedUrl;
 		}
-		if (urlImagen.startsWith("/")) {
-			return buildApiUrl(urlImagen);
+		if (/^\/?api\//i.test(normalizedUrl)) {
+			return normalizedUrl.startsWith("/") ? normalizedUrl : `/${normalizedUrl}`;
 		}
-		return buildApiUrl(`/${urlImagen}`);
+		if (normalizedUrl.startsWith("/")) {
+			return buildApiUrl(normalizedUrl);
+		}
+		return buildApiUrl(`/${normalizedUrl}`);
 	}
 
 	deleteProduct(id: number): Observable<ApiResponse<null>> {

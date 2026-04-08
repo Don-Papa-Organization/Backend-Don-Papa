@@ -192,7 +192,12 @@ export class ReservasDisponibilidadPage implements OnInit, OnDestroy {
     this.confirmandoReserva = true;
 
     // Construir datetime completo para API
-    const fechaHoraInicio = `${this.fechaSeleccionada}T${this.horaSeleccionada}:00`;
+    const fechaHoraInicio = this.construirFechaReservaIso(this.fechaSeleccionada, this.horaSeleccionada);
+    if (!fechaHoraInicio) {
+      this.error = 'La fecha y hora seleccionadas no son válidas.';
+      this.confirmandoReserva = false;
+      return;
+    }
 
     const dto: ReserveTableRequestDto = {
       idMesa: this.reservationContext.mesaSeleccionada.idMesa,
@@ -218,10 +223,17 @@ export class ReservasDisponibilidadPage implements OnInit, OnDestroy {
           this.buscarDisponibilidad();
         },
         error: (err) => {
-          this.error = err?.message || 'Error al procesar reserva';
+          this.error = err?.error?.message || err?.message || 'Error al procesar reserva';
           this.confirmandoReserva = false;
         }
       });
+  }
+
+  private construirFechaReservaIso(fecha: string, hora: string): string | null {
+    if (!fecha || !hora) return null;
+    const localDateTime = new Date(`${fecha}T${hora}:00`);
+    if (Number.isNaN(localDateTime.getTime())) return null;
+    return localDateTime.toISOString();
   }
 
   /**

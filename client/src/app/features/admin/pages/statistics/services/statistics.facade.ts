@@ -539,6 +539,7 @@ export class StatisticsFacade {
         },
         detalles: rawData.detalles.map((item: any) => ({
           idPromocion: Number(item?.idPromocion ?? 0),
+          nombrePromocion: item?.nombrePromocion,
           idEvento: item?.idEvento,
           fecha: item?.fecha,
           usosAplicados: Number(item?.usosAplicados ?? 0),
@@ -557,6 +558,7 @@ export class StatisticsFacade {
         },
         detalles: rawData.topPromociones.map((item: any) => ({
           idPromocion: Number(item?.idPromocion ?? 0),
+          nombrePromocion: item?.nombrePromocion,
           idEvento: item?.idEvento,
           fecha: item?.fecha,
           usosAplicados: Number(item?.usosAplicados ?? 0),

@@ -1,5 +1,13 @@
 <app-header [mode]="'client'">
-    <a class="brand-link" routerLink="/client/catalogo">Don Papa</a>
+    <span class="brand-link">Don Papa</span>
+
+    <app-ui-icon-button 
+        texto="Catálogo"
+        link="/client/catalogo"
+        [exactMatch]="true"
+        [hideUnderline]="true"
+        [mostrarIcono]="false"
+    ></app-ui-icon-button>
 
     <app-ui-icon-button 
         texto="Cuenta"

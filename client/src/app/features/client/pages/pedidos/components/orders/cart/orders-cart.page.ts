@@ -100,27 +100,41 @@ export class OrdersCartPage implements OnInit, OnDestroy {
     return this.perfilCompleto && !this.hayProductosBloqueados && this.productos.length > 0;
   }
 
+  private resolveProductImageLikeCatalog(producto: { idProducto?: number; urlImagen?: string | null; productoImagen?: string | null }): string {
+    const raw = ((producto.urlImagen ?? producto.productoImagen) || '').replace(/\\/g, '/').trim();
+
+    if (!raw) {
+      return '/img/default_product.png';
+    }
+
+    if (/^https?:\/\//i.test(raw)) {
+      return raw;
+    }
+
+    if (raw.startsWith('/img/') || raw.startsWith('img/')) {
+      return raw.startsWith('/') ? raw : `/${raw}`;
+    }
+
+    if (raw.startsWith('/images/') || raw.startsWith('images/')) {
+      const normalized = raw.startsWith('/') ? raw : `/${raw}`;
+      const idProducto = Number(producto.idProducto);
+      if (Number.isFinite(idProducto) && idProducto > 0) {
+        return this.inventoryApi.getProductImageUrl(idProducto);
+      }
+      return this.inventoryApi.resolveImageUrl(normalized);
+    }
+
+    return this.inventoryApi.resolveImageUrl(raw);
+  }
+
   resolveImageUrl(producto: CartItemView): string {
     const raw = (producto.productoImagen || '').replace(/\\/g, '/').trim();
     console.log(`[TRACE-IMG-CART] resolveImageUrl - idProducto=${producto.idProducto}, productoImagen=${JSON.stringify(producto.productoImagen)}, raw=${raw}`);
 
-    if (!raw) {
-      console.log(`[TRACE-IMG-CART] resolveImageUrl - ${producto.idProducto}: raw vacio → fallback default`);
-      return '/img/default_product.png';
-    }
-
-    if (raw.startsWith('/img/') || raw.startsWith('img/')) {
-      const result = raw.startsWith('/') ? raw : `/${raw}`;
-      console.log(`[TRACE-IMG-CART] resolveImageUrl - ${producto.idProducto}: raw=${raw} → /img/ path → ${result}`);
-      return result;
-    }
-
-    if (raw.startsWith('/images/')) {
-      console.log(`[TRACE-IMG-CART] resolveImageUrl - ${producto.idProducto}: raw=${raw} → /images/ → fallback default`);
-      return '/img/default_product.png';
-    }
-
-    const apiResult = this.inventoryApi.resolveImageUrl(raw);
+    const apiResult = this.resolveProductImageLikeCatalog({
+      idProducto: producto.idProducto,
+      productoImagen: raw
+    });
     console.log(`[TRACE-IMG-CART] resolveImageUrl - ${producto.idProducto}: raw=${raw} → apiResolve=${apiResult}`);
     return apiResult;
   }
@@ -362,9 +376,10 @@ export class OrdersCartPage implements OnInit, OnDestroy {
           next: (res) => {
             if (res.success && res.data) {
               const rawUrl = res.data.urlImagen || '';
-              const safeUrl = rawUrl.startsWith('/images/')
-                ? '/img/default_product.png'
-                : this.inventoryApi.resolveImageUrl(rawUrl);
+              const safeUrl = this.resolveProductImageLikeCatalog({
+                idProducto,
+                urlImagen: rawUrl
+              });
               console.log(`[TRACE-IMG-CART] enriquecerProductos - GET product ${idProducto} response: urlImagen=${rawUrl}, safeUrl=${safeUrl}`);
               this.productoDataCache.set(idProducto, {
                 nombre: res.data.nombre || '',
@@ -429,6 +444,11 @@ export class OrdersCartPage implements OnInit, OnDestroy {
 
     this.cartItemsView = this.cart.productos.map((item: ProductoPedidoItem) => ({
       ...item,
+      productoImagen: this.resolveProductImageLikeCatalog({
+        idProducto: item.idProducto,
+        urlImagen: (item as any).urlImagen,
+        productoImagen: (item as any).productoImagen
+      }),
       productoEstaEnStock: true,
       razonBloqueo: ''
     }));

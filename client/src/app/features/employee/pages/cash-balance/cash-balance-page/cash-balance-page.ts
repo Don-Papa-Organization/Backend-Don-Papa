@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
-interface PagoVisual {
-  metodo: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA';
-  monto: number;
-  fecha: Date;
-}
+import { OrdersApi } from '../../../../../services/apis/orders.api';
+import { Pago } from '../../../../../domain/orders/models/pago.model';
 
 @Component({
   selector: 'app-cash-balance-page',
@@ -20,12 +16,11 @@ export class CashBalancePageComponent implements OnInit {
   horaColombia = '';
   dineroEfectivo = 0;
 
-  private pagosDelSistema: PagoVisual[] = [];
+  constructor(private readonly ordersApi: OrdersApi) {}
 
   ngOnInit(): void {
-    this.generarPagosVisuales();
     this.actualizarHoraColombia();
-    this.calcularDineroEfectivo();
+    this.cargarDineroEfectivoDelDia();
   }
 
   get igual(): number {
@@ -48,34 +43,49 @@ export class CashBalancePageComponent implements OnInit {
     }).format(new Date());
   }
 
-  private calcularDineroEfectivo(): void {
-    const hoyBogota = this.getDateKeyInBogota(new Date());
-
-    this.dineroEfectivo = this.pagosDelSistema
-      .filter((pago) => pago.metodo === 'EFECTIVO')
-      .filter((pago) => this.getDateKeyInBogota(pago.fecha) === hoyBogota)
-      .reduce((acc, pago) => acc + pago.monto, 0);
-  }
-
   private getDateKeyInBogota(date: Date): string {
-    return new Intl.DateTimeFormat('en-CA', {
+    const parts = new Intl.DateTimeFormat('en-CA', {
       timeZone: this.colombiaTimeZone,
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
-    }).format(date);
+    }).formatToParts(date);
+
+    const year = parts.find((p) => p.type === 'year')?.value ?? '0000';
+    const month = parts.find((p) => p.type === 'month')?.value ?? '01';
+    const day = parts.find((p) => p.type === 'day')?.value ?? '01';
+    return `${year}-${month}-${day}`;
   }
 
-  private generarPagosVisuales(): void {
-    const ahora = new Date();
+  private cargarDineroEfectivoDelDia(): void {
+    const hoyBogota = this.getDateKeyInBogota(new Date());
 
-    this.pagosDelSistema = [
-      { metodo: 'EFECTIVO', monto: 180000, fecha: new Date(ahora.getTime() - 1000 * 60 * 60 * 1) },
-      { metodo: 'EFECTIVO', monto: 95000, fecha: new Date(ahora.getTime() - 1000 * 60 * 60 * 4) },
-      { metodo: 'EFECTIVO', monto: 120000, fecha: new Date(ahora.getTime() - 1000 * 60 * 60 * 8) },
-      { metodo: 'TARJETA', monto: 210000, fecha: new Date(ahora.getTime() - 1000 * 60 * 60 * 2) },
-      { metodo: 'TRANSFERENCIA', monto: 60000, fecha: new Date(ahora.getTime() - 1000 * 60 * 60 * 3) },
-      { metodo: 'EFECTIVO', monto: 140000, fecha: new Date(ahora.getTime() - 1000 * 60 * 60 * 28) }
-    ];
+    this.ordersApi.getPaymentHistory({
+      page: 1,
+      limit: 500,
+      fechaInicio: hoyBogota,
+      fechaFin: hoyBogota
+    }).subscribe({
+      next: (response) => {
+        const pagos = (response.data ?? []) as Pago[];
+        this.dineroEfectivo = pagos
+          .filter((pago) => this.isPagoEfectivo(pago))
+          .filter((pago) => this.getDateKeyInBogota(new Date(pago.fechaPago)) === hoyBogota)
+          .reduce((acc, pago) => acc + Number(pago.monto ?? 0), 0);
+      },
+      error: () => {
+        this.dineroEfectivo = 0;
+      }
+    });
+  }
+
+  private isPagoEfectivo(pago: Pago): boolean {
+    const nombreMetodo = (pago.metodoPago?.nombre || '').toUpperCase();
+    if (nombreMetodo.includes('EFECTIVO')) {
+      return true;
+    }
+
+    const detalles = pago.detalles ?? [];
+    return detalles.some((d) => (d.nombre || '').toUpperCase().includes('EFECTIVO') && Number(d.monto) > 0);
   }
 }

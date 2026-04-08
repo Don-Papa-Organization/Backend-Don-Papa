@@ -1,1 +1,3 @@
 .env
+# Assets de runtime (no versionar)
+storage/inventory-images/

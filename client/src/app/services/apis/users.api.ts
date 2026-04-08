@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, map, tap } from "rxjs";
 import { ApiResponse } from "../../types/api-response.type";
 import { Usuario } from "../../domain/users/models/usuario.model";
 import { Cliente } from "../../domain/users/models/cliente.model";
@@ -89,7 +89,29 @@ export class UsersApi {
 	}
 
 	getProfile(): Observable<ApiResponse<AuthProfileResponseDto>> {
-		return this.http.get<ApiResponse<AuthProfileResponseDto>>(this.authProfileUrl);
+		return this.http.get<AuthProfileResponseDto | ApiResponse<AuthProfileResponseDto>>(this.authProfileUrl).pipe(
+			tap((response) => {
+				console.log('[TRACE][UsersApi.getProfile] raw response:', JSON.stringify(response));
+			}),
+			map((response) => {
+				const wrapped = response as ApiResponse<AuthProfileResponseDto>;
+				const rawProfile = response as AuthProfileResponseDto;
+				const hasWrappedShape = typeof wrapped?.success === 'boolean' && 'data' in wrapped;
+
+				if (hasWrappedShape) {
+					console.log('[TRACE][UsersApi.getProfile] wrapped response detected');
+					return wrapped;
+				}
+
+				console.log('[TRACE][UsersApi.getProfile] normalizing flat profile response');
+				return {
+					success: true,
+					data: rawProfile,
+					message: 'Perfil cargado correctamente',
+					timestamp: new Date().toISOString()
+				};
+			})
+		);
 	}
 
 	updateProfile(dto: AuthUpdateProfileRequestDto): Observable<ApiResponse<AuthUpdateProfileResponseDto>> {

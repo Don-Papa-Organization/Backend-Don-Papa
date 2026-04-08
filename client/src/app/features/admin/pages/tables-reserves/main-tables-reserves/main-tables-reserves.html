@@ -7,6 +7,10 @@
       <app-ui-only-icon-button texto="Mesa" [showTextStyle]="true" urlIcono="icons/agregar.svg"
         (action)="onAgregarMesa()"></app-ui-only-icon-button>
       }
+      @if (tabActiva === 'reservas') {
+      <app-ui-only-icon-button texto="Reserva" [showTextStyle]="true" urlIcono="icons/agregar.svg"
+        (action)="onAgregarReserva()"></app-ui-only-icon-button>
+      }
     </div>
   </div>
 
@@ -96,6 +100,96 @@
         <span>{{ reservaSeleccionada?.idCliente }}</span>
       </div>
     </div>
+  </app-ui-modal>
+  }
+
+  @if (mostrarModalAgregarReserva) {
+  <app-ui-modal [mostrar]="mostrarModalAgregarReserva" titulo="Agregar reserva"
+    (cerrar)="cerrarModalAgregarReserva()">
+    <app-ui-form maxHeight="55vh" maxWidth="600px">
+      <div class="reserva-form-grid">
+        <app-ui-combobox
+          tituloInput="Mesa"
+          [options]="mesaReservaOptions"
+          [(selectedOption)]="reservaForm.idMesa"
+          [isDisabled]="!mesaReservaOptions.length"
+          [stretch]="true"
+        ></app-ui-combobox>
+
+        <ui-input
+          tituloInput="ID cliente (opcional)"
+          tipo="number"
+          placeholder="Dejar vacío para usar el usuario actual"
+          [(ngModel)]="reservaForm.idCliente"
+          name="idClienteReserva"
+          [min]="1"
+          #idClienteModel="ngModel"
+        ></ui-input>
+
+        <ui-input
+          tituloInput="Fecha"
+          tipo="date"
+          [(ngModel)]="reservaForm.fecha"
+          name="fechaReserva"
+          required
+          [min]="fechaMinimaReserva"
+          #fechaModel="ngModel"
+        ></ui-input>
+
+        <ui-input
+          tituloInput="Hora"
+          tipo="time"
+          [(ngModel)]="reservaForm.hora"
+          name="horaReserva"
+          required
+          [min]="horaMinimaReserva"
+          #horaModel="ngModel"
+        ></ui-input>
+
+        <ui-input
+          tituloInput="Personas"
+          tipo="number"
+          placeholder="2"
+          [(ngModel)]="reservaForm.cantidadPersonas"
+          name="cantidadPersonasReserva"
+          required
+          [min]="1"
+          [max]="maxPersonasSegunMesa"
+          #personasModel="ngModel"
+        ></ui-input>
+      </div>
+
+      <div footer class="form-footer">
+        <ui-button texto="Crear Reserva" [noBackgroundColor]="true" backgroundColor="#D4AF37"
+          (accion)="confirmarAgregarReserva()"></ui-button>
+      </div>
+
+      <app-ui-helper-text *ngIf="!mesaReservaOptions.length && reservaFormValida === false">
+        <ng-container>No hay mesas disponibles para asignar.</ng-container>
+      </app-ui-helper-text>
+
+      <app-ui-helper-text *ngIf="idClienteModel.invalid && formSubmitted && reservaForm.idCliente">
+        <ng-container *ngIf="idClienteModel.errors?.['min']">El ID de cliente debe ser mayor que 0.</ng-container>
+      </app-ui-helper-text>
+
+      <app-ui-helper-text *ngIf="fechaModel.invalid && formSubmitted">
+        <ng-container>La fecha de reserva es obligatoria.</ng-container>
+      </app-ui-helper-text>
+
+      <app-ui-helper-text *ngIf="horaModel.invalid && formSubmitted">
+        <ng-container>La hora de reserva es obligatoria.</ng-container>
+      </app-ui-helper-text>
+
+      <app-ui-helper-text *ngIf="personasModel.invalid && formSubmitted">
+        <ng-container *ngIf="personasModel.errors?.['required']">La cantidad de personas es obligatoria.</ng-container>
+        <ng-container *ngIf="personasModel.errors?.['min']">La cantidad de personas debe ser mayor que 0.</ng-container>
+        <ng-container *ngIf="personasModel.errors?.['max']">Máximo {{ maxPersonasSegunMesa }} personas permitidas para {{ tipoMesaSeleccionada }}.</ng-container>
+      </app-ui-helper-text>
+
+      <app-ui-helper-text *ngIf="reservaFormError">
+        <ng-container>{{ reservaFormError }}</ng-container>
+      </app-ui-helper-text>
+    </app-ui-form>
   </app-ui-modal>
   }
 </div>

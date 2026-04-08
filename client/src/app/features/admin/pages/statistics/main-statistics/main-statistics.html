@@ -3,6 +3,14 @@
   <div class="statistics-header">
     <h1>Estadísticas</h1>
     <div class="acciones-header">
+      <div class="download-menu" #downloadMenuContainer>
+        <button class="download-chip" (click)="toggleDownloadMenu($event)">Descargar estadísticas</button>
+        <div class="download-options" *ngIf="showDownloadMenu">
+          <button type="button" (click)="onDownloadRange(7)">Últimos 7 días</button>
+          <button type="button" (click)="onDownloadRange(30)">Últimos 30 días</button>
+          <button type="button" (click)="onDownloadRange(90)">Últimos 3 meses</button>
+        </div>
+      </div>
       <app-ui-only-icon-button
         urlIcono="icons/reload.svg"
         (action)="loadDashboard()"

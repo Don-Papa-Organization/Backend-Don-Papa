@@ -1,0 +1,21 @@
+node_modules
+.angular
+dist
+.vscode
+.git
+.gitignore
+
+# Documentacion y artefactos no funcionales
+*.md
+baseline-log.txt
+e2e-results.json
+probe.txt
+playwright.config.ts
+
+# Capturas y carpetas visuales ajenas al build
+image
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.gif

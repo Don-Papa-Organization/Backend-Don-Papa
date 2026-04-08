@@ -6,6 +6,7 @@ import { BitacoraByEmployeeDataDto } from "../../../../../domain/reports/dtos/re
 import { BitacoraSearchDataDto } from "../../../../../domain/reports/dtos/response/bitacora-search.response.dto";
 import { SalesHistoryDataDto } from "../../../../../domain/reports/dtos/response/sales-history.response.dto";
 import { SaleDetailDataDto } from "../../../../../domain/reports/dtos/response/sale-detail.response.dto";
+import { SalesReportByDatesRequestDto } from "../../../../../domain/reports/dtos/request/sales-report-by-dates.request.dto";
 import { ReporteVentas } from "../../../../../domain/reports/models/ventas.model";
 
 @Injectable({
@@ -94,5 +95,28 @@ export class ReportsFacade {
 				return of(null);
 			})
 		);
+	}
+
+	downloadSalesReportPdf(dto: SalesReportByDatesRequestDto): Observable<void> {
+		return this.reportsApi.downloadSalesReportPdf(dto).pipe(
+			map((blob) => {
+				this.triggerDownload(blob, `reporte-ventas-${dto.fechaInicio}-${dto.fechaFin}.pdf`);
+			}),
+			catchError((error) => {
+				console.error("Error al descargar reporte de ventas en PDF:", error);
+				return of(void 0);
+			})
+		);
+	}
+
+	private triggerDownload(blob: Blob, filename: string): void {
+		const url = window.URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		window.URL.revokeObjectURL(url);
 	}
 }

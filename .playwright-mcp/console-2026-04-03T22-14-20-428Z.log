@@ -1,0 +1,57 @@
+[     475ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[     972ms] [LOG] [TRACE][UsersApi.getProfile] raw response: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-J7NUJQ44.js:59
+[     972ms] [LOG] [TRACE][UsersApi.getProfile] normalizing flat profile response @ http://localhost:4200/chunk-J7NUJQ44.js:68
+[    1099ms] [LOG] [TRACE] --- getProfile START --- @ http://localhost:4200/chunk-PZCNFT7E.js:1205
+[    1314ms] [LOG] [TRACE][UsersApi.getProfile] raw response: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-J7NUJQ44.js:59
+[    1315ms] [LOG] [TRACE][UsersApi.getProfile] normalizing flat profile response @ http://localhost:4200/chunk-J7NUJQ44.js:68
+[    1315ms] [LOG] [TRACE] getProfile success: true @ http://localhost:4200/chunk-PZCNFT7E.js:1208
+[    1316ms] [LOG] [TRACE] getProfile data: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1209
+[    1316ms] [LOG] [TRACE] getProfile data.cliente: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1210
+[    1316ms] [LOG] [TRACE] perfil asignado: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1217
+[    1317ms] [LOG] [TRACE] sincronizarFormularioPerfil - input profile: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1233
+[    1317ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1234
+[    1317ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.nombre: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1235
+[    1317ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.telefono: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1236
+[    1318ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.direccion: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1237
+[    1318ms] [LOG] [TRACE] sincronizarFormularioPerfil - formPerfil result: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1248
+[    1319ms] [LOG] [TRACE] sincronizarFormularioPerfil - snapshotPerfil result: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1249
+[    1319ms] [LOG] [TRACE] --- getProfile END --- @ http://localhost:4200/chunk-PZCNFT7E.js:1220
+[   70374ms] [LOG] [TRACE] sincronizarFormularioPerfil - input profile: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1233
+[   70374ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1234
+[   70375ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.nombre: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1235
+[   70375ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.telefono: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1236
+[   70375ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.direccion: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1237
+[   70376ms] [LOG] [TRACE] sincronizarFormularioPerfil - formPerfil result: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1248
+[   70376ms] [LOG] [TRACE] sincronizarFormularioPerfil - snapshotPerfil result: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1249
+[  106198ms] [LOG] [TRACE] --- actualizarPerfil START --- @ http://localhost:4200/chunk-PZCNFT7E.js:1100
+[  106198ms] [LOG] [TRACE] formPerfil: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45"} @ http://localhost:4200/chunk-PZCNFT7E.js:1101
+[  106198ms] [LOG] [TRACE] snapshotPerfil: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1102
+[  106198ms] [LOG] [TRACE] perfil (this.perfil): {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1103
+[  106199ms] [LOG] [TRACE] puedeGuardarPerfil: true @ http://localhost:4200/chunk-PZCNFT7E.js:1104
+[  106199ms] [LOG] [TRACE] payload construido: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45"} @ http://localhost:4200/chunk-PZCNFT7E.js:1112
+[  106199ms] [LOG] [TRACE] tieneCambios: true @ http://localhost:4200/chunk-PZCNFT7E.js:1114
+[  106199ms] [LOG] [TRACE] Llamando updateProfile... @ http://localhost:4200/chunk-PZCNFT7E.js:1122
+[  106675ms] [LOG] [TRACE] updateProfile RESPONSE success: true @ http://localhost:4200/chunk-PZCNFT7E.js:1125
+[  106675ms] [LOG] [TRACE] updateProfile RESPONSE data: {"cliente":{"direccion":"Carrera 5 #123-45","telefono":"3001234567","nombre":"Juan Castañeda López"},"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1126
+[  106675ms] [LOG] [TRACE] updateProfile RESPONSE message: Perfil actualizado correctamente @ http://localhost:4200/chunk-PZCNFT7E.js:1127
+[  106675ms] [LOG] [TRACE] SUCCESS - asignando perfil @ http://localhost:4200/chunk-PZCNFT7E.js:1135
+[  106676ms] [LOG] [TRACE] perfil asignado: {"cliente":{"direccion":"Carrera 5 #123-45","telefono":"3001234567","nombre":"Juan Castañeda López"},"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1137
+[  106676ms] [LOG] [TRACE] perfil.cliente: {"direccion":"Carrera 5 #123-45","telefono":"3001234567","nombre":"Juan Castañeda López"} @ http://localhost:4200/chunk-PZCNFT7E.js:1138
+[  106676ms] [LOG] [TRACE] llamando sincronizarFormularioPerfil @ http://localhost:4200/chunk-PZCNFT7E.js:1139
+[  106676ms] [LOG] [TRACE] sincronizarFormularioPerfil - input profile: {"cliente":{"direccion":"Carrera 5 #123-45","telefono":"3001234567","nombre":"Juan Castañeda López"},"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1233
+[  106677ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente: {"direccion":"Carrera 5 #123-45","telefono":"3001234567","nombre":"Juan Castañeda López"} @ http://localhost:4200/chunk-PZCNFT7E.js:1234
+[  106677ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.nombre: Juan Castañeda López @ http://localhost:4200/chunk-PZCNFT7E.js:1235
+[  106677ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.telefono: 3001234567 @ http://localhost:4200/chunk-PZCNFT7E.js:1236
+[  106677ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.direccion: Carrera 5 #123-45 @ http://localhost:4200/chunk-PZCNFT7E.js:1237
+[  106678ms] [LOG] [TRACE] sincronizarFormularioPerfil - formPerfil result: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45"} @ http://localhost:4200/chunk-PZCNFT7E.js:1248
+[  106678ms] [LOG] [TRACE] sincronizarFormularioPerfil - snapshotPerfil result: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45"} @ http://localhost:4200/chunk-PZCNFT7E.js:1249
+[  106678ms] [LOG] [TRACE] formPerfil sincronizado: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45"} @ http://localhost:4200/chunk-PZCNFT7E.js:1141
+[  106679ms] [LOG] [TRACE] snapshotPerfil sincronizado: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45"} @ http://localhost:4200/chunk-PZCNFT7E.js:1142
+[  106679ms] [LOG] [TRACE] --- actualizarPerfil END SUCCESS --- @ http://localhost:4200/chunk-PZCNFT7E.js:1146
+[  146709ms] [LOG] [TRACE] sincronizarFormularioPerfil - input profile: {"cliente":{"direccion":"Carrera 5 #123-45","telefono":"3001234567","nombre":"Juan Castañeda López"},"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1233
+[  146709ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente: {"direccion":"Carrera 5 #123-45","telefono":"3001234567","nombre":"Juan Castañeda López"} @ http://localhost:4200/chunk-PZCNFT7E.js:1234
+[  146710ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.nombre: Juan Castañeda López @ http://localhost:4200/chunk-PZCNFT7E.js:1235
+[  146710ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.telefono: 3001234567 @ http://localhost:4200/chunk-PZCNFT7E.js:1236
+[  146710ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.direccion: Carrera 5 #123-45 @ http://localhost:4200/chunk-PZCNFT7E.js:1237
+[  146710ms] [LOG] [TRACE] sincronizarFormularioPerfil - formPerfil result: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45"} @ http://localhost:4200/chunk-PZCNFT7E.js:1248
+[  146710ms] [LOG] [TRACE] sincronizarFormularioPerfil - snapshotPerfil result: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45"} @ http://localhost:4200/chunk-PZCNFT7E.js:1249

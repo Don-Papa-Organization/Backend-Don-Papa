@@ -11,7 +11,6 @@
     </div>
 
     <div class="modal-body">
-      <!-- Mesa Seleccionada -->
       <div class="form-group read-only">
         <label>Mesa</label>
         <div class="read-only-value">
@@ -21,7 +20,6 @@
         </div>
       </div>
 
-      <!-- Fecha -->
       <div class="form-group">
         <label for="fechaReserva">Fecha</label>
         <input
@@ -34,7 +32,6 @@
         />
       </div>
 
-      <!-- Hora Inicio -->
       <div class="form-group">
         <label for="horaInicio">Hora Inicio</label>
         <select
@@ -47,9 +44,9 @@
             {{ h }}
           </option>
         </select>
+        <small class="helper" *ngIf="horasInicioDisponibles.length === 0">No hay horas disponibles para la fecha seleccionada.</small>
       </div>
 
-      <!-- Cantidad de Personas -->
       <div class="form-group">
         <label for="cantidadPersonas">Cantidad de Personas</label>
         <select
@@ -62,15 +59,10 @@
             {{ personas }} {{ personas === 1 ? 'persona' : 'personas' }}
           </option>
         </select>
-        <small *ngIf="mesa?.tipo === 'Barra'">
-          (Máximo 1 persona en barra)
-        </small>
-        <small *ngIf="mesa?.tipo !== 'Barra'">
-          (Máximo 4 personas)
-        </small>
+        <small *ngIf="mesa?.tipo === 'Barra'">(Máximo 1 persona en barra)</small>
+        <small *ngIf="mesa?.tipo !== 'Barra'">(Máximo 4 personas)</small>
       </div>
 
-      <!-- Hora Fin -->
       <div class="form-group">
         <label for="horaFin">Hora Fin</label>
         <select
@@ -78,18 +70,17 @@
           [(ngModel)]="horaFin"
           class="form-input"
         >
-          <option *ngFor="let opcion of horasDisponibles" 
+          <option
+            *ngFor="let opcion of horasDisponibles"
             [value]="opcion.hora"
             [disabled]="isHoraFinDisabled(opcion)"
             [ngClass]="getHoraFinClass(opcion)"
           >
             {{ opcion.hora }}
-            <span *ngIf="!opcion.disponible"> - Ocupada</span>
           </option>
         </select>
       </div>
 
-      <!-- Resumen -->
       <div class="resumen">
         <div class="resumen-item">
           <span>Duración:</span>
@@ -113,7 +104,7 @@
         type="button"
         class="btn btn-primary"
         (click)="onConfirmar()"
-        [disabled]="confirmando"
+        [disabled]="confirmando || !horaInicioEditable"
       >
         <span *ngIf="!confirmando">Confirmar Reserva</span>
         <span *ngIf="confirmando">Procesando...</span>

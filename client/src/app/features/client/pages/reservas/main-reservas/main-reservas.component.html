@@ -1,2 +1,24 @@
-﻿<app-catalog-mesas></app-catalog-mesas>
+﻿<main class="reservas-main-shell">
+	<section class="reservas-main-header">
+		<h1>Reservas</h1>
+		<p>Gestiona tus mesas y tus reservas activas</p>
+	</section>
+
+	<section class="reservas-tabs-wrap">
+		<app-ui-tabs
+			visualTheme="client-premium"
+			[tabItems]="tabs"
+			[tabActiva]="tabActiva"
+			(tabChange)="cambiarTab($event)"
+		></app-ui-tabs>
+	</section>
+
+	<section class="reservas-tab-content" *ngIf="tabActiva === 'mesas'">
+		<app-catalog-mesas></app-catalog-mesas>
+	</section>
+
+	<section class="reservas-tab-content" *ngIf="tabActiva === 'mis-reservas'">
+		<app-reservation-history></app-reservation-history>
+	</section>
+</main>
 

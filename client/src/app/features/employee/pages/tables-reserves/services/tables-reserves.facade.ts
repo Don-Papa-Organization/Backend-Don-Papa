@@ -24,6 +24,11 @@ export interface ReservaFloorPlan {
   idReserva: number;
   hora: string;
   cantidadPersonas: number;
+  estado?: string;
+  puedeConfirmar?: boolean;
+  esActivaPorHorario?: boolean;
+  minutosRestantes?: number;
+  fechaReserva?: string;
 }
 
 @Injectable({
@@ -59,12 +64,24 @@ export class TablesReservesFacade {
         const reservasPorMesa = new Map<number, ReservaFloorPlan>();
         const reservas = response.data?.reservas ?? [];
         for (const r of reservas) {
+          if (String(r.estado || '').toLowerCase() === 'cancelada') {
+            continue;
+          }
+
           const idMesa = Number(r.idMesa);
           if (Number.isFinite(idMesa) && idMesa > 0 && !reservasPorMesa.has(idMesa)) {
+            const fechaReserva = r.fechaCompleta ? new Date(r.fechaCompleta) : (r.fechaReserva ? new Date(r.fechaReserva) : null);
+            const minutosRestantes = fechaReserva ? Math.floor((fechaReserva.getTime() - Date.now()) / 60000) : null;
+            const esActivaPorHorario = typeof minutosRestantes === 'number' && minutosRestantes <= 0 && minutosRestantes >= -120;
             reservasPorMesa.set(idMesa, {
               idReserva: r.idReserva,
               hora: r.hora ?? '',
-              cantidadPersonas: r.cantidadPersonas ?? 0
+              cantidadPersonas: r.cantidadPersonas ?? 0,
+              estado: r.estado,
+              puedeConfirmar: r.estado === 'pendiente' && typeof minutosRestantes === 'number' && minutosRestantes <= 20 && minutosRestantes >= 0,
+              esActivaPorHorario,
+              minutosRestantes: minutosRestantes ?? undefined,
+              fechaReserva: r.fechaReserva
             });
           }
         }
@@ -75,6 +92,10 @@ export class TablesReservesFacade {
 
   confirmReservation(idReserva: number): Observable<ApiResponse<Reserva>> {
     return this.tablesReservesApi.confirmReservation(idReserva);
+  }
+
+  cancelReservationByStaff(idReserva: number): Observable<ApiResponse<Reserva>> {
+    return this.tablesReservesApi.cancelReservationByStaff(idReserva);
   }
 
   listReservationsByStatus(estado?: string): Observable<ApiResponse<ListReservationsByStatusDataDto>> {

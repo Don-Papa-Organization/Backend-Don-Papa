@@ -45,51 +45,74 @@
     </div>
 
     <!-- RESERVAS LIST -->
-    <div class="reservas-list">
-      <div *ngFor="let reserva of reservasFiltered" class="reserva-card">
-        <div class="reserva-header" [style.border-left-color]="obtenerColorEstado(reserva.estado)">
-          <div class="reserva-title">
-            <h3>Mesa #{{ reserva.numeroMesa }}</h3>
+    <div class="reservas-list reservas-list--compact">
+      <div *ngFor="let reserva of reservasFiltered" class="reserva-shortcut" [style.border-left-color]="obtenerColorEstado(reserva.estado)">
+        <div class="shortcut-main">
+          <div class="shortcut-title-row">
+            <strong>Mesa #{{ reserva.numeroMesa }}</strong>
             <span class="tipo-badge">{{ reserva.tipoMesa }}</span>
+            <span class="estado-badge"
+              [style.background-color]="obtenerColorEstado(reserva.estado) + '20'"
+              [style.color]="obtenerColorEstado(reserva.estado)">
+              {{ obtenerLabelEstado(reserva.estado) }}
+            </span>
           </div>
-          <span class="estado-badge" 
-            [style.background-color]="obtenerColorEstado(reserva.estado) + '20'"
-            [style.color]="obtenerColorEstado(reserva.estado)">
-            {{ obtenerLabelEstado(reserva.estado) }}
-          </span>
-        </div>
 
-        <div class="reserva-content">
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">Fecha Reserva:</span>
-              <span class="info-value">{{ formatearFecha(reserva.fechaReserva) }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Personas:</span>
-              <span class="info-value">{{ reserva.cantidadPersonas }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">ID Reserva:</span>
-              <span class="info-value">#{{ reserva.idReserva }}</span>
-            </div>
+          <div class="shortcut-meta-row">
+            <span>{{ formatearFecha(reserva.fechaReserva) }}</span>
+            <span class="dot-sep">•</span>
+            <span>{{ formatearHora(reserva.fechaReserva) }}</span>
+            <span class="dot-sep">•</span>
+            <span>{{ reserva.cantidadPersonas }} {{ reserva.cantidadPersonas === 1 ? 'persona' : 'personas' }}</span>
           </div>
         </div>
 
-        <div class="reserva-actions">
-          <button (click)="verDetalles(reserva.idReserva)" class="btn-details">
-            Ver Detalles
+        <div class="shortcut-actions">
+          <button
+            *ngIf="puedeConfirmar(reserva.estado)"
+            (click)="confirmarReserva(reserva.idReserva)"
+            class="btn-confirm"
+            [disabled]="estaProcesando(reserva.idReserva)">
+            {{ estaProcesando(reserva.idReserva) ? 'Procesando...' : 'Confirmar' }}
+          </button>
+
+          <button
+            *ngIf="puedeCancelar(reserva.estado)"
+            (click)="solicitarCancelarReserva(reserva)"
+            class="btn-cancel"
+            [disabled]="estaProcesando(reserva.idReserva)">
+            {{ estaProcesando(reserva.idReserva) ? 'Procesando...' : 'Cancelar' }}
           </button>
         </div>
       </div>
     </div>
-
-    <!-- MAKE NEW RESERVATION BUTTON -->
-    <div class="new-reservation-section">
-      <button (click)="irAReservar()" class="btn-new-reservation">
-        + Hacer una Nueva Reserva
-      </button>
-    </div>
   </div>
+
+  <app-ui-modal
+    [mostrar]="!!reservaPendienteCancelar"
+    titulo="Confirmar cancelación"
+    (cerrar)="cerrarModalCancelar()"
+  >
+    <app-ui-form maxHeight="45vh" maxWidth="520px">
+      <div class="cancel-modal__content">
+        <p>¿Seguro que deseas cancelar esta reserva?</p>
+        <p class="cancel-modal__summary">{{ resumenReservaParaModal(reservaPendienteCancelar) }}</p>
+      </div>
+      <div footer class="cancel-modal__actions">
+        <ui-button
+          texto="Volver"
+          [noBackgroundColor]="true"
+          backgroundColor="#7A7A7A"
+          (accion)="cerrarModalCancelar()"
+        ></ui-button>
+        <ui-button
+          texto="Sí, cancelar"
+          [noBackgroundColor]="true"
+          backgroundColor="#D9534F"
+          (accion)="confirmarCancelacionReserva()"
+        ></ui-button>
+      </div>
+    </app-ui-form>
+  </app-ui-modal>
 </div>
 

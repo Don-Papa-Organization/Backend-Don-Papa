@@ -137,7 +137,13 @@ export class ReserveTablePage implements OnInit, OnDestroy {
             return;
           }
 
-          this.ejecutarConfirmacionReserva();
+          const idCliente = this.obtenerIdCliente(profileResponse.data);
+          if (!idCliente) {
+            this.error = 'No se pudo identificar el cliente para confirmar la reserva.';
+            return;
+          }
+
+          this.ejecutarConfirmacionReserva(idCliente);
         },
         error: (err) => {
           this.error = err?.error?.message || 'No se pudo validar el perfil para confirmar la reserva.';
@@ -145,7 +151,7 @@ export class ReserveTablePage implements OnInit, OnDestroy {
       });
   }
 
-  private ejecutarConfirmacionReserva(): void {
+  private ejecutarConfirmacionReserva(idCliente: number): void {
     if (!this.idMesa) {
       this.error = 'No se encontro la mesa seleccionada para reservar.';
       return;
@@ -154,10 +160,18 @@ export class ReserveTablePage implements OnInit, OnDestroy {
     this.isSubmitting = true;
     this.error = null;
 
+    const fechaReservaIso = this.construirFechaReservaIsoSeguro(this.fechaReserva);
+    if (!fechaReservaIso) {
+      this.error = 'Debes seleccionar una fecha válida para la reserva.';
+      this.isSubmitting = false;
+      return;
+    }
+
     const dto: ReserveTableRequestDto = {
       idMesa: this.idMesa,
-      fechaReserva: this.fechaReserva,
-      cantidadPersonas: this.cantidadPersonas
+      fechaReserva: fechaReservaIso,
+      cantidadPersonas: this.cantidadPersonas,
+      idCliente
     };
 
     this.tablesApi.reserveTable(dto)
@@ -175,6 +189,22 @@ export class ReserveTablePage implements OnInit, OnDestroy {
           this.isSubmitting = false;
         }
       });
+  }
+
+  private construirFechaReservaIsoSeguro(fecha: string): string | null {
+    if (!fecha) return null;
+
+    const ahora = new Date();
+    const esHoy = fecha === this.minDate;
+    const horaBase = esHoy ? Math.min(23, ahora.getHours() + 1) : 19;
+    const fechaHoraLocal = new Date(`${fecha}T${String(horaBase).padStart(2, '0')}:00:00`);
+
+    if (Number.isNaN(fechaHoraLocal.getTime())) return null;
+    return fechaHoraLocal.toISOString();
+  }
+
+  private obtenerIdCliente(profile: AuthProfileResponseDto): number | null {
+    return typeof profile.id === 'number' && profile.id > 0 ? profile.id : null;
   }
 
   private esPerfilCompleto(profile: AuthProfileResponseDto): boolean {

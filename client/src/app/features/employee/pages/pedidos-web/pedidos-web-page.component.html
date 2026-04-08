@@ -85,10 +85,14 @@
               <div class="products-list">
                 <div *ngFor="let item of pedido.productos" class="product-item">
                   <span class="product-qty">{{ item.cantidad }}x</span>
-                  <span class="product-name">{{ item.productoNombre || 'Producto #' + item.idProducto }}</span>
+                  <span class="product-name">{{ getNombreProducto(item) }}</span>
                   <span class="product-subtotal">{{ formatoMoneda(item.subtotal) }}</span>
                 </div>
               </div>
+            </div>
+
+            <div class="order-products" *ngIf="!pedido.productos?.length">
+              <span class="products-label">Sin detalle de productos disponible</span>
             </div>
           </div>
 

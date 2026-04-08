@@ -32,9 +32,9 @@ export async function authGatewayMiddleware(req: Request, res: Response, next: N
       accessToken = authHeader.replace('Bearer ', '').trim();
     }
 
-    // Si hay refresh token, intentar refrescar automáticamente
-    // El gateway no valida, solo ayuda a refrescar tokens cuando es posible
-    if (refreshToken) {
+    // Refrescar solo cuando falta access token y existe refresh token.
+    // Refrescar en cada request genera tormenta de tokens y duplicados en DB.
+    if (!accessToken && refreshToken) {
       console.log('[GATEWAY] Refresh token disponible, intentando refrescar...');
       
       try {

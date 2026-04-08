@@ -2,3 +2,34 @@
   display: block;
   width: 100%;
 }
+
+.reservas-main-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.reservas-main-header {
+  text-align: center;
+  padding-top: 0.5rem;
+
+  h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 2rem;
+  }
+
+  p {
+    margin: 0.5rem 0 0;
+    color: rgba(255, 255, 255, 0.75);
+  }
+}
+
+.reservas-tabs-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.reservas-tab-content {
+  width: 100%;
+}

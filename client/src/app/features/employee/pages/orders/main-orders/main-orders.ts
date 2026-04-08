@@ -64,15 +64,29 @@ export class MainOrdersComponent implements OnInit, OnDestroy {
 
         const enriched: MesaEnriquecida[] = mesas.map(mesa => {
           const pedido = this.pedidosAbiertosPorMesa.get(mesa.idMesa) || null;
-          const estadoVisual = pedido ? 'Ocupada' : mesa.estadoVisual;
-          const estadoRaw = pedido ? 'Ocupada' : mesa.estadoRaw;
+          const reservaHoy = reservasPorMesa.get(mesa.idMesa) ?? null;
+
+          let estadoVisual = mesa.estadoVisual;
+          let estadoRaw = mesa.estadoRaw;
+
+          if (pedido) {
+            estadoVisual = 'Ocupada';
+            estadoRaw = 'Ocupada';
+          } else if (reservaHoy?.esActivaPorHorario) {
+            estadoVisual = 'Otro';
+            estadoRaw = 'Reservada';
+          } else {
+            estadoVisual = 'Disponible';
+            estadoRaw = 'Disponible';
+          }
+
           return {
             ...mesa,
             estadoRaw,
             estadoVisual,
             fechaPedido: pedido?.fechaPedido || null,
             tiempoOcupada: pedido?.fechaPedido ? this.calcularTiempoOcupada(pedido.fechaPedido) : '--:--',
-            reservaHoy: reservasPorMesa.get(mesa.idMesa) ?? null
+            reservaHoy
           };
         });
 
@@ -119,6 +133,16 @@ export class MainOrdersComponent implements OnInit, OnDestroy {
   }
 
   onConfirmarReserva(idReserva: number): void {
+    const reserva = Array.from(this.grupos.salon)
+      .concat(this.grupos.barra, this.grupos.vip, this.grupos.varios)
+      .map(mesa => mesa.reservaHoy)
+      .find(item => item?.idReserva === idReserva) || null;
+
+    if (reserva && !reserva.puedeConfirmar) {
+      this.mensajeEstadoMesa = 'La reserva solo puede confirmarse dentro de los 20 minutos previos a su hora.';
+      return;
+    }
+
     this.tablesReservesFacade.confirmReservation(idReserva).subscribe({
       next: () => {
         this.mensajeEstadoMesa = 'Reserva confirmada correctamente.';
@@ -127,6 +151,19 @@ export class MainOrdersComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error al confirmar reserva:', error);
         this.mensajeEstadoMesa = 'No se pudo confirmar la reserva.';
+      }
+    });
+  }
+
+  onCancelarReserva(idReserva: number): void {
+    this.tablesReservesFacade.cancelReservationByStaff(idReserva).subscribe({
+      next: () => {
+        this.mensajeEstadoMesa = 'Reserva cancelada correctamente.';
+        this.cargarMesas();
+      },
+      error: (error) => {
+        console.error('Error al cancelar reserva:', error);
+        this.mensajeEstadoMesa = 'No se pudo cancelar la reserva.';
       }
     });
   }

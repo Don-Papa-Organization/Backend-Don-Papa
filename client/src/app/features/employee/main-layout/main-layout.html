@@ -19,6 +19,41 @@
       </nav>
 
       <div class="header-actions">
+        <div class="header-clock" aria-label="Hora actual">{{ horaActual }}</div>
+
+        <div class="reservas-hoy-badge" (click)="toggleReservasDropdown()" [class.active]="reservasDropdownOpen">
+          <span class="reservas-hoy-badge__icon">R</span>
+          <span class="badge-count" *ngIf="reservasHoyPendientesCount > 0">{{ reservasHoyPendientesCount }}</span>
+          <div class="reservas-hoy-dropdown" *ngIf="reservasDropdownOpen" (click)="$event.stopPropagation()">
+            <div class="dropdown-header">
+              <span>Reservas de hoy</span>
+              <button class="btn-close" (click)="closeReservasDropdown()">x</button>
+            </div>
+            <div class="dropdown-body">
+              <div *ngIf="reservasHoyLoading" class="dropdown-empty">Cargando reservas...</div>
+              <div *ngIf="!reservasHoyLoading && reservasHoyActivas.length === 0" class="dropdown-empty">No hay reservas para hoy</div>
+
+              <div *ngFor="let reserva of reservasHoyActivas" class="reservas-item">
+                <div class="reservas-item__header">
+                  <span class="item-id">Mesa {{ reserva.numeroMesa || reserva.idMesa }}</span>
+                  <span class="item-date">{{ reserva.hora || '--:--' }}</span>
+                  <span class="badge" [ngClass]="getBadgeClassReserva(reserva.estado || '')">{{ reserva.estado }}</span>
+                </div>
+                <div class="reservas-item__meta">
+                  <span>{{ reserva.tipoMesa || 'Mesa' }}</span>
+                  <span>{{ reserva.cantidadPersonas }} personas</span>
+                  <span *ngIf="reserva.minutosRestantes !== undefined">{{ reserva.minutosRestantes }} min</span>
+                </div>
+                <div class="reservas-item__actions">
+                  <button type="button" class="btn-action btn-action--confirm" [disabled]="!reserva.puedeConfirmar" (click)="confirmarReservaHoy(reserva)">Confirmar</button>
+                  <button type="button" class="btn-action btn-action--cancel" (click)="cancelarReservaHoy(reserva)">Cancelar</button>
+                  <button type="button" class="btn-action" (click)="irAMesaReserva(reserva.idMesa)">Ir a mesa</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="web-orders-badge" (click)="toggleWebPedidosDropdown()" [class.active]="webPedidosDropdownOpen">
           <img src="icons/payment.svg" alt="" />
           <span class="badge-count" *ngIf="webPedidosCount > 0">{{ webPedidosCount }}</span>
@@ -80,6 +115,41 @@
         </nav>
 
         <div class="header-actions header-actions--pos">
+          <div class="header-clock header-clock--pos" aria-label="Hora actual">{{ horaActual }}</div>
+
+          <div class="reservas-hoy-badge reservas-hoy-badge--pos" (click)="toggleReservasDropdown()" [class.active]="reservasDropdownOpen">
+            <span class="reservas-hoy-badge__icon">R</span>
+            <span class="badge-count" *ngIf="reservasHoyPendientesCount > 0">{{ reservasHoyPendientesCount }}</span>
+            <div class="reservas-hoy-dropdown reservas-hoy-dropdown--pos" *ngIf="reservasDropdownOpen" (click)="$event.stopPropagation()">
+              <div class="dropdown-header">
+                <span>Reservas de hoy</span>
+                <button class="btn-close" (click)="closeReservasDropdown()">x</button>
+              </div>
+              <div class="dropdown-body">
+                <div *ngIf="reservasHoyLoading" class="dropdown-empty">Cargando reservas...</div>
+                <div *ngIf="!reservasHoyLoading && reservasHoyActivas.length === 0" class="dropdown-empty">No hay reservas para hoy</div>
+
+                <div *ngFor="let reserva of reservasHoyActivas" class="reservas-item">
+                  <div class="reservas-item__header">
+                    <span class="item-id">Mesa {{ reserva.numeroMesa || reserva.idMesa }}</span>
+                    <span class="item-date">{{ reserva.hora || '--:--' }}</span>
+                    <span class="badge" [ngClass]="getBadgeClassReserva(reserva.estado || '')">{{ reserva.estado }}</span>
+                  </div>
+                  <div class="reservas-item__meta">
+                    <span>{{ reserva.tipoMesa || 'Mesa' }}</span>
+                    <span>{{ reserva.cantidadPersonas }} personas</span>
+                    <span *ngIf="reserva.minutosRestantes !== undefined">{{ reserva.minutosRestantes }} min</span>
+                  </div>
+                  <div class="reservas-item__actions">
+                    <button type="button" class="btn-action btn-action--confirm" [disabled]="!reserva.puedeConfirmar" (click)="confirmarReservaHoy(reserva)">Confirmar</button>
+                    <button type="button" class="btn-action btn-action--cancel" (click)="cancelarReservaHoy(reserva)">Cancelar</button>
+                    <button type="button" class="btn-action" (click)="irAMesaReserva(reserva.idMesa)">Ir a mesa</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="web-orders-badge web-orders-badge--pos" (click)="toggleWebPedidosDropdown()" [class.active]="webPedidosDropdownOpen">
             <img src="icons/payment.svg" alt="" />
             <span class="badge-count" *ngIf="webPedidosCount > 0">{{ webPedidosCount }}</span>
@@ -137,6 +207,8 @@
           <h1 class="table-sale-topbar__title">{{ tableSaleTitle || 'Mesa' }}</h1>
 
           <div class="table-sale-topbar__right">
+            <div class="header-clock header-clock--compact" aria-label="Hora actual">{{ horaActual }}</div>
+
             <app-ui-icon-button
               texto="Recargar"
               urlIcono="icons/reload.svg"

@@ -94,6 +94,7 @@ export const API_ENDPOINTS = {
     methods: () => `${API_ROUTES.payments}/methods`,
     methodDetail: (idMetodo: number) => `${API_ROUTES.payments}/methods/${idMetodo}`,
     register: (idPedido: number) => `${API_ROUTES.payments}/register/${idPedido}`,
+    mercadoPagoPreference: (idPedido: number) => `${API_ROUTES.payments}/mercadopago/preference/${idPedido}`,
     history: () => `${API_ROUTES.payments}/history`,
     all: () => `${API_ROUTES.payments}/all`,
     paymentDetail: (idPago: number) => `${API_ROUTES.payments}/${idPago}`,
@@ -102,6 +103,7 @@ export const API_ENDPOINTS = {
   reservations: {
     availability: () => `${API_ROUTES.reservations}/availability`,
     reserve: () => `${API_ROUTES.reservations}/reserve`,
+    reserveStaff: () => `${API_ROUTES.reservations}/reserve-staff`,
     history: () => `${API_ROUTES.reservations}/history`,
     daily: () => `${API_ROUTES.reservations}/daily`,
     staffStatus: () => `${API_ROUTES.reservations}/staff/status`,

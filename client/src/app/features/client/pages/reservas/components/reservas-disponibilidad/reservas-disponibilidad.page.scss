@@ -137,7 +137,7 @@
   padding: 2.5rem;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba($color-white, 0.05);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 
   // Sutil patrón de cuadrícula de fondo para el "plano"
   &::before {
