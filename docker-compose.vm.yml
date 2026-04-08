@@ -1,0 +1,404 @@
+services:
+  frontend:
+    image: ${IMAGE_CLIENT:?IMAGE_CLIENT no definida}
+    container_name: frontend
+    restart: unless-stopped
+    networks:
+      - backend-network
+
+  caddy:
+    image: caddy:2.8-alpine
+    container_name: caddy
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      CADDY_DOMAIN: ${CADDY_DOMAIN:?CADDY_DOMAIN no definida}
+      CADDY_EMAIL: ${CADDY_EMAIL:?CADDY_EMAIL no definida}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - backend-network
+
+  gateway:
+    image: ${IMAGE_GATEWAY:?IMAGE_GATEWAY no definida}
+    container_name: gateway
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    depends_on:
+      email-service:
+        condition: service_started
+      inventory-service-app:
+        condition: service_started
+      user-service-app:
+        condition: service_started
+      order-service-app:
+        condition: service_started
+      event-service-app:
+        condition: service_started
+      reservation-service-app:
+        condition: service_started
+      report-service-app:
+        condition: service_started
+      agent-service:
+        condition: service_started
+    environment:
+      PORT: "4000"
+      CORS_ORIGIN: ${CORS_ORIGIN:?CORS_ORIGIN no definida}
+      INVENTORY_URL: http://inventory-service-app:4001/api
+      USERS_AND_EMPLOYERS_URL: http://user-service-app:4002/api
+      ORDERS_AND_PAYMENTS_URL_ORDERS: http://order-service-app:4003/api/orders
+      ORDERS_AND_PAYMENTS_URL_PAYMENTS: http://order-service-app:4003/api/payments
+      RESERVATIONS_AND_TABLES_URL: http://reservation-service-app:4004/api/reservations
+      RESERVATIONS_AND_TABLES_URL_TABLE: http://reservation-service-app:4004/api/table
+      EVENTS_AND_PROMOTIONS_URL_EVENTS: http://event-service-app:4005/api/events
+      EVENTS_AND_PROMOTIONS_URL_PROMOTIONS: http://event-service-app:4005/api/promotions
+      EVENTS_AND_PROMOTIONS_URL_EVENTOS_DIAS: http://event-service-app:4005/api/eventos-dias
+      EVENTS_AND_PROMOTIONS_URL_PRODUCTOS_PROMOCION: http://event-service-app:4005/api/productos-promocion
+      EVENTS_AND_PROMOTIONS_URL_PROMOCION_EVENTO_DIA: http://event-service-app:4005/api/promocion-evento-dia
+      REPORTS_AND_BINNACLES_URL: http://report-service-app:4006/api
+      AGENT_SERVICE_URL: http://agent-service:4008/api
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET no definida}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN no definida}
+    networks:
+      - backend-network
+
+  email-service:
+    image: ${IMAGE_EMAIL_SERVICE:?IMAGE_EMAIL_SERVICE no definida}
+    container_name: email-service
+    restart: unless-stopped
+    environment:
+      PORT: "4007"
+      NODE_ENV: ${NODE_ENV:-production}
+      CLIENT_BASE_URL: ${EMAIL_BASE_URL:?EMAIL_BASE_URL no definida}
+      VERIFY_EMAIL_PATH: ${VERIFY_EMAIL_PATH:-/auth/verify-email}
+      RESET_PASSWORD_PATH: ${RESET_PASSWORD_PATH:-/auth/reset-password}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN no definida}
+    networks:
+      - backend-network
+
+  inventory-service-app:
+    image: ${IMAGE_INVENTORY_SERVICE:?IMAGE_INVENTORY_SERVICE no definida}
+    container_name: inventory-service-app
+    restart: unless-stopped
+    depends_on:
+      inventory-mysql:
+        condition: service_healthy
+    volumes:
+      - inventory_images:/home/app/src/images
+    environment:
+      PORT: "4001"
+      DB_HOST: inventory-mysql
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      DB_NAME: ${DB_NAME_INVENTORY:?DB_NAME_INVENTORY no definida}
+      NODE_ENV: ${NODE_ENV_INVENTORY:-development}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET no definida}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN no definida}
+    networks:
+      - backend-network
+
+  inventory-mysql:
+    image: mysql:8.0
+    container_name: inventory-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      MYSQL_DATABASE: ${DB_NAME_INVENTORY:?DB_NAME_INVENTORY no definida}
+    volumes:
+      - inventory_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - backend-network
+
+  user-service-app:
+    image: ${IMAGE_USER_SERVICE:?IMAGE_USER_SERVICE no definida}
+    container_name: user-service-app
+    restart: unless-stopped
+    depends_on:
+      user-mysql:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: "4002"
+      PORT: "4002"
+      DB_HOST: user-mysql
+      DB_PORT: "3306"
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      DB_NAME: ${DB_NAME_USERS:?DB_NAME_USERS no definida}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-production}
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-false}
+      HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET no definida}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN no definida}
+      EMAIL_SERVICE_URL: http://email-service:4007
+    networks:
+      - backend-network
+
+  user-mysql:
+    image: mysql:8.0
+    container_name: user-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      MYSQL_DATABASE: ${DB_NAME_USERS:?DB_NAME_USERS no definida}
+    volumes:
+      - users_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - backend-network
+
+  order-service-app:
+    image: ${IMAGE_ORDER_SERVICE:?IMAGE_ORDER_SERVICE no definida}
+    container_name: order-service-app
+    restart: unless-stopped
+    depends_on:
+      order-mysql:
+        condition: service_healthy
+      inventory-service-app:
+        condition: service_started
+      user-service-app:
+        condition: service_started
+      reservation-service-app:
+        condition: service_started
+      event-service-app:
+        condition: service_started
+      email-service:
+        condition: service_started
+    environment:
+      PORT: "4003"
+      NODE_ENV: ${NODE_ENV:-production}
+      DB_HOST: order-mysql
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      DB_NAME: ${DB_NAME_ORDERS:?DB_NAME_ORDERS no definida}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET no definida}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN no definida}
+      EMAIL_SERVICE_URL: http://email-service:4007
+      INVENTORY_SERVICE_URL: http://inventory-service-app:4001/api
+      USER_SERVICE_URL: http://user-service-app:4002/api/clientes
+      RESERVATION_SERVICE_URL: http://reservation-service-app:4004/api
+      EVENT_SERVICE_URL: http://event-service-app:4005/api
+      RECEIPTS_DIR: recibos
+      MP_ACCESS_TOKEN: ${MP_ACCESS_TOKEN:?MP_ACCESS_TOKEN no definida}
+      MP_SUCCESS_URL: ${MP_SUCCESS_URL:?MP_SUCCESS_URL no definida}
+      MP_FAILURE_URL: ${MP_FAILURE_URL:?MP_FAILURE_URL no definida}
+      MP_PENDING_URL: ${MP_PENDING_URL:?MP_PENDING_URL no definida}
+    volumes:
+      - order_receipts:/home/app/recibos
+    networks:
+      - backend-network
+
+  order-mysql:
+    image: mysql:8.0
+    container_name: order-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      MYSQL_DATABASE: ${DB_NAME_ORDERS:?DB_NAME_ORDERS no definida}
+    volumes:
+      - order_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - backend-network
+
+  reservation-service-app:
+    image: ${IMAGE_RESERVATION_SERVICE:?IMAGE_RESERVATION_SERVICE no definida}
+    container_name: reservation-service-app
+    restart: unless-stopped
+    depends_on:
+      reservation-mysql:
+        condition: service_healthy
+    environment:
+      PORT: "4004"
+      DB_HOST: reservation-mysql
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      DB_NAME: ${DB_NAME_RESERVATIONS:?DB_NAME_RESERVATIONS no definida}
+      NODE_ENV: ${NODE_ENV:-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET no definida}
+      USER_SERVICE_URL: http://user-service-app:4002/api/clientes
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN no definida}
+    networks:
+      - backend-network
+
+  reservation-mysql:
+    image: mysql:8.0
+    container_name: reservation-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      MYSQL_DATABASE: ${DB_NAME_RESERVATIONS:?DB_NAME_RESERVATIONS no definida}
+    volumes:
+      - reservation_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - backend-network
+
+  event-service-app:
+    image: ${IMAGE_EVENT_SERVICE:?IMAGE_EVENT_SERVICE no definida}
+    container_name: event-service-app
+    restart: unless-stopped
+    depends_on:
+      event-mysql:
+        condition: service_healthy
+    environment:
+      PORT: "4005"
+      DB_HOST: event-mysql
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      DB_NAME: ${DB_NAME_EVENTS:?DB_NAME_EVENTS no definida}
+      NODE_ENV: ${NODE_ENV_EVENT:-development}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET no definida}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN no definida}
+      INVENTORY_SERVICE_URL: http://inventory-service-app:4001/api
+    networks:
+      - backend-network
+
+  event-mysql:
+    image: mysql:8.0
+    container_name: event-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      MYSQL_DATABASE: ${DB_NAME_EVENTS:?DB_NAME_EVENTS no definida}
+    volumes:
+      - events_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - backend-network
+
+  report-service-app:
+    image: ${IMAGE_REPORT_SERVICE:?IMAGE_REPORT_SERVICE no definida}
+    container_name: report-service-app
+    restart: unless-stopped
+    depends_on:
+      report-mysql:
+        condition: service_healthy
+      order-service-app:
+        condition: service_started
+      inventory-service-app:
+        condition: service_started
+      user-service-app:
+        condition: service_started
+      reservation-service-app:
+        condition: service_started
+      event-service-app:
+        condition: service_started
+    environment:
+      PORT: "4006"
+      NODE_ENV: ${NODE_ENV:-production}
+      DB_HOST: report-mysql
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      DB_NAME: ${DB_NAME_REPORTS:?DB_NAME_REPORTS no definida}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET no definida}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET no definida}
+      ORDER_SERVICE_URL: http://order-service-app:4003/api
+      INVENTORY_SERVICE_URL: http://inventory-service-app:4001/api
+      USER_SERVICE_URL: http://user-service-app:4002/api
+      RESERVATION_SERVICE_URL: http://reservation-service-app:4004/api
+      EVENT_SERVICE_URL: http://event-service-app:4005/api
+      INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY:?INTERNAL_SERVICE_KEY no definida}
+      HTTP_TIMEOUT: ${HTTP_TIMEOUT:-10000}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:?ALLOWED_ORIGINS no definida}
+      RUN_ANALYTICS_SEEDS: ${RUN_ANALYTICS_SEEDS:-false}
+      RUN_BITACORA_SEEDS: ${RUN_BITACORA_SEEDS:-false}
+      CRON_SCHEDULE: ${CRON_SCHEDULE:-0 2 * * *}
+      REPORTS_DIR: ${REPORTS_DIR:-reportes}
+    networks:
+      - backend-network
+
+  report-mysql:
+    image: mysql:8.0
+    container_name: report-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD no definida}
+      MYSQL_DATABASE: ${DB_NAME_REPORTS:?DB_NAME_REPORTS no definida}
+    volumes:
+      - report_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - backend-network
+
+  agent-service:
+    image: ${IMAGE_AGENT_SERVICE:?IMAGE_AGENT_SERVICE no definida}
+    container_name: agent-service
+    restart: unless-stopped
+    environment:
+      PORT: "4008"
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:?GOOGLE_API_KEY no definida}
+      GEMINI_MODEL_ID: ${GEMINI_MODEL_ID:-gemini-2.5-flash}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET no definida}
+      GATEWAY_URL: http://gateway:4000
+      RATE_LIMIT_RPM: ${RATE_LIMIT_RPM:-12}
+      RATE_LIMIT_RPD: ${RATE_LIMIT_RPD:-1200}
+      CACHE_TTL_SECONDS: ${CACHE_TTL_SECONDS:-300}
+      MAX_HISTORY_TURNS: ${MAX_HISTORY_TURNS:-5}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN no definida}
+    networks:
+      - backend-network
+
+volumes:
+  inventory_mysql_data:
+  users_mysql_data:
+  order_mysql_data:
+  events_mysql_data:
+  reservation_mysql_data:
+  report_mysql_data:
+  order_receipts:
+  inventory_images:
+  caddy_data:
+  caddy_config:
+
+networks:
+  backend-network:
+    driver: bridge
