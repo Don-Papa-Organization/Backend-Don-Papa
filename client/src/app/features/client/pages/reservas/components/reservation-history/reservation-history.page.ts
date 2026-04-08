@@ -21,6 +21,8 @@ export class ReservationHistoryPage implements OnInit, OnDestroy {
   isLoading = false;
   error: string | null = null;
   isEmpty = false;
+  processingReservationId: number | null = null;
+  reservaPendienteCancelar: ReservationHistoryItemDto | null = null;
 
   filtroEstado: string = '';
   estadosDisponibles: string[] = [];
@@ -76,7 +78,70 @@ export class ReservationHistoryPage implements OnInit, OnDestroy {
   }
 
   irAReservar(): void {
-    this.router.navigate(['/client/reservas/disponibilidad']);
+    this.router.navigate(['/client/reservas']);
+  }
+
+  solicitarCancelarReserva(reserva: ReservationHistoryItemDto): void {
+    this.reservaPendienteCancelar = reserva;
+  }
+
+  cerrarModalCancelar(): void {
+    this.reservaPendienteCancelar = null;
+  }
+
+  confirmarCancelacionReserva(): void {
+    if (!this.reservaPendienteCancelar) return;
+    this.cancelarReserva(this.reservaPendienteCancelar.idReserva);
+    this.reservaPendienteCancelar = null;
+  }
+
+  cancelarReserva(idReserva: number): void {
+    if (this.processingReservationId !== null) return;
+
+    this.processingReservationId = idReserva;
+    this.tablesApi.cancelReservation(idReserva)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.processingReservationId = null;
+          this.cargarHistorial();
+        },
+        error: () => {
+          this.error = 'No se pudo cancelar la reserva. Intenta nuevamente.';
+          this.processingReservationId = null;
+        }
+      });
+  }
+
+  confirmarReserva(idReserva: number): void {
+    if (this.processingReservationId !== null) return;
+
+    this.processingReservationId = idReserva;
+    this.tablesApi.confirmReservation(idReserva)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.processingReservationId = null;
+          this.cargarHistorial();
+        },
+        error: (err) => {
+          this.error = err?.error?.message || 'No se pudo confirmar la reserva. Intenta nuevamente.';
+          this.processingReservationId = null;
+        }
+      });
+  }
+
+  puedeConfirmar(estado: string): boolean {
+    return estado.toLowerCase() === 'pendiente';
+  }
+
+  puedeCancelar(estado: string): boolean {
+    const estadoNormalizado = estado.toLowerCase();
+    return estadoNormalizado === 'pendiente' || estadoNormalizado === 'confirmada';
+  }
+
+  estaProcesando(idReserva: number): boolean {
+    return this.processingReservationId === idReserva;
   }
 
   obtenerColorEstado(estado: string): string {
@@ -107,6 +172,22 @@ export class ReservationHistoryPage implements OnInit, OnDestroy {
     } catch {
       return fecha;
     }
+  }
+
+  formatearHora(fecha: string): string {
+    try {
+      return new Date(fecha).toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch {
+      return '--:--';
+    }
+  }
+
+  resumenReservaParaModal(reserva: ReservationHistoryItemDto | null): string {
+    if (!reserva) return '';
+    return `Mesa #${reserva.numeroMesa} · ${this.formatearFecha(reserva.fechaReserva)} ${this.formatearHora(reserva.fechaReserva)}`;
   }
 
   ngOnDestroy(): void {

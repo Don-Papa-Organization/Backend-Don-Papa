@@ -290,7 +290,7 @@ services:
       - "4008:4008"
     environment:
       - PORT=4008
-      - GEMINI_API_KEY=${GOOGLE_API_KEY:-AIzaSyAlUqoUfHWhjqa3JQgsCqJjxn-PFtvm3Qs}
+      - GEMINI_API_KEY=${GOOGLE_API_KEY:-AIzaSyBe7Lq8eIjV0o1DCDIPpVR5bYm0Isx77NE}
       - GEMINI_MODEL_ID=gemini-2.5-flash
       - JWT_SECRET=${JWT_SECRET:-tu_super_secreto_jwt_development_very_secure_key_12345}
       - GATEWAY_URL=http://gateway:4000

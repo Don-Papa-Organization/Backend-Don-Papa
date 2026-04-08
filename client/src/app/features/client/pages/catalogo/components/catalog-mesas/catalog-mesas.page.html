@@ -3,7 +3,7 @@
     <div class="filter-bar">
       <div class="filter-group">
         <label>Fecha</label>
-        <input type="date" [(ngModel)]="fechaFiltro" [min]="minDate" class="filter-input" />
+        <input type="date" [(ngModel)]="fechaFiltro" (ngModelChange)="onFechaFiltroChange()" [min]="minDate" class="filter-input" />
       </div>
       <div class="filter-group">
         <label>Hora</label>
@@ -167,8 +167,8 @@
     [confirmando]="confirmandoReserva"
     (cerrar)="cerrarModalReserva()"
     (confirmar)="confirmarReservaModal($event)"
-    (fechaCambiada)="fechaFiltro = $event"
-    (horaInicioCambiada)="horaFiltro = $event"
+    (fechaCambiada)="onFechaDesdeModal($event)"
+    (horaInicioCambiada)="onHoraDesdeModal($event)"
   ></app-ui-reservation-modal>
 
   <app-ui-toast visualTheme="client-premium"

@@ -7,6 +7,14 @@ import type { UpdateMesaRequestDto } from '../../../../../domain/tables&Reserves
 import { AccionTabla } from '../../../../../shared/ui/ui-tabla/ui-tabla';
 import { MESA_TIPOS, MesaTipo } from '../../../../../types/mesa-tipo.type';
 
+type ReservaStaffForm = {
+  idMesa: number | null;
+  idCliente: number | null;
+  fecha: string;
+  hora: string;
+  cantidadPersonas: number;
+};
+
 @Component({
   selector: 'app-main-tables-reserves',
   standalone: false,
@@ -65,9 +73,20 @@ export class MainTablesReserves implements OnInit {
 
   mostrarModalDetalleReserva = false;
   mostrarModalCancelarReserva = false;
+  mostrarModalAgregarReserva = false;
 
   mesaSeleccionada: MesaViewModel | null = null;
   reservaSeleccionada: ReservationViewModel | null = null;
+
+  reservaForm: ReservaStaffForm = {
+    idMesa: null,
+    idCliente: null,
+    fecha: '',
+    hora: '19:00',
+    cantidadPersonas: 2
+  };
+  formSubmitted = false;
+  reservaFormError = '';
 
   constructor(@Inject(TablesReservesFacade) private tablesReservesFacade: TablesReservesFacade) { }
 
@@ -134,6 +153,22 @@ export class MainTablesReserves implements OnInit {
 
   onAgregarMesa(): void {
     this.mostrarModalAgregarMesa = true;
+  }
+
+  onAgregarReserva(): void {
+    const ahora = new Date();
+    const hoy = this.formatDateLocal(ahora);
+    const horaMinima = this.formatTimeLocal(ahora);
+    this.reservaForm = {
+      idMesa: this.mesas.find((m) => m.estado === 'Disponible')?.idMesa ?? null,
+      idCliente: null,
+      fecha: hoy,
+      hora: horaMinima,
+      cantidadPersonas: 2
+    };
+    this.formSubmitted = false;
+    this.reservaFormError = '';
+    this.mostrarModalAgregarReserva = true;
   }
 
   onMesaCreada(dto: CreateMesaRequestDto): void {
@@ -240,5 +275,134 @@ export class MainTablesReserves implements OnInit {
   cerrarModalCancelarReserva(): void {
     this.mostrarModalCancelarReserva = false;
     this.reservaSeleccionada = null;
+  }
+
+  cerrarModalAgregarReserva(): void {
+    this.mostrarModalAgregarReserva = false;
+    this.formSubmitted = false;
+    this.reservaFormError = '';
+  }
+
+  confirmarAgregarReserva(): void {
+    this.formSubmitted = true;
+    this.reservaFormError = '';
+
+    const idMesa = Number(this.reservaForm.idMesa);
+    const idCliente = Number(this.reservaForm.idCliente);
+    const idClienteEsValido = Number.isFinite(idCliente) && idCliente > 0;
+    const cantidadPersonas = Number(this.reservaForm.cantidadPersonas);
+
+    if (!idMesa || !this.reservaForm.fecha || !this.reservaForm.hora || !cantidadPersonas) {
+      this.reservaFormError = 'Completa los campos obligatorios para crear la reserva.';
+      return;
+    }
+
+    if (cantidadPersonas > this.maxPersonasSegunMesa) {
+      this.reservaFormError = `Máximo ${this.maxPersonasSegunMesa} personas permitidas para ${this.tipoMesaSeleccionada}.`;
+      return;
+    }
+
+    if (!this.fechaHoraReservaEsValida) {
+      this.reservaFormError = 'No puedes registrar una reserva en una fecha/hora anterior a la actual.';
+      return;
+    }
+
+    const fechaReserva = `${this.reservaForm.fecha}T${this.reservaForm.hora}:00`;
+
+    this.tablesReservesFacade.createReservationByStaff({
+      idMesa,
+      ...(idClienteEsValido ? { idCliente } : {}),
+      fechaReserva,
+      cantidadPersonas
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.cerrarModalAgregarReserva();
+          this.cargarMesas();
+          this.cargarReservas();
+        }
+      },
+      error: (error) => {
+        console.error('Error al crear reserva:', error);
+        const backendMessage = String(error?.error?.message || error?.error?.error || error?.message || '').trim();
+        this.reservaFormError = backendMessage || 'No se pudo crear la reserva. Verifica fecha, hora y capacidad de la mesa.';
+      }
+    });
+  }
+
+  get fechaMinimaReserva(): string {
+    return this.formatDateLocal(new Date());
+  }
+
+  get horaMinimaReserva(): string {
+    if (this.reservaForm.fecha !== this.fechaMinimaReserva) {
+      return '00:00';
+    }
+    return this.formatTimeLocal(new Date());
+  }
+
+  get fechaHoraReservaEsValida(): boolean {
+    if (!this.reservaForm.fecha || !this.reservaForm.hora) {
+      return false;
+    }
+
+    const fechaHoraReserva = new Date(`${this.reservaForm.fecha}T${this.reservaForm.hora}:00`);
+    if (Number.isNaN(fechaHoraReserva.getTime())) {
+      return false;
+    }
+
+    return fechaHoraReserva.getTime() >= Date.now();
+  }
+
+  get mesaReservaOptions(): Array<{ value: number; label: string }> {
+    return this.mesas
+      .filter((mesa) => mesa.estado === 'Disponible')
+      .map((mesa) => ({
+        value: mesa.idMesa,
+        label: `Mesa ${mesa.numero} (${mesa.tipo}) - ${mesa.estado}`
+      }));
+  }
+
+  get reservaFormValida(): boolean {
+    return Boolean(
+      Number(this.reservaForm.idMesa) > 0 &&
+      this.reservaForm.fecha &&
+      this.reservaForm.hora &&
+      Number(this.reservaForm.cantidadPersonas) > 0 &&
+      Number(this.reservaForm.cantidadPersonas) <= this.maxPersonasSegunMesa
+    );
+  }
+
+  get tipoMesaSeleccionada(): string | null {
+    if (!this.reservaForm.idMesa) return null;
+    const mesa = this.mesas.find((m) => m.idMesa === this.reservaForm.idMesa);
+    return mesa?.tipo ?? null;
+  }
+
+  get maxPersonasSegunMesa(): number {
+    const tipo = this.tipoMesaSeleccionada;
+    switch (tipo) {
+      case 'VIP':
+        return 4;
+      case 'Salon':
+        return 4;
+      case 'Barra':
+        return 1;
+      default:
+        return 999;
+    }
+  }
+
+  private formatDateLocal(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private formatTimeLocal(date: Date): string {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 }

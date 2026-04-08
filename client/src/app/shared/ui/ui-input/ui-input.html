@@ -4,9 +4,11 @@
     class="ui-input-field"
     [placeholder]="placeholder"
     [type]="tipo"
+    [attr.autocomplete]="autocomplete || null"
     [value]="value"
     [disabled]="isDisabled"
-    [min]="min"
+    [attr.min]="min ?? null"
+    [attr.max]="max ?? null"
     (input)="onInput($event)"
     (keyup.enter)="onEnterPressed()"
   />

@@ -1,0 +1,41 @@
+- generic [ref=e119]:
+  - banner [ref=e120]:
+    - button "Iniciar sesion" [ref=e122] [cursor=pointer]
+    - button "Registrar" [ref=e124] [cursor=pointer]
+  - generic [ref=e128]:
+    - banner [ref=e129]:
+      - generic [ref=e130]:
+        - img [ref=e131]
+        - heading "Catálogo Marketplace" [level=1] [ref=e132]
+      - button "Ir a mi perfil" [ref=e134] [cursor=pointer]
+    - main [ref=e135]:
+      - region "Promociones destacadas Don Papa" [ref=e137]
+      - generic [ref=e140]:
+        - complementary [ref=e141]:
+          - complementary "Categorias de producto" [ref=e143]:
+            - generic [ref=e144]:
+              - heading "Categorias" [level=2] [ref=e145]
+              - button "Ocultar" [expanded] [ref=e146] [cursor=pointer]
+        - generic [ref=e155]:
+          - navigation [ref=e156]:
+            - navigation "Navegación de rutas" [ref=e158]:
+              - list [ref=e159]:
+                - listitem [ref=e160]:
+                  - button "Inicio" [ref=e161] [cursor=pointer]
+                  - generic [ref=e162]: ∙
+                - listitem [ref=e163]:
+                  - generic [ref=e164]: Catálogo
+          - generic [ref=e166]:
+            - generic [ref=e168]:
+              - generic [ref=e169]: "Ordenar por:"
+              - combobox "Ordenar por:" [ref=e170] [cursor=pointer]:
+                - option "Relevancia" [selected]
+                - option "Precio (menor a mayor)"
+                - option "Precio (mayor a menor)"
+                - option "Nombre (A-Z)"
+                - option "Nombre (Z-A)"
+                - option "Más recientes"
+            - button "Abrir filtros" [ref=e172] [cursor=pointer]:
+              - img [ref=e173]
+              - text: Filtros
+          - paragraph [ref=e176]: Cargando catálogo...

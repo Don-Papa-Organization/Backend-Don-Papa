@@ -1,0 +1,19 @@
+- main [ref=e5]:
+  - heading "Iniciar Sesión" [level=2] [ref=e6]
+  - generic [ref=e7]:
+    - generic [ref=e9]:
+      - generic [ref=e10]: Correo electronico
+      - textbox "ejemplo@correo.com" [ref=e11]: juancastaneda120507@gmail.com
+    - generic [ref=e12]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: Contraseña
+        - textbox "Ingresa tu contraseña" [ref=e16]: Juan12345
+      - link "¿Olvidaste tu contraseña?" [ref=e17] [cursor=pointer]:
+        - /url: /auth/forgot-password
+    - paragraph [ref=e25]: "Error: Usuario no encontrado con correo: juancastaneda120507@gmail.com"
+    - generic [ref=e19]:
+      - button "Iniciar Sesion" [ref=e21] [cursor=pointer]
+      - paragraph [ref=e22]:
+        - text: ¿No tienes cuenta?
+        - link "Registrarse" [ref=e23] [cursor=pointer]:
+          - /url: /auth/register

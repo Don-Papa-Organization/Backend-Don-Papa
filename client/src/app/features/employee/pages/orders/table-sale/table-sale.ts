@@ -416,6 +416,7 @@ export class TableSaleComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (summary) => {
         this.pedidoActual = this.enrichSummary(summary);
+        this.marcarMesaOcupadaTrasAgregarProducto();
         this.showFeedback(cantidadFinal > 1 ? `Se agregaron ${cantidadFinal} unidades.` : 'Producto agregado al pedido.', 'success');
         this.refrescarCatalogoEnSegundoPlano();
         this.finishOperationTimer(opStart, 'ok');
@@ -634,6 +635,27 @@ export class TableSaleComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.warn('Pago registrado, pero no se pudo actualizar la mesa a disponible:', error);
+      }
+    });
+  }
+
+  private marcarMesaOcupadaTrasAgregarProducto(): void {
+    if (this.mesa?.estadoRaw === 'Ocupada' || this.mesa?.estadoVisual === 'Ocupada') {
+      return;
+    }
+
+    this.tablesReservesFacade.updateTableStatus(this.idMesa, { estado: 'Ocupada' }).subscribe({
+      next: () => {
+        if (this.mesa) {
+          this.mesa = {
+            ...this.mesa,
+            estadoRaw: 'Ocupada',
+            estadoVisual: 'Ocupada'
+          };
+        }
+      },
+      error: (error) => {
+        console.warn('Se agregó producto al pedido, pero no se pudo actualizar la mesa a ocupada:', error);
       }
     });
   }

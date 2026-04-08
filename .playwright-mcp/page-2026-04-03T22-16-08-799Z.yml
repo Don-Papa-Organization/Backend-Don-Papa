@@ -1,0 +1,80 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]: Don Papa
+    - link "Catálogo" [ref=e7] [cursor=pointer]:
+      - /url: /client/catalogo
+      - paragraph [ref=e8]: Catálogo
+    - link "Cuenta" [ref=e10] [cursor=pointer]:
+      - /url: /client/perfil
+      - paragraph [ref=e11]: Cuenta
+    - link "Carrito" [ref=e13] [cursor=pointer]:
+      - /url: /client/carrito
+      - paragraph [ref=e14]: Carrito
+    - link "Reservas" [ref=e16] [cursor=pointer]:
+      - /url: /client/reservas
+      - paragraph [ref=e17]: Reservas
+    - link "Eventos" [ref=e19] [cursor=pointer]:
+      - /url: /client/eventos
+      - paragraph [ref=e20]: Eventos
+    - paragraph [ref=e23]: Salir
+  - main [ref=e29]:
+    - heading "Mi cuenta" [level=1] [ref=e31]
+    - generic [ref=e32]:
+      - complementary [ref=e33]:
+        - navigation [ref=e34]:
+          - button "Datos personales" [ref=e35] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e40]: Datos personales
+          - button "Seguridad" [ref=e41] [cursor=pointer]:
+            - img [ref=e43]
+            - generic [ref=e46]: Seguridad
+          - button "Mis pedidos" [ref=e47] [cursor=pointer]:
+            - img [ref=e49]
+            - generic [ref=e52]: Mis pedidos
+          - button "Cerrar sesión" [ref=e53] [cursor=pointer]:
+            - img [ref=e55]
+            - generic [ref=e58]: Cerrar sesión
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - heading "Datos personales" [level=2] [ref=e62]
+          - button "Editar" [ref=e64] [cursor=pointer]
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - generic [ref=e67]: Correo
+            - paragraph [ref=e68]: juancastaneda120507@gmail.com
+          - generic [ref=e69]:
+            - generic [ref=e70]: Nombre
+            - paragraph [ref=e71]: Juan Castañeda López
+          - generic [ref=e72]:
+            - generic [ref=e73]: Teléfono
+            - paragraph [ref=e74]: "3001234567"
+          - generic [ref=e75]:
+            - generic [ref=e76]: Dirección
+            - paragraph [ref=e77]: "Carrera 5 #123-45"
+          - generic [ref=e78]:
+            - generic [ref=e79]: Rol
+            - paragraph [ref=e80]: cliente
+    - generic [ref=e85]:
+      - generic [ref=e86]:
+        - heading "Gestion de perfil" [level=3] [ref=e87]
+        - button [ref=e88] [cursor=pointer]:
+          - img [ref=e89]
+      - generic [ref=e92]:
+        - generic [ref=e94]:
+          - button "Editar datos" [ref=e95] [cursor=pointer]
+          - button "Cambiar contrasena" [ref=e96] [cursor=pointer]
+        - main [ref=e99]:
+          - generic [ref=e100]:
+            - paragraph [ref=e101]: Actualiza solo los datos que necesites.
+            - generic [ref=e102]:
+              - generic [ref=e104]:
+                - generic [ref=e105]: Nombre
+                - textbox "Tu nombre" [ref=e106]: Juan Castañeda López
+              - generic [ref=e108]:
+                - generic [ref=e109]: Telefono
+                - 'textbox "Ej: 3001234567" [ref=e110]': "3001234567"
+            - generic [ref=e113]:
+              - generic [ref=e114]: Direccion
+              - 'textbox "Ej: Calle 123 #45-67" [ref=e115]': "Carrera 5 #123-45"
+            - paragraph [ref=e119]: Perfil actualizado correctamente
+            - button "Guardar cambios" [disabled] [ref=e118]

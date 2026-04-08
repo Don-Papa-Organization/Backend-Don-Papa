@@ -82,11 +82,58 @@ export class CatalogMesasPage implements OnInit, OnDestroy {
     this.fechaFiltro = this.minDate;
   }
 
+  private esFechaHoy(fecha: string): boolean {
+    if (!fecha) return false;
+    const hoy = new Date();
+    const hoyStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    return fecha === hoyStr;
+  }
+
+  private obtenerHoraMinimaPermitida(fecha: string): number {
+    if (!this.esFechaHoy(fecha)) return 12;
+    const ahora = new Date();
+    const horaActual = ahora.getHours();
+    const minutosActuales = ahora.getMinutes();
+    return minutosActuales > 0 ? horaActual + 1 : horaActual;
+  }
+
+  private fechaHoraEsPasada(fecha: string, hora: string): boolean {
+    if (!fecha || !hora) return false;
+    const fechaHora = new Date(`${fecha}T${hora}:00`);
+    if (Number.isNaN(fechaHora.getTime())) return true;
+    return fechaHora.getTime() < Date.now();
+  }
+
   generarHoras(): void {
     this.horasDisponibles = [];
-    for (let i = 12; i <= 23; i++) {
+    const horaMinima = Math.max(12, this.obtenerHoraMinimaPermitida(this.fechaFiltro));
+    for (let i = horaMinima; i <= 23; i++) {
       this.horasDisponibles.push(`${String(i).padStart(2,'0')}:00`);
     }
+    if (this.horaFiltro && !this.horasDisponibles.includes(this.horaFiltro)) {
+      this.horaFiltro = '';
+    }
+  }
+
+  onFechaFiltroChange(): void {
+    this.generarHoras();
+  }
+
+  onFechaDesdeModal(fecha: string): void {
+    this.fechaFiltro = fecha;
+    this.generarHoras();
+    if (this.horaFiltro && this.fechaHoraEsPasada(this.fechaFiltro, this.horaFiltro)) {
+      this.horaFiltro = '';
+    }
+  }
+
+  onHoraDesdeModal(hora: string): void {
+    if (hora && this.fechaHoraEsPasada(this.fechaFiltro, hora)) {
+      this.error = 'No puedes seleccionar una hora menor a la actual.';
+      this.horaFiltro = '';
+      return;
+    }
+    this.horaFiltro = hora;
   }
 
   aplicarFiltro(): void {
@@ -94,6 +141,11 @@ export class CatalogMesasPage implements OnInit, OnDestroy {
 
     if (!this.horaFiltro) {
       this.cargarMesas();
+      return;
+    }
+
+    if (this.fechaHoraEsPasada(this.fechaFiltro, this.horaFiltro)) {
+      this.error = 'No puedes consultar disponibilidad con una hora menor a la actual.';
       return;
     }
 
@@ -253,7 +305,14 @@ export class CatalogMesasPage implements OnInit, OnDestroy {
             this.mostrarToastPerfilIncompleto();
             return;
           }
-          this.ejecutarConfirmacionReserva(data);
+
+          const idCliente = this.obtenerIdCliente(profileResponse.data);
+          if (!idCliente) {
+            this.error = 'No se pudo identificar el cliente para realizar la reserva.';
+            return;
+          }
+
+          this.ejecutarConfirmacionReserva(data, idCliente);
         },
         error: () => {
           this.mostrarToastPerfilIncompleto();
@@ -269,18 +328,29 @@ export class CatalogMesasPage implements OnInit, OnDestroy {
     return !!nombre && !!direccion && telefonoValido;
   }
 
-  private ejecutarConfirmacionReserva(data: { cantidadPersonas: number; horaFin: string; fecha: string; horaInicio: string }): void {
+  private ejecutarConfirmacionReserva(data: { cantidadPersonas: number; horaFin: string; fecha: string; horaInicio: string }, idCliente: number): void {
     if (!this.mesaSeleccionadaModal || !data.fecha || !data.horaInicio) return;
 
+    if (this.fechaHoraEsPasada(data.fecha, data.horaInicio)) {
+      this.error = 'No puedes realizar una reserva con una hora menor a la actual.';
+      return;
+    }
+
     this.confirmandoReserva = true;
-    const fechaHora = `${data.fecha}T${data.horaInicio}:00`;
+    const fechaHora = this.construirFechaReservaIso(data.fecha, data.horaInicio);
+    if (!fechaHora) {
+      this.confirmandoReserva = false;
+      this.error = 'La fecha y hora seleccionadas no son válidas.';
+      return;
+    }
     this.fechaFiltro = data.fecha;
     this.horaFiltro = data.horaInicio;
 
     this.tablesApi.reserveTable({
       idMesa: this.mesaSeleccionadaModal.idMesa,
       fechaReserva: fechaHora,
-      cantidadPersonas: data.cantidadPersonas
+      cantidadPersonas: data.cantidadPersonas,
+      idCliente
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
         this.confirmandoReserva = false;
@@ -289,10 +359,22 @@ export class CatalogMesasPage implements OnInit, OnDestroy {
           this.aplicarFiltro();
         }
       },
-      error: () => {
+      error: (err) => {
+        this.error = err?.error?.message || 'No se pudo completar la reserva. Intenta nuevamente.';
         this.confirmandoReserva = false;
       }
     });
+  }
+
+  private construirFechaReservaIso(fecha: string, hora: string): string | null {
+    if (!fecha || !hora) return null;
+    const localDateTime = new Date(`${fecha}T${hora}:00`);
+    if (Number.isNaN(localDateTime.getTime())) return null;
+    return localDateTime.toISOString();
+  }
+
+  private obtenerIdCliente(profile: AuthProfileResponseDto): number | null {
+    return typeof profile.id === 'number' && profile.id > 0 ? profile.id : null;
   }
 
   private mostrarToastPerfilIncompleto(): void {

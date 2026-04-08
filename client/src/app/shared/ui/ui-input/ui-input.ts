@@ -19,8 +19,10 @@
     @Input() showLabel: boolean = true;
     @Input() placeholder: string = '';
     @Input() tipo: 'text' | 'password' | 'email' | 'number' | 'checkbox' | 'date' | 'time' = 'text';
+    @Input() autocomplete: string = '';
     @Input() valorInput: string = '';
-    @Input() min?: number;
+    @Input() min?: number | string;
+    @Input() max?: number | string;
     @Input() density: 'default' | 'compact' = 'default';
     @Input() stretch: boolean = false;
     @Input() theme: 'default' | 'pos' | 'client-premium' = 'default';

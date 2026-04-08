@@ -18,18 +18,42 @@ import { UserProfile } from "../../types/user-profile.type";
 export class AuthService {
   constructor(private usersApi: UsersApi) {}
 
+  private resolveMessageResponse(res: unknown, fallbackMessage: string): string {
+    const response = res as any;
+    const message = response?.data?.message ?? response?.message;
+    const isSuccess = response?.success === undefined ? !!message : !!response?.success;
+
+    if (!isSuccess || !message) {
+      throw new Error(response?.message || fallbackMessage);
+    }
+
+    return message;
+  }
+
   login(payload: AuthLoginRequest): Observable<Usuario> {
     return this.usersApi.login(payload).pipe(
       map((res) => {
-        if (!res.success || !res.data?.user) {
-          throw new Error(res.message || "Error de autenticación");
+        const response = res as any;
+
+        const userData = response?.data?.user ?? response?.user;
+        const isSuccess = response?.success === undefined ? !!userData : !!response?.success;
+
+        if (!isSuccess || !userData) {
+          throw new Error(response?.message || "Error de autenticación");
+        }
+
+        const idUsuario = userData.id ?? userData.userId;
+        const correo = userData.correo ?? userData.email;
+
+        if (idUsuario === undefined || idUsuario === null || !correo || !userData.tipoUsuario) {
+          throw new Error("Respuesta de autenticación inválida");
         }
 
         return {
-          idUsuario: res.data.user.id,
-          correo: res.data.user.correo,
-          tipoUsuario: res.data.user.tipoUsuario,
-          activo: res.data.user.activo
+          idUsuario,
+          correo,
+          tipoUsuario: userData.tipoUsuario,
+          activo: userData.activo
         };
       })
     );
@@ -37,34 +61,19 @@ export class AuthService {
 
   register(payload: AuthRegisterRequest): Observable<string> {
     return this.usersApi.register(payload).pipe(
-      map((res) => {
-        if (!res.success || !res.data?.message) {
-          throw new Error(res.message || "Error al registrar");
-        }
-        return res.data.message;
-      })
+      map((res) => this.resolveMessageResponse(res, "Error al registrar"))
     );
   }
 
   verifyEmail(payload: AuthVerifyEmailRequest): Observable<string> {
     return this.usersApi.verifyEmail(payload).pipe(
-      map((res) => {
-        if (!res.success || !res.data?.message) {
-          throw new Error(res.message || "Error al verificar");
-        }
-        return res.data.message;
-      })
+      map((res) => this.resolveMessageResponse(res, "Error al verificar"))
     );
   }
 
   resendVerification(payload: AuthResendVerificationRequest): Observable<string> {
     return this.usersApi.resendVerification(payload).pipe(
-      map((res) => {
-        if (!res.success || !res.data?.message) {
-          throw new Error(res.message || "Error al reenviar");
-        }
-        return res.data.message;
-      })
+      map((res) => this.resolveMessageResponse(res, "Error al reenviar"))
     );
   }
 

@@ -12,9 +12,21 @@ const app: Express = express();
 
 app.use(cookieParser());
 
+const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:4200,http://localhost:4500")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:4200",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`Origen no permitido por CORS: ${origin}`));
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -46,7 +58,7 @@ const routes: Record<string, string> = {
   // Reservaciones y Mesas
   "/reservations":
     process.env.RESERVATIONS_AND_TABLES_URL || "http://reservation-service-app:4004/api/reservations",
-  "/table": process.env.RESERVATIONS_AND_TABLES_URL || "http://reservation-service-app:4004/api/table",
+  "/table": process.env.RESERVATIONS_AND_TABLES_URL_TABLE || "http://reservation-service-app:4004/api/table",
   // Eventos y Promociones
   "/events": process.env.EVENTS_AND_PROMOTIONS_URL_EVENTS || "http://event-service-app:4005/api/events",
   "/promotions":

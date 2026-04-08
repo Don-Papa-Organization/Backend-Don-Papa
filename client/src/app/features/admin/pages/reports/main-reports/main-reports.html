@@ -21,10 +21,12 @@
 		(filtrosLimpiados)="onFiltrosLimpiados()">
 	</app-ui-admin-filter-panel>
 
+	<app-ui-tabs [tabItems]="tabs" [tabActiva]="tabActiva" (tabChange)="cambiarTab($event)"></app-ui-tabs>
+
 	<!-- CONTENIDO DE TABS -->
 	<div class="reports-contenido">
 		<!-- TAB: BITÁCORA DE INCIDENCIAS -->
-		<div class="reportes-seccion">
+		<div class="reportes-seccion" *ngIf="tabActiva === 'bitacora'">
 
 			<!-- TABLA BITÁCORA -->
 			<div class="tabla-contenedor" *ngIf="!cargandoBitacora">
@@ -44,7 +46,24 @@
 			</div>
 		</div>
 
-        
+		<!-- TAB: REPORTE DE VENTAS -->
+		<div class="reportes-seccion" *ngIf="tabActiva === 'ventas'">
+			<div class="tabla-contenedor" *ngIf="!cargandoVentas">
+				<app-ui-tabla
+					[theadData]="columnasVentas"
+					[tbodyData]="ventasItems"
+					[acciones]="accionesVentas">
+				</app-ui-tabla>
+				<div *ngIf="ventasItems.length === 0" class="mensaje-vacio">
+					No hay ventas registradas
+				</div>
+			</div>
+
+			<div class="cargando" *ngIf="cargandoVentas">
+				<p>Cargando ventas...</p>
+			</div>
+		</div>
+	</div>
 
 	<!-- MODAL: DETALLE BITÁCORA -->
 	<app-ui-modal 
@@ -105,4 +124,5 @@
 			</div>
 		</div>
 	</app-ui-modal>
+
 </div>

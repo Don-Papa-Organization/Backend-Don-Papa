@@ -70,10 +70,35 @@ export class UiReservationModalComponent implements OnInit {
     }
     this.inicializarPersonas();
     this.generarHorasInicioDisponibles();
+    if (!this.horaInicioEditable && this.horasInicioDisponibles.length > 0) {
+      this.horaInicioEditable = this.horasInicioDisponibles[0];
+    }
     this.generarHorasDisponibles();
     if (this.horasDisponibles.length > 0) {
       this.horaFin = this.horasDisponibles[0].hora;
     }
+  }
+
+  private esFechaHoy(fecha: string): boolean {
+    if (!fecha) return false;
+    const hoy = new Date();
+    const hoyStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    return fecha === hoyStr;
+  }
+
+  private obtenerHoraMinimaPermitida(fecha: string): number {
+    if (!this.esFechaHoy(fecha)) return 12;
+    const ahora = new Date();
+    const horaActual = ahora.getHours();
+    const minutosActuales = ahora.getMinutes();
+    return minutosActuales > 0 ? horaActual + 1 : horaActual;
+  }
+
+  private fechaHoraEsPasada(fecha: string, hora: string): boolean {
+    if (!fecha || !hora) return false;
+    const fechaHora = new Date(`${fecha}T${hora}:00`);
+    if (Number.isNaN(fechaHora.getTime())) return true;
+    return fechaHora.getTime() < Date.now();
   }
 
   /**
@@ -98,6 +123,12 @@ export class UiReservationModalComponent implements OnInit {
    * Marcar en rojo si hay otra mesa reservada en esa hora
    */
   private generarHorasDisponibles(): void {
+    if (!this.horaInicioEditable) {
+      this.horasDisponibles = [];
+      this.horaFin = '';
+      return;
+    }
+
     const [hhInicio] = this.horaInicioEditable.split(':').map(Number);
     this.horasDisponibles = [];
 
@@ -107,12 +138,21 @@ export class UiReservationModalComponent implements OnInit {
 
       this.horasDisponibles.push({ hora, disponible });
     }
+
+    if (this.horasDisponibles.length === 0) {
+      this.horasDisponibles.push({ hora: '23:59', disponible: true });
+    }
   }
 
   private generarHorasInicioDisponibles(): void {
     this.horasInicioDisponibles = [];
-    for (let hh = 12; hh <= 23; hh++) {
+    const horaMinima = Math.max(12, this.obtenerHoraMinimaPermitida(this.fechaEditable));
+    for (let hh = horaMinima; hh <= 22; hh++) {
       this.horasInicioDisponibles.push(`${String(hh).padStart(2, '0')}:00`);
+    }
+
+    if (this.horaInicioEditable && !this.horasInicioDisponibles.includes(this.horaInicioEditable)) {
+      this.horaInicioEditable = this.horasInicioDisponibles[0] || '';
     }
   }
 
@@ -151,6 +191,11 @@ export class UiReservationModalComponent implements OnInit {
   }
 
   onFechaChange(): void {
+    this.generarHorasInicioDisponibles();
+    this.generarHorasDisponibles();
+    if (this.horasDisponibles.length > 0 && !this.horaFin) {
+      this.horaFin = this.horasDisponibles[0].hora;
+    }
     this.fechaCambiada.emit(this.fechaEditable);
   }
 
@@ -173,8 +218,18 @@ export class UiReservationModalComponent implements OnInit {
    * Confirmar reserva
    */
   onConfirmar(): void {
+    if (!this.horaInicioEditable) {
+      alert('No hay horas disponibles para la fecha seleccionada.');
+      return;
+    }
+
     if (!this.horaFin) {
       alert('Por favor seleccione hora fin');
+      return;
+    }
+
+    if (this.fechaHoraEsPasada(this.fechaEditable, this.horaInicioEditable)) {
+      alert('No puedes realizar una reserva con una hora menor a la actual.');
       return;
     }
 

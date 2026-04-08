@@ -36,6 +36,7 @@ import { UpdateOrderStatusDataDto } from "../../domain/orders/dtos/response/upda
 import { UpdateOrderProductQuantityDataDto } from "../../domain/orders/dtos/response/update-order-product-quantity.response.dto";
 import { PendingPaymentOrderDto } from "../../domain/orders/dtos/response/list-pending-payment-orders.response.dto";
 import { RegisterPaymentDataDto } from "../../domain/orders/dtos/response/register-payment.response.dto";
+import { MercadoPagoPreferenceDataDto } from "../../domain/orders/dtos/response/mercadopago-preference.response.dto";
 import { API_ENDPOINTS, buildApiUrl } from "../../config/api.config";
 
 @Injectable({ providedIn: "root" })
@@ -215,6 +216,13 @@ export class OrdersApi {
 		return this.http.post<ApiResponse<RegisterPaymentDataDto>>(
 			buildApiUrl(API_ENDPOINTS.payments.register(idPedido)),
 			dto
+		);
+	}
+
+	createMercadoPagoPreference(idPedido: number): Observable<ApiResponse<MercadoPagoPreferenceDataDto>> {
+		return this.http.post<ApiResponse<MercadoPagoPreferenceDataDto>>(
+			buildApiUrl(API_ENDPOINTS.payments.mercadoPagoPreference(idPedido)),
+			{}
 		);
 	}
 

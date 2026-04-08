@@ -4,12 +4,18 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ConfirmOrderRequestDto } from '../../../../../../../domain/orders/dtos/request/confirm-order.request.dto';
-import { RegisterPaymentRequestDto } from '../../../../../../../domain/orders/dtos/request/register-payment.request.dto';
 import { MetodoPago } from '../../../../../../../domain/orders/models/pago.model';
 import { AuthProfileResponseDto } from '../../../../../../../domain/users/dtos/response/auth-profile.response.dto';
+import { environment } from '../../../../../../../config/environment';
 import { OrdersApi } from '../../../../../../../services/apis/orders.api';
 import { UsersApi } from '../../../../../../../services/apis/users.api';
 import { SharedModule } from '../../../../../../../shared/shared-module';
+
+declare global {
+  interface Window {
+    MercadoPago?: any;
+  }
+}
 
 @Component({
   selector: 'app-register-payment-page',
@@ -32,7 +38,7 @@ export class RegisterPaymentPage implements OnInit, OnDestroy {
 
   loading = false;
   confirmandoOrden = false;
-  registrando = false;
+  iniciandoCheckout = false;
   error = '';
   exitoso = false;
   mostrarToastBloqueoPerfil = false;
@@ -87,10 +93,10 @@ export class RegisterPaymentPage implements OnInit, OnDestroy {
       perfilOk,
       idPedido: this.idPedido,
       montoPedido: this.montoPedido,
-      registering: this.registrando
+      iniciandoCheckout: this.iniciandoCheckout
     });
 
-    return metodoOk && !this.registrando && perfilOk;
+    return metodoOk && !this.iniciandoCheckout && perfilOk;
   }
 
   get nombreMetodoSeleccionado(): string {
@@ -118,7 +124,7 @@ export class RegisterPaymentPage implements OnInit, OnDestroy {
 
     if (this.idPedido !== null) {
       console.log('[TRACE-PAY] Pedido ya existe, omitiendo confirmOrder');
-      this.ejecutarRegistroPago(this.idPedido);
+      this.iniciarCheckoutMercadoPago(this.idPedido);
       return;
     }
 
@@ -151,7 +157,7 @@ export class RegisterPaymentPage implements OnInit, OnDestroy {
 
           this.idPedido = idPedidoResponse;
           this.pasosError.push('OK: Orden confirmada, idPedido=' + idPedidoResponse);
-          this.ejecutarRegistroPago(idPedidoResponse);
+          this.iniciarCheckoutMercadoPago(idPedidoResponse);
         },
         error: (err) => {
           this.pasosError.push('FAIL: confirmOrder error: ' + JSON.stringify(err));
@@ -162,59 +168,85 @@ export class RegisterPaymentPage implements OnInit, OnDestroy {
       });
   }
 
-  private ejecutarRegistroPago(idPedido: number): void {
-    console.log('[TRACE-PAY] ejecutarRegistroPago() - idPedido:', idPedido);
-    console.log('[TRACE-PAY] metodoTarjetaId:', this.metodoTarjetaId);
-    console.log('[TRACE-PAY] montoPedido:', this.montoPedido);
-
-    if (!this.metodoTarjetaId) {
-      console.log('[TRACE-PAY] FAIL: metodoTarjetaId es null');
-      this.error = 'No se encontro el metodo de pago por tarjeta.';
-      this.confirmandoOrden = false;
-      return;
-    }
-
-    this.registrando = true;
+  private iniciarCheckoutMercadoPago(idPedido: number): void {
+    this.iniciandoCheckout = true;
     this.error = '';
-    this.exitoso = false;
 
-    const dto: RegisterPaymentRequestDto = {
-      idMetodoPago: this.metodoTarjetaId
-    };
-
-    console.log('[TRACE-PAY] Llamando registerPayment con dto:', JSON.stringify(dto));
-
-    this.ordersApi
-      .registerPayment(idPedido, dto)
+    this.ordersApi.createMercadoPagoPreference(idPedido)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          console.log('[TRACE-PAY] registerPayment response:', JSON.stringify(response));
+        next: async (response) => {
+          console.log('[TRACE-PAY] createMercadoPagoPreference response:', JSON.stringify(response));
 
-          if (!response.success) {
-            console.log('[TRACE-PAY] FAIL: registerPayment success=false');
-            this.error = response.message || 'No se pudo registrar el pago.';
-            this.registrando = false;
+          if (!response.success || !response.data?.preferenceId) {
+            this.error = response.message || 'No se pudo iniciar MercadoPago.';
+            this.iniciandoCheckout = false;
+            this.confirmandoOrden = false;
             return;
           }
 
-          console.log('[TRACE-PAY] SUCCESS: Pago registrado');
-          this.exitoso = true;
-          this.registrando = false;
-          this.confirmandoOrden = false;
-
-          setTimeout(() => {
-            this.router.navigate(['/client/perfil'], { queryParams: { seccion: 'pedidos' } });
-          }, 2000);
+          try {
+            await this.abrirPopupMercadoPago(response.data.preferenceId);
+            this.exitoso = true;
+            this.pasosError.push('OK: Checkout de MercadoPago abierto');
+          } catch (error: any) {
+            this.error = error?.message || 'No se pudo abrir la ventana de MercadoPago.';
+          } finally {
+            this.iniciandoCheckout = false;
+            this.confirmandoOrden = false;
+          }
         },
         error: (err) => {
-          console.log('[TRACE-PAY] registerPayment ERROR:', err);
-          console.log('[TRACE-PAY] error.error:', JSON.stringify(err?.error));
-          this.error = err?.error?.message || err?.message || 'No se pudo registrar el pago.';
-          this.registrando = false;
+          console.log('[TRACE-PAY] createMercadoPagoPreference ERROR:', err);
+          this.error = err?.error?.message || err?.message || 'No se pudo iniciar MercadoPago.';
+          this.iniciandoCheckout = false;
           this.confirmandoOrden = false;
         }
       });
+  }
+
+  private async abrirPopupMercadoPago(preferenceId: string): Promise<void> {
+    const publicKey = environment.mercadoPagoPublicKey;
+    if (!publicKey) {
+      throw new Error('Falta configurar mercadoPagoPublicKey en environment');
+    }
+
+    await this.cargarSdkMercadoPago();
+
+    if (!window.MercadoPago) {
+      throw new Error('No se pudo inicializar el SDK de MercadoPago');
+    }
+
+    const mp = new window.MercadoPago(publicKey, { locale: 'es-CO' });
+    mp.checkout({
+      preference: {
+        id: preferenceId
+      },
+      autoOpen: true
+    });
+  }
+
+  private cargarSdkMercadoPago(): Promise<void> {
+    if (window.MercadoPago) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+      const existing = document.getElementById('mercadopago-sdk');
+      if (existing) {
+        existing.addEventListener('load', () => resolve());
+        existing.addEventListener('error', () => reject(new Error('No se pudo cargar el SDK de MercadoPago')));
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.id = 'mercadopago-sdk';
+      script.src = 'https://sdk.mercadopago.com/js/v2';
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('No se pudo cargar el SDK de MercadoPago'));
+      document.body.appendChild(script);
+    });
   }
 
   private validarPerfilYCargarMetodos(): void {

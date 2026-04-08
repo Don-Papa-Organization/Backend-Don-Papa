@@ -55,6 +55,7 @@ export interface SalesTimelineItemDto {
 // ============ PRODUCTOS TOP ============
 export interface TopProductDto {
   idProducto: number;
+  nombreProducto?: string;
   cantidadVendida: number;
   ingresosGenerados: number;
   fecha?: Date;
@@ -69,6 +70,7 @@ export interface DeadStockDto {
 
 export interface CategoryStockDto {
   idCategoria: number;
+  nombreCategoria?: string;
   stockTotal: number;
   productosUnicos: number;
   fecha?: Date;
@@ -123,6 +125,7 @@ export interface OccupancyResponseDto {
 // ============ PROMOCIONES ============
 export interface PromotionPerformanceDto {
   idPromocion: number;
+  nombrePromocion?: string;
   idEvento?: number;
   fecha: Date;
   usosAplicados: number;

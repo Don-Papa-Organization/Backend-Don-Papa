@@ -1,9 +1,9 @@
 <app-ui-form titulo="Iniciar Sesión" (formSubmit)="submit($event)" class="formulario">
-    <ui-input tituloInput="Correo electronico" placeholder="ejemplo@correo.com" name="email" tipo="email" required email
+    <ui-input tituloInput="Correo electronico" placeholder="ejemplo@correo.com" name="email" tipo="email" autocomplete="email" required email
         [(ngModel)]="email" #emailModel="ngModel"></ui-input>
 
     <section class="contrasenaSection">
-        <ui-input tituloInput="Contraseña" placeholder="Ingresa tu contraseña" name="password" tipo="password" required
+        <ui-input tituloInput="Contraseña" placeholder="Ingresa tu contraseña" name="password" tipo="password" autocomplete="current-password" required
             minlength="8" pattern="^(?=.*[A-Z])(?=.*\d).{8,}$" [(ngModel)]="password"
             #passwordModel="ngModel"></ui-input>
         <a routerLink="/auth/forgot-password" class="link">¿Olvidaste tu contraseña?</a>

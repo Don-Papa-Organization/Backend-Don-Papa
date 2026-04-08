@@ -60,4 +60,14 @@ export class ReportsApi {
 			params: dto as any
 		});
 	}
+
+	downloadSalesReportPdf(dto: SalesReportByDatesRequestDto): Observable<Blob> {
+		return this.http.get(this.salesByDatesUrl, {
+			params: {
+				...dto,
+				formato: 'pdf'
+			},
+			responseType: 'blob'
+		});
+	}
 }

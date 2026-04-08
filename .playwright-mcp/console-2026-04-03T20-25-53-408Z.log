@@ -1,0 +1,58 @@
+[     418ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[    7851ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:4000/users/auth/login:0
+[  100109ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:4000/users/auth/login:0
+[  445763ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[ 1713910ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[ 4889812ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[ 4902223ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[ 4936432ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[ 4986684ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[ 4989677ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[ 4991031ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:4000/users/auth/profile:0
+[ 5018778ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[ 5021306ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Don-Papa/Backend-Don-Papa/client/.angular/cache/20.3.17/client/vite/deps/chunk-WHIVADGR.js?v=d5443163:14745
+[ 5022643ms] [LOG] [TRACE][UsersApi.getProfile] raw response: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-J7NUJQ44.js:59
+[ 5022643ms] [LOG] [TRACE][UsersApi.getProfile] normalizing flat profile response @ http://localhost:4200/chunk-J7NUJQ44.js:68
+[ 5022945ms] [LOG] [TRACE] --- getProfile START --- @ http://localhost:4200/chunk-PZCNFT7E.js:1205
+[ 5025412ms] [LOG] [TRACE][UsersApi.getProfile] raw response: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-J7NUJQ44.js:59
+[ 5025412ms] [LOG] [TRACE][UsersApi.getProfile] normalizing flat profile response @ http://localhost:4200/chunk-J7NUJQ44.js:68
+[ 5025412ms] [LOG] [TRACE] getProfile success: true @ http://localhost:4200/chunk-PZCNFT7E.js:1208
+[ 5025413ms] [LOG] [TRACE] getProfile data: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1209
+[ 5025413ms] [LOG] [TRACE] getProfile data.cliente: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1210
+[ 5025413ms] [LOG] [TRACE] perfil asignado: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1217
+[ 5025414ms] [LOG] [TRACE] sincronizarFormularioPerfil - input profile: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1233
+[ 5025415ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1234
+[ 5025421ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.nombre: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1235
+[ 5025422ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.telefono: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1236
+[ 5025422ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.direccion: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1237
+[ 5025423ms] [LOG] [TRACE] sincronizarFormularioPerfil - formPerfil result: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1248
+[ 5025424ms] [LOG] [TRACE] sincronizarFormularioPerfil - snapshotPerfil result: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1249
+[ 5025424ms] [LOG] [TRACE] --- getProfile END --- @ http://localhost:4200/chunk-PZCNFT7E.js:1220
+[ 6420868ms] [LOG] [TRACE] sincronizarFormularioPerfil - input profile: {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1233
+[ 6420869ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1234
+[ 6420869ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.nombre: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1235
+[ 6420870ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.telefono: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1236
+[ 6420870ms] [LOG] [TRACE] sincronizarFormularioPerfil - profile.cliente.direccion: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1237
+[ 6420870ms] [LOG] [TRACE] sincronizarFormularioPerfil - formPerfil result: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1248
+[ 6420870ms] [LOG] [TRACE] sincronizarFormularioPerfil - snapshotPerfil result: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1249
+[ 6487575ms] [LOG] [TRACE] --- actualizarPerfil START --- @ http://localhost:4200/chunk-PZCNFT7E.js:1100
+[ 6487582ms] [LOG] [TRACE] formPerfil: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45, Apto 678"} @ http://localhost:4200/chunk-PZCNFT7E.js:1101
+[ 6487582ms] [LOG] [TRACE] snapshotPerfil: {"nombre":"","telefono":"","direccion":""} @ http://localhost:4200/chunk-PZCNFT7E.js:1102
+[ 6487582ms] [LOG] [TRACE] perfil (this.perfil): {"correo":"juancastaneda120507@gmail.com","tipoUsuario":"cliente","id":2,"activo":true} @ http://localhost:4200/chunk-PZCNFT7E.js:1103
+[ 6487583ms] [LOG] [TRACE] puedeGuardarPerfil: true @ http://localhost:4200/chunk-PZCNFT7E.js:1104
+[ 6487583ms] [LOG] [TRACE] payload construido: {"nombre":"Juan Castañeda López","telefono":"3001234567","direccion":"Carrera 5 #123-45, Apto 678"} @ http://localhost:4200/chunk-PZCNFT7E.js:1112
+[ 6487583ms] [LOG] [TRACE] tieneCambios: true @ http://localhost:4200/chunk-PZCNFT7E.js:1114
+[ 6487584ms] [LOG] [TRACE] Llamando updateProfile... @ http://localhost:4200/chunk-PZCNFT7E.js:1122
+[ 6493338ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:4000/users/auth/profile:0
+[ 6493347ms] [LOG] [TRACE] updateProfile ERROR completo: {"success":false,"message":"No autenticado","timestamp":"2026-04-03T22:14:06.754Z","status":401,"error":{"message":"No autenticado"}} @ http://localhost:4200/chunk-PZCNFT7E.js:1149
+[ 6493348ms] [LOG] [TRACE] error.response: undefined @ http://localhost:4200/chunk-PZCNFT7E.js:1150
+[ 6493348ms] [LOG] [TRACE] error.status: 401 @ http://localhost:4200/chunk-PZCNFT7E.js:1151
+[ 6493349ms] [LOG] [TRACE] error.error: {"message":"No autenticado"} @ http://localhost:4200/chunk-PZCNFT7E.js:1152
+[ 6493350ms] [LOG] [TRACE] mensaje extraido: No autenticado @ http://localhost:4200/chunk-PZCNFT7E.js:1154
+[ 6493350ms] [LOG] [TRACE] debeCrearCliente: false @ http://localhost:4200/chunk-PZCNFT7E.js:1155
+[ 6493350ms] [LOG] [TRACE] --- actualizarPerfil END ERROR --- @ http://localhost:4200/chunk-PZCNFT7E.js:1164
+[ 6497598ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Gateway Timeout) @ http://localhost:4000/inventory/catalogo/enriquecido?page=1&limit=8:0
+[ 6497615ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Gateway Timeout) @ http://localhost:4000/events/proximos:0
+[ 6499647ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Gateway Timeout) @ http://localhost:4000/inventory/categoria:0
+[ 6499695ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Gateway Timeout) @ http://localhost:4000/inventory/catalogo/enriquecido?page=1&limit=12&ordenarPor=nombre&orden=asc:0
+[ 6501559ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Gateway Timeout) @ http://localhost:4000/promotions/activas/true:0

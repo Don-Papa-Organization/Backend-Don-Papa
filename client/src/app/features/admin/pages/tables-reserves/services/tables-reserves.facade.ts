@@ -10,6 +10,7 @@ import { ListMesaTiposDataDto } from '../../../../../domain/tables&Reserves/dtos
 import { ApiResponse } from '../../../../../types/api-response.type';
 import { Mesa, MesaEstado, MesaTipo } from '../../../../../domain/tables&Reserves/models/mesa.model';
 import { Reserva } from '../../../../../domain/tables&Reserves/models/reserva.model';
+import { ReserveTableRequestDto } from '../../../../../domain/tables&Reserves/dtos/request/reserve-table.request.dto';
 
 export interface MesaViewModel {
   idMesa: number;
@@ -65,6 +66,10 @@ export class TablesReservesFacade {
 
   cancelReservationByStaff(idReserva: number): Observable<ApiResponse<Reserva>> {
     return this.tablesReservesApi.cancelReservationByStaff(idReserva);
+  }
+
+  createReservationByStaff(dto: ReserveTableRequestDto): Observable<ApiResponse<Reserva>> {
+    return this.tablesReservesApi.reserveTableByStaff(dto);
   }
 
   private mapMesasToViewModels(data?: ListMesasDataDto | null): MesaViewModel[] {

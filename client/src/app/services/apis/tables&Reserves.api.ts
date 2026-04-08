@@ -36,6 +36,10 @@ export class TablesReservesApi {
 		return this.http.post<ApiResponse<Reserva>>(buildApiUrl(API_ENDPOINTS.reservations.reserve()), dto);
 	}
 
+	reserveTableByStaff(dto: ReserveTableRequestDto): Observable<ApiResponse<Reserva>> {
+		return this.http.post<ApiResponse<Reserva>>(buildApiUrl(API_ENDPOINTS.reservations.reserveStaff()), dto);
+	}
+
 	getReservationHistory(): Observable<ApiResponse<ReservationHistoryDataDto>> {
 		return this.http.get<ApiResponse<ReservationHistoryDataDto>>(buildApiUrl(API_ENDPOINTS.reservations.history()));
 	}

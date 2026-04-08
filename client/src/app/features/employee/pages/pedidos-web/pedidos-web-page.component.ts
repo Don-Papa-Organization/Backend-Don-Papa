@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
-import { Pedido, EstadoPedido } from '../../../../domain/orders/models/pedido.model';
+import { Subject, forkJoin, of, takeUntil } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { Pedido, EstadoPedido, ProductoPedidoItem } from '../../../../domain/orders/models/pedido.model';
 import { OrdersApi } from '../../../../services/apis/orders.api';
 import { UsersApi } from '../../../../services/apis/users.api';
+import { InventoryApi } from '../../../../services/apis/inventory.api';
 
 @Component({
   selector: 'app-pedidos-web-page',
@@ -24,7 +26,8 @@ export class PedidosWebPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private ordersApi: OrdersApi,
-    private usersApi: UsersApi
+    private usersApi: UsersApi,
+    private inventoryApi: InventoryApi
   ) {}
 
   ngOnInit(): void {
@@ -49,13 +52,101 @@ export class PedidosWebPageComponent implements OnInit, OnDestroy {
             this.error = 'No se pudieron cargar los pedidos.';
             return;
           }
-          this.pedidos = response.data.filter((p: Pedido) => p.canalVenta === 'web');
+          const pedidosWeb = response.data.filter((p: Pedido) => p.canalVenta === 'web');
+          this.cargarDetalleProductos(pedidosWeb);
         },
         error: () => {
           this.loading = false;
           this.error = 'Error al conectar con el servidor.';
         }
       });
+  }
+
+  private cargarDetalleProductos(pedidosWeb: Pedido[]): void {
+    if (!pedidosWeb.length) {
+      this.pedidos = [];
+      return;
+    }
+
+    const pedidosConDetalle$ = pedidosWeb.map((pedido) => {
+      const basePedido$ = pedido.productos?.length
+        ? of(pedido)
+        : this.ordersApi.getOrderById(pedido.idPedido).pipe(
+            map((detalleResp) => {
+              const productos = detalleResp?.data?.productos ?? [];
+              return {
+                ...pedido,
+                productos
+              } as Pedido;
+            }),
+            catchError(() => of(pedido))
+          );
+
+      return basePedido$.pipe(
+        map((pedidoConDetalle) => this.completarNombresProductos(pedidoConDetalle))
+      );
+    });
+
+    forkJoin(pedidosConDetalle$)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((pedidosDetallados) => {
+        this.pedidos = pedidosDetallados;
+      });
+  }
+
+  private completarNombresProductos(pedido: Pedido): Pedido {
+    if (!pedido.productos?.length) {
+      return pedido;
+    }
+
+    const productos = [...pedido.productos];
+    const productosSinNombre = productos.filter((item) => !item.productoNombre?.trim());
+
+    if (!productosSinNombre.length) {
+      return pedido;
+    }
+
+    const idsSinNombre = Array.from(new Set(productosSinNombre.map((item) => item.idProducto)));
+
+    idsSinNombre.forEach((idProducto) => {
+      this.inventoryApi.getCatalogDetail(idProducto)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (resp) => {
+            const nombre = String(resp?.data?.nombre || '').trim();
+            if (!nombre) {
+              return;
+            }
+
+            this.actualizarNombreProductoPedido(pedido.idPedido, idProducto, nombre);
+          }
+        });
+    });
+
+    return {
+      ...pedido,
+      productos: productos.map((item) => ({
+        ...item,
+        productoNombre: item.productoNombre?.trim() || 'Producto sin nombre'
+      }))
+    };
+  }
+
+  private actualizarNombreProductoPedido(idPedido: number, idProducto: number, nombre: string): void {
+    this.pedidos = this.pedidos.map((pedido) => {
+      if (pedido.idPedido !== idPedido || !pedido.productos?.length) {
+        return pedido;
+      }
+
+      return {
+        ...pedido,
+        productos: pedido.productos.map((item) =>
+          item.idProducto === idProducto
+            ? { ...item, productoNombre: nombre }
+            : item
+        )
+      };
+    });
   }
 
   get pedidosFiltrados(): Pedido[] {
@@ -169,5 +260,10 @@ export class PedidosWebPageComponent implements OnInit, OnDestroy {
 
   isUpdating(id: number): boolean {
     return this.updatingId === id;
+  }
+
+  getNombreProducto(item: ProductoPedidoItem): string {
+    const nombre = item.productoNombre?.trim();
+    return nombre || 'Producto sin nombre';
   }
 }

@@ -18,7 +18,7 @@
     </div>
 
     <div class="state state--success" *ngIf="exitoso">
-      <p>Pago registrado exitosamente. Redirigiendo...</p>
+      <p>Checkout de MercadoPago.</p>
     </div>
 
     <div class="payment-form" *ngIf="!loading && !confirmandoOrden && !error && !exitoso">
@@ -44,8 +44,8 @@
 
       <div class="actions">
         <ui-button visualTheme="client-premium"
-          [texto]="registrando ? 'Procesando...' : 'Confirmar pago'"
-          [disabled]="!puedeRegistrar || registrando"
+          [texto]="iniciandoCheckout ? 'Abriendo MercadoPago...' : 'Pagar con MercadoPago'"
+          [disabled]="!puedeRegistrar || iniciandoCheckout"
           (accion)="registrarPago()"
         ></ui-button>
       </div>

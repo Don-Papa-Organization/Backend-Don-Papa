@@ -3,6 +3,7 @@ import { ReportsFacade } from "../services/reports.facade";
 import { TabItem } from "../../../../../shared/ui/ui-tabs/ui-tabs";
 import { AccionTabla } from "../../../../../shared/ui/ui-tabla/ui-tabla";
 import { AdminFiltros } from "../../../../../shared/ui/ui-admin-filter-panel/ui-admin-filter-panel";
+import { SalesReportByDatesRequestDto } from "../../../../../domain/reports/dtos/request/sales-report-by-dates.request.dto";
 
 interface BitacoraViewModel {
 	"ID": number;
@@ -60,7 +61,15 @@ export class MainReports implements OnInit {
 	// === ESTADOS DE MODALES ===
 	mostrarModalDetalleBitacora = false;
 	mostrarModalDetalleVenta = false;
+	mostrarModalDescargaReporte = false;
+	descargandoReporte = false;
+	mensajeDescargaReporte = '';
+	tipoDescargaReporte: 'success' | 'error' = 'success';
 	registroSeleccionado: any = null;
+	reporteDescarga: SalesReportByDatesRequestDto = {
+		fechaInicio: '',
+		fechaFin: ''
+	};
 
 	// === ACCIONES DE TABLA ===
 	accionesBitacora: AccionTabla[] = [
@@ -105,6 +114,53 @@ export class MainReports implements OnInit {
 		this.cargarReportes();
 	}
 
+	abrirModalDescargaReporte(): void {
+		const rango = this.obtenerRangoDescargaPorDefecto();
+		this.reporteDescarga = {
+			fechaInicio: this.filtrosActuales?.fechaInicio || rango.fechaInicio,
+			fechaFin: this.filtrosActuales?.fechaFin || rango.fechaFin
+		};
+		this.mensajeDescargaReporte = '';
+		this.mostrarModalDescargaReporte = true;
+	}
+
+	cerrarModalDescargaReporte(): void {
+		this.mostrarModalDescargaReporte = false;
+		this.descargandoReporte = false;
+	}
+
+	descargarReporteVentas(): void {
+		if (!this.reporteDescarga.fechaInicio || !this.reporteDescarga.fechaFin) {
+			this.tipoDescargaReporte = 'error';
+			this.mensajeDescargaReporte = 'Debes seleccionar fecha inicio y fecha fin.';
+			return;
+		}
+
+		if (this.reporteDescarga.fechaInicio > this.reporteDescarga.fechaFin) {
+			this.tipoDescargaReporte = 'error';
+			this.mensajeDescargaReporte = 'La fecha de inicio no puede ser posterior a la fecha final.';
+			return;
+		}
+
+		this.descargandoReporte = true;
+		this.tipoDescargaReporte = 'success';
+		this.mensajeDescargaReporte = '';
+
+		this.facade.downloadSalesReportPdf(this.reporteDescarga).subscribe({
+			next: () => {
+				this.descargandoReporte = false;
+				this.tipoDescargaReporte = 'success';
+				this.mensajeDescargaReporte = 'Reporte descargado correctamente.';
+				this.cerrarModalDescargaReporte();
+			},
+			error: (error) => {
+				this.descargandoReporte = false;
+				this.tipoDescargaReporte = 'error';
+				this.mensajeDescargaReporte = error?.message || 'No se pudo descargar el reporte.';
+			}
+		});
+	}
+
 	// ==================== BITÁCORA ====================
 	cargarBitacora(): void {
 		this.cargandoBitacora = true;
@@ -131,11 +187,13 @@ export class MainReports implements OnInit {
 		this.facade.searchBitacora(filtros).subscribe({
 			next: (data: any) => {
 				console.log("Bitácora cargada:", data);
-				this.bitacoraItems = this.mapearBitacora(data.incidentes || []);
+				const registros = data?.registros || data?.incidentes || [];
+				this.bitacoraItems = this.mapearBitacora(registros);
 				this.cargandoBitacora = false;
 			},
 			error: (error) => {
 				console.error("Error al cargar bitácora:", error);
+				this.bitacoraItems = [];
 				this.cargandoBitacora = false;
 			}
 		});
@@ -168,11 +226,12 @@ export class MainReports implements OnInit {
 		this.facade.getSalesHistory(filtros).subscribe({
 			next: (data: any) => {
 				console.log("Historial de ventas cargado:", data);
-				this.ventasItems = this.mapearVentas(data.ventas || []);
+				this.ventasItems = this.mapearVentas(data?.ventas || []);
 				this.cargandoVentas = false;
 			},
 			error: (error) => {
 				console.error("Error al cargar ventas:", error);
+				this.ventasItems = [];
 				this.cargandoVentas = false;
 			}
 		});
@@ -237,5 +296,16 @@ export class MainReports implements OnInit {
 		} catch {
 			return fecha || "-";
 		}
+	}
+
+	private obtenerRangoDescargaPorDefecto(): { fechaInicio: string; fechaFin: string } {
+		const hoy = new Date();
+		const hace30Dias = new Date();
+		hace30Dias.setDate(hace30Dias.getDate() - 30);
+
+		return {
+			fechaInicio: hace30Dias.toISOString().split('T')[0],
+			fechaFin: hoy.toISOString().split('T')[0]
+		};
 	}
 }

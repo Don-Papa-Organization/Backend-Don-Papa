@@ -10,6 +10,13 @@ import { MenuItem } from '../../../shared/interfaces/menu-item';
 import { OrdersApi } from '../../../services/apis/orders.api';
 import { PosPreferencesService } from '../pages/orders/services/pos-preferences.service';
 import { TableSaleHeaderService } from '../pages/orders/services/table-sale-header.service';
+import { TablesReservesFacade } from '../pages/tables-reserves/services/tables-reserves.facade';
+import { DailyReservationItemDto } from '../../../domain/tables&Reserves/dtos/response/daily-reservations.response.dto';
+
+interface ReservaHeaderItem extends DailyReservationItemDto {
+  minutosRestantes?: number;
+  puedeConfirmar?: boolean;
+}
 
 @Component({
   selector: 'app-main-layout',
@@ -23,7 +30,8 @@ export class MainLayout implements OnInit, OnDestroy {
     private router: Router,
     private posPreferences: PosPreferencesService,
     private tableSaleHeader: TableSaleHeaderService,
-    private ordersApi: OrdersApi
+    private ordersApi: OrdersApi,
+    private tablesReservesFacade: TablesReservesFacade
   ) {}
 
   isPosMode = false;
@@ -38,11 +46,18 @@ export class MainLayout implements OnInit, OnDestroy {
   webPedidosDropdownOpen = false;
   webPedidosUpdatingId: number | null = null;
 
+  reservasHoy: ReservaHeaderItem[] = [];
+  reservasHoyLoading = false;
+  reservasDropdownOpen = false;
+
+  horaActual = '';
+
   private routerSub?: Subscription;
   private autoPrintSub?: Subscription;
   private tableSaleHeaderSub?: Subscription;
   private paraLlevarSub?: Subscription;
   private pollSub?: Subscription;
+  private clockSub?: Subscription;
 
   menuItems: MenuItem[] = [
     { texto: 'POS', urlIcono: 'icons/iconoMesas.svg', link: '/employee/orders' },
@@ -73,7 +88,15 @@ export class MainLayout implements OnInit, OnDestroy {
     });
 
     this.cargarWebPedidos();
-    this.pollSub = interval(30000).subscribe(() => this.cargarWebPedidos());
+    this.cargarReservasHoy();
+    this.actualizarHoraActual();
+
+    this.pollSub = interval(30000).subscribe(() => {
+      this.cargarWebPedidos();
+      this.cargarReservasHoy(true);
+    });
+
+    this.clockSub = interval(60000).subscribe(() => this.actualizarHoraActual());
   }
 
   ngOnDestroy(): void {
@@ -82,6 +105,7 @@ export class MainLayout implements OnInit, OnDestroy {
     this.tableSaleHeaderSub?.unsubscribe();
     this.paraLlevarSub?.unsubscribe();
     this.pollSub?.unsubscribe();
+    this.clockSub?.unsubscribe();
   }
 
   private checkPosMode(url: string): void {
@@ -160,16 +184,105 @@ export class MainLayout implements OnInit, OnDestroy {
     this.webPedidosDropdownOpen = !this.webPedidosDropdownOpen;
   }
 
+  toggleReservasDropdown(): void {
+    this.reservasDropdownOpen = !this.reservasDropdownOpen;
+    if (this.reservasDropdownOpen) {
+      this.cargarReservasHoy();
+    }
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (!target.closest('.web-orders-badge')) {
       this.webPedidosDropdownOpen = false;
     }
+
+    if (!target.closest('.reservas-hoy-badge')) {
+      this.reservasDropdownOpen = false;
+    }
   }
 
   closeWebPedidosDropdown(): void {
     this.webPedidosDropdownOpen = false;
+  }
+
+  closeReservasDropdown(): void {
+    this.reservasDropdownOpen = false;
+  }
+
+  cargarReservasHoy(silent = false): void {
+    if (!silent) {
+      this.reservasHoyLoading = true;
+    }
+
+    const hoy = new Date();
+    const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+
+    this.tablesReservesFacade.getDailyReservations({ fecha }).subscribe({
+      next: (response) => {
+        this.reservasHoyLoading = false;
+        const reservas = response.data?.reservas ?? [];
+        this.reservasHoy = reservas.map((reserva) => {
+          const fechaReserva = reserva.fechaCompleta ? new Date(reserva.fechaCompleta) : (reserva.fechaReserva ? new Date(reserva.fechaReserva) : null);
+          const minutosRestantes = fechaReserva ? Math.floor((fechaReserva.getTime() - Date.now()) / 60000) : null;
+
+          return {
+            ...reserva,
+            minutosRestantes: minutosRestantes ?? undefined,
+            puedeConfirmar: reserva.estado === 'pendiente' && typeof minutosRestantes === 'number' && minutosRestantes <= 20 && minutosRestantes >= 0
+          };
+        });
+      },
+      error: () => {
+        this.reservasHoyLoading = false;
+      }
+    });
+  }
+
+  get reservasHoyPendientesCount(): number {
+    return this.reservasHoy.filter(reserva => reserva.estado === 'pendiente').length;
+  }
+
+  get reservasHoyActivas(): ReservaHeaderItem[] {
+    return this.reservasHoy.filter(reserva => reserva.estado !== 'cancelada');
+  }
+
+  actualizarHoraActual(): void {
+    this.horaActual = new Date().toLocaleTimeString('es-CO', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  irAMesaReserva(idMesa: number): void {
+    this.router.navigate(['/employee/orders/table', idMesa]);
+    this.closeReservasDropdown();
+  }
+
+  confirmarReservaHoy(reserva: ReservaHeaderItem): void {
+    if (!reserva.puedeConfirmar) {
+      return;
+    }
+
+    this.tablesReservesFacade.confirmReservation(reserva.idReserva).subscribe({
+      next: () => {
+        this.cargarReservasHoy();
+        this.posPreferences.triggerReload();
+      },
+      error: () => this.cargarReservasHoy()
+    });
+  }
+
+  cancelarReservaHoy(reserva: ReservaHeaderItem): void {
+    this.tablesReservesFacade.cancelReservationByStaff(reserva.idReserva).subscribe({
+      next: () => {
+        this.cargarReservasHoy();
+        this.posPreferences.triggerReload();
+      },
+      error: () => this.cargarReservasHoy()
+    });
   }
 
   getSiguientesEstados(estado: string): Array<{ value: string; label: string }> {
@@ -237,6 +350,15 @@ export class MainLayout implements OnInit, OnDestroy {
       case 'pendiente': return 'badge--confirmed';
       case 'entregado': return 'badge--delivered';
       case 'cancelado': return 'badge--cancelled';
+      default: return '';
+    }
+  }
+
+  getBadgeClassReserva(estado: string): string {
+    switch (estado) {
+      case 'pendiente': return 'badge--pending';
+      case 'confirmada': return 'badge--confirmed';
+      case 'cancelada': return 'badge--cancelled';
       default: return '';
     }
   }
